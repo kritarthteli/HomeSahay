@@ -57,7 +57,7 @@ export default function RoleSwitcher() {
     setOpen(true);
   };
 
-  const handleRoleSelect = (r) => {
+  const handleRoleSelect = (r: any) => {
     setRole(r.id);
     setOpen(false);
     router.replace(r.route);
@@ -142,8 +142,10 @@ const styles = StyleSheet.create({
   },
   fabLabel: {
     color: Colors.textPrimary,
-    fontSize: Typography.fontSize.sm,
-    fontWeight: Typography.fontWeight.semibold,
+    fontSize: Typography.fontSize.xs,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    textTransform: 'uppercase',
   },
   backdrop: {
     flex: 1,
@@ -170,8 +172,8 @@ const styles = StyleSheet.create({
   },
   sheetTitle: {
     color: Colors.textPrimary,
-    fontSize: Typography.fontSize.xl,
-    fontWeight: Typography.fontWeight.bold,
+    fontSize: Typography.fontSize['2xl'],
+    fontWeight: Typography.fontWeight.black,
     marginBottom: Spacing.xs,
   },
   sheetSubtitle: {
@@ -184,7 +186,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.bg2,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.xl,
     padding: Spacing.base,
     marginBottom: Spacing.sm,
     borderWidth: 1.5,
@@ -205,7 +207,7 @@ const styles = StyleSheet.create({
   roleName: {
     color: Colors.textPrimary,
     fontSize: Typography.fontSize.md,
-    fontWeight: Typography.fontWeight.semibold,
+    fontWeight: Typography.fontWeight.extrabold,
   },
   roleSubtitle: {
     color: Colors.textSecondary,

@@ -62,10 +62,10 @@ export default function AIInputBar({ onSubmit, loading = false, parsedIntent = n
 
       {/* Input */}
       <Animated.View style={[styles.inputWrapper, { borderColor }]}>
-        <Ionicons name="mic-outline" size={20} color={Colors.textMuted} style={styles.micIcon} />
+        <Ionicons name="sparkles" size={20} color={Colors.primary} style={styles.sparkleIcon} />
         <TextInput
           style={styles.input}
-          placeholder="Type your request in any language…"
+          placeholder="Search for any service..."
           placeholderTextColor={Colors.textMuted}
           value={text}
           onChangeText={setText}
@@ -76,15 +76,17 @@ export default function AIInputBar({ onSubmit, loading = false, parsedIntent = n
           multiline={false}
           editable={!loading}
         />
+        <Ionicons name="mic-outline" size={20} color={Colors.textMuted} style={styles.micIcon} />
         <TouchableOpacity
           style={[styles.sendBtn, (!text.trim() || loading) && styles.sendBtnDisabled]}
           onPress={handleSend}
           disabled={!text.trim() || loading}
+          activeOpacity={0.8}
         >
           {loading ? (
-            <ActivityIndicator size="small" color="#fff" />
+            <ActivityIndicator size="small" color={Colors.darkSurface} />
           ) : (
-            <Ionicons name="arrow-forward" size={18} color="#fff" />
+            <Ionicons name="arrow-up" size={18} color={Colors.darkSurface} />
           )}
         </TouchableOpacity>
       </Animated.View>
@@ -159,33 +161,37 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: Colors.bg3,
-    borderRadius: Radius.lg,
+    backgroundColor: Colors.darkSurface,
+    borderRadius: Radius.full,
     borderWidth: 1.5,
     paddingHorizontal: Spacing.md,
-    paddingVertical: Spacing.sm,
+    paddingVertical: 10,
     gap: Spacing.sm,
   },
+  sparkleIcon: {
+    opacity: 0.9,
+  },
   micIcon: {
-    opacity: 0.7,
+    opacity: 0.6,
+    marginRight: 4,
   },
   input: {
     flex: 1,
-    color: Colors.textPrimary,
+    color: Colors.textInverse,
     fontSize: Typography.fontSize.base,
     paddingVertical: 4,
+    outlineStyle: 'none',
   },
   sendBtn: {
-    width: 36,
-    height: 36,
-    borderRadius: 18,
+    width: 38,
+    height: 38,
+    borderRadius: 19,
     backgroundColor: Colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    ...Shadow.sm,
   },
   sendBtnDisabled: {
-    backgroundColor: Colors.bg4,
+    backgroundColor: Colors.bg3,
   },
   intentCard: {
     flexDirection: 'row',

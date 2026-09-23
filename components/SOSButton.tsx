@@ -3,7 +3,7 @@ import { TouchableOpacity, Text, StyleSheet, Animated, View } from 'react-native
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Shadow, Typography } from '../constants/theme';
 
-export default function SOSButton({ onPress, disabled = false }) {
+export default function SOSButton({ onPress, disabled = false }: any) {
   const pulseAnim = useRef(new Animated.Value(1)).current;
 
   React.useEffect(() => {
@@ -52,22 +52,22 @@ const styles = StyleSheet.create({
   },
   ring: {
     position: 'absolute',
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    backgroundColor: Colors.sos,
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    backgroundColor: Colors.dangerTint,
   },
   button: {
-    width: 58,
-    height: 58,
-    borderRadius: 29,
-    backgroundColor: Colors.sos,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: Colors.danger,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: 'rgba(255,255,255,0.3)',
+    borderWidth: 2,
+    borderColor: Colors.dangerTint,
     ...Shadow.md,
-    shadowColor: Colors.sos,
+    shadowColor: Colors.danger,
   },
   buttonDisabled: {
     backgroundColor: Colors.bg4,
@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
   label: {
     color: '#fff',
     fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
     letterSpacing: 1,
     marginTop: 1,
