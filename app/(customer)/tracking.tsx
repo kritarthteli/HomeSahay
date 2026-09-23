@@ -13,11 +13,13 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/appStore';
 import FeedbackCard from '../../components/FeedbackCard';
+import MapViewComponent from '../../components/MapViewComponent';
 import { Colors, Spacing, Radius, Shadow, Typography } from '../../constants/theme';
+import { BENGALURU_CENTER } from '../../data/seedData';
 
 export default function TrackingScreen() {
   const router = useRouter();
-  const { checkoutData, workers, jobs, completeJob, feedback, submitFeedback, activeCustomerId } = useAppStore();
+  const { checkoutData, workers, jobs, completeJob, feedback, submitFeedback, activeCustomerId, getActiveCustomer } = useAppStore();
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [etaLeft, setEtaLeft] = useState<number | null>(null);
   const progressAnim = useRef(new Animated.Value(0)).current;
@@ -25,13 +27,14 @@ export default function TrackingScreen() {
   const PHASES = [
     { id: 'confirmed', label: 'Booking Confirmed', icon: 'checkmark-circle', color: Colors.accentPrimary },
     { id: 'heading', label: 'Worker Heading to You', icon: 'bicycle', color: Colors.accentPrimary },
-    { id: 'arrived', label: 'Worker Arrived at Location', icon: 'home', color: Colors.warning },
+    { id: 'arrived', label: 'Worker Arrived at Location', icon: 'location', color: Colors.warning },
     { id: 'inprogress', label: 'Work In Progress', icon: 'construct', color: Colors.accentPrimaryDim },
     { id: 'completed', label: 'Job Completed!', icon: 'trophy', color: Colors.success },
   ];
 
-  const worker = workers.find((w) => w.id === checkoutData?.workerId) ?? workers[0];
-  const currentJob = jobs.find((j) => j.id === checkoutData?.jobId);
+  const customer = getActiveCustomer();
+  const worker = workers.find((w: any) => w.id === checkoutData?.workerId) ?? workers[0];
+  const currentJob = jobs.find((j: any) => j.id === checkoutData?.jobId);
   const eta = checkoutData?.estimatedArrival ?? worker?.etaMinutes ?? 12;
 
   useEffect(() => {
@@ -70,31 +73,34 @@ export default function TrackingScreen() {
 
   return (
     <View style={styles.mainContainer}>
-      {/* Dark Header Surface */}
-      <View style={styles.headerBackground}>
-        <SafeAreaView edges={['top']} />
-        <View style={styles.headerContent}>
+      <View style={styles.mapSection}>
+        <MapViewComponent
+          workers={worker ? [worker] : []}
+          customerLocation={customer?.location ?? BENGALURU_CENTER}
+          radiusKm={2}
+          style={StyleSheet.absoluteFill}
+        />
+        <SafeAreaView edges={['top']} style={styles.headerOverlay}>
           <View style={styles.topRow}>
             <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.8}>
               <Ionicons name="arrow-back" size={20} color={Colors.textInverse} />
             </TouchableOpacity>
             <View style={styles.headerTitles}>
-              <Text style={styles.title}>Live Tracking</Text>
-              <Text style={styles.subtitle}>ORDER #{checkoutData?.jobId ?? 'HS-8492'}</Text>
-            </View>
-            <View style={styles.liveTag}>
-              <View style={styles.liveDot} />
-              <Text style={styles.liveText}>ACTIVE</Text>
+              <View style={styles.liveTag}>
+                <View style={styles.liveDot} />
+                <Text style={styles.liveText}>LIVE</Text>
+              </View>
             </View>
           </View>
+        </SafeAreaView>
 
-          {/* ETA Snapshot */}
+        <View style={styles.etaCardContainer}>
           <View style={styles.etaCard}>
-            <View style={[styles.etaIcon, { backgroundColor: currentPhase.color + '20' }]}>
-              <Ionicons name={currentPhase.icon as any} size={24} color={currentPhase.color} />
+            <View style={[styles.etaIcon, { backgroundColor: currentPhase.color }]}>
+              <Ionicons name={currentPhase.icon as any} size={28} color={Colors.darkSurfaceDeep} />
             </View>
             <View style={styles.etaInfo}>
-              <Text style={[styles.etaStatus, { color: currentPhase.color }]}>
+              <Text style={[styles.etaStatus, { color: Colors.textInverse }]}>
                 {currentPhase.label}
               </Text>
               <Text style={styles.etaTime}>
@@ -109,10 +115,9 @@ export default function TrackingScreen() {
         </View>
       </View>
 
-      {/* Clean Ivory Bottom Sheet */}
       <View style={styles.bottomSheet}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
-          {/* Worker Profile Card */}
+          
           <View style={styles.workerCard}>
             <Image source={{ uri: worker.avatar }} style={styles.avatar} />
             <View style={styles.workerInfo}>
@@ -123,17 +128,16 @@ export default function TrackingScreen() {
                 <View style={styles.dot} />
                 <Text style={styles.metaText}>{worker.category.toUpperCase()}</Text>
                 <View style={styles.dot} />
-                <Ionicons name="shield-checkmark" size={12} color={Colors.success} />
-                <Text style={styles.metaText}>Verified</Text>
+                <Ionicons name="shield-checkmark" size={12} color={Colors.accentPrimary} />
+                <Text style={[styles.metaText, { color: Colors.accentPrimary }]}>Verified</Text>
               </View>
               <Text style={styles.coopText}>{worker.cooperative}</Text>
             </View>
             <TouchableOpacity style={styles.callBtn} activeOpacity={0.8}>
-              <Ionicons name="call" size={18} color={Colors.textInverse} />
+              <Ionicons name="call" size={20} color={Colors.darkSurfaceDeep} />
             </TouchableOpacity>
           </View>
 
-          {/* Progress Timeline */}
           <View style={styles.timelineCard}>
             <Text style={styles.timelineTitle}>DISPATCH PROGRESS</Text>
             {PHASES.map((p, i) => {
@@ -147,13 +151,13 @@ export default function TrackingScreen() {
                     <View
                       style={[
                         styles.stepNode,
-                        isCurrent && { borderColor: p.color, backgroundColor: p.color + '20' },
-                        isPast && { backgroundColor: Colors.accentPrimary, borderColor: Colors.accentPrimary },
+                        isCurrent && { borderColor: p.color, backgroundColor: Colors.surfaceLight },
+                        isPast && { backgroundColor: Colors.textPrimary, borderColor: Colors.textPrimary },
                         isFuture && { backgroundColor: Colors.canvasCream, borderColor: Colors.borderLight },
                       ]}
                     >
                       {isPast ? (
-                        <Ionicons name="checkmark" size={12} color={Colors.darkSurfaceDeep} />
+                        <Ionicons name="checkmark" size={12} color={Colors.surfaceLight} />
                       ) : (
                         <View
                           style={[
@@ -168,7 +172,7 @@ export default function TrackingScreen() {
                       <View
                         style={[
                           styles.stepLine,
-                          isPast && { backgroundColor: Colors.accentPrimary },
+                          isPast && { backgroundColor: Colors.textPrimary },
                           !isPast && { backgroundColor: Colors.borderLight },
                         ]}
                       />
@@ -179,7 +183,7 @@ export default function TrackingScreen() {
                     <Text
                       style={[
                         styles.stepLabel,
-                        isCurrent && { color: Colors.textPrimary, fontWeight: Typography.fontWeight.bold },
+                        isCurrent && { color: Colors.textPrimary, fontWeight: Typography.fontWeight.black },
                         isPast && { color: Colors.textSecondary },
                         isFuture && { color: Colors.textMuted },
                       ]}
@@ -195,9 +199,8 @@ export default function TrackingScreen() {
             })}
           </View>
 
-          {/* Safety & SOS Notice */}
           <View style={styles.safetyCard}>
-            <Ionicons name="shield-checkmark" size={20} color={Colors.accentPrimary} />
+            <Ionicons name="shield-checkmark" size={24} color={Colors.accentPrimary} />
             <View style={{ flex: 1 }}>
               <Text style={styles.safetyTitle}>COOPERATIVE SAFETY SHIELD</Text>
               <Text style={styles.safetyText}>
@@ -205,9 +208,10 @@ export default function TrackingScreen() {
               </Text>
             </View>
           </View>
+
           {phaseIndex === PHASES.length - 1 && worker && currentJob?.status === 'completed' && (
             <FeedbackCard title="How was your experience?" subject={worker.name}
-              submitted={feedback.some((entry) => entry.jobId === currentJob.id && entry.fromRole === 'customer')}
+              submitted={feedback.some((entry: any) => entry.jobId === currentJob.id && entry.fromRole === 'customer')}
               onSubmit={(entry: any) => submitFeedback({ ...entry, jobId: currentJob.id, fromRole: 'customer', fromUserId: activeCustomerId, toWorkerId: worker.id })} />
           )}
         </ScrollView>
@@ -221,133 +225,135 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: Colors.canvasDark,
   },
-  headerBackground: {
+  mapSection: {
+    height: '45%',
     backgroundColor: Colors.canvasDark,
-    paddingBottom: Spacing.xl,
+    position: 'relative',
   },
-  headerContent: {
+  headerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.base,
+    zIndex: 10,
   },
   topRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: Spacing.lg,
   },
   backBtn: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceInteractive,
+    backgroundColor: Colors.canvasDark,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: Colors.borderDark,
+    ...Shadow.glow,
   },
   headerTitles: {
     flex: 1,
-    marginLeft: Spacing.md,
-  },
-  title: {
-    color: Colors.textInverse,
-    fontSize: Typography.fontSize.xl,
-    fontFamily: Typography.fontFamily.display,
-    fontWeight: Typography.fontWeight.black,
-    letterSpacing: -0.5,
-  },
-  subtitle: {
-    color: Colors.textInverseMuted,
-    fontSize: 10,
-    fontFamily: Typography.fontFamily.mono,
-    fontWeight: Typography.fontWeight.bold,
-    marginTop: 2,
-    letterSpacing: 1,
+    alignItems: 'flex-end',
   },
   liveTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    backgroundColor: 'transparent',
+    gap: 6,
+    backgroundColor: Colors.canvasDark,
     borderRadius: Radius.full,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderWidth: 1,
     borderColor: Colors.borderDark,
+    ...Shadow.glow,
   },
   liveDot: {
-    width: 6,
-    height: 6,
+    width: 8,
+    height: 8,
     borderRadius: Radius.full,
     backgroundColor: Colors.accentPrimary,
   },
   liveText: {
-    color: Colors.accentPrimary,
+    color: Colors.textInverse,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: 1,
+  },
+  etaCardContainer: {
+    position: 'absolute',
+    bottom: Spacing['3xl'],
+    left: Spacing.xl,
+    right: Spacing.xl,
+    zIndex: 10,
+  },
+  etaCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.lg,
+    backgroundColor: Colors.canvasDark,
+    borderRadius: Radius.xl,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    ...Shadow.glow,
+  },
+  etaIcon: {
+    width: 56,
+    height: 56,
+    borderRadius: Radius.full,
+    justifyContent: 'center',
+    alignItems: 'center',
+    ...Shadow.glow,
+  },
+  etaInfo: { flex: 1 },
+  etaStatus: {
+    fontSize: Typography.fontSize.lg,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
+    marginBottom: 4,
+  },
+  etaTime: {
+    color: Colors.textInverseMuted,
     fontSize: 9,
     fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
     letterSpacing: 0.5,
   },
-
-  etaCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.surfaceDark,
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
-    gap: Spacing.md,
-    borderWidth: 1,
-    borderColor: Colors.borderDark,
-  },
-  etaIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: Radius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  etaInfo: { flex: 1 },
-  etaStatus: {
-    fontSize: Typography.fontSize.md,
-    fontFamily: Typography.fontFamily.display,
-    fontWeight: Typography.fontWeight.black,
-    letterSpacing: -0.5,
-  },
-  etaTime: {
-    color: Colors.textInverseMuted,
-    fontSize: 10,
-    fontFamily: Typography.fontFamily.mono,
-    fontWeight: Typography.fontWeight.bold,
-    marginTop: 4,
-    letterSpacing: 0.5,
-  },
-
-  // Bottom Sheet
   bottomSheet: {
     flex: 1,
     backgroundColor: Colors.canvasLight,
-    borderTopLeftRadius: Radius.xl,
-    borderTopRightRadius: Radius.xl,
+    borderTopLeftRadius: Radius['2xl'],
+    borderTopRightRadius: Radius['2xl'],
     overflow: 'hidden',
+    marginTop: -Spacing.xl,
+    zIndex: 20,
   },
   scrollContent: {
     padding: Spacing.xl,
+    paddingTop: Spacing['2xl'],
     paddingBottom: Spacing['4xl'],
   },
   workerCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surfaceLight,
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
+    borderRadius: Radius.xl,
+    padding: Spacing.lg,
     gap: Spacing.md,
-    borderWidth: 1,
+    borderWidth: 2,
     borderColor: Colors.borderLight,
     marginBottom: Spacing.xl,
+    ...Shadow.sm,
   },
   avatar: {
-    width: 48,
-    height: 48,
+    width: 56,
+    height: 56,
     borderRadius: Radius.full,
     borderWidth: 1,
     borderColor: Colors.borderLight,
@@ -355,9 +361,10 @@ const styles = StyleSheet.create({
   workerInfo: { flex: 1 },
   workerName: {
     color: Colors.textPrimary,
-    fontSize: Typography.fontSize.md,
+    fontSize: Typography.fontSize.lg,
     fontFamily: Typography.fontFamily.display,
-    fontWeight: Typography.fontWeight.bold,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
   },
   metaRow: {
     flexDirection: 'row',
@@ -379,28 +386,26 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.borderLight,
   },
   coopText: {
-    fontSize: 10,
+    fontSize: 9,
     fontFamily: Typography.fontFamily.mono,
     color: Colors.textMuted,
     fontWeight: Typography.fontWeight.bold,
-    marginTop: 4,
+    marginTop: 6,
     letterSpacing: 0.5,
   },
   callBtn: {
-    width: 40,
-    height: 40,
+    width: 48,
+    height: 48,
     borderRadius: Radius.full,
-    backgroundColor: Colors.darkSurfaceDeep,
+    backgroundColor: Colors.accentPrimary,
     justifyContent: 'center',
     alignItems: 'center',
     ...Shadow.glow,
   },
-
-  // Timeline
   timelineCard: {
     backgroundColor: Colors.surfaceLight,
-    borderRadius: Radius.lg,
-    padding: Spacing.lg,
+    borderRadius: Radius.xl,
+    padding: Spacing.xl,
     borderWidth: 1,
     borderColor: Colors.borderLight,
     marginBottom: Spacing.xl,
@@ -411,7 +416,7 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.bold,
     color: Colors.textMuted,
     letterSpacing: 1.5,
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.xl,
   },
   stepRow: {
     flexDirection: 'row',
@@ -430,17 +435,17 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   nodeInner: {
-    width: 8,
-    height: 8,
+    width: 10,
+    height: 10,
     borderRadius: Radius.full,
   },
   stepLine: {
     width: 2,
-    height: 36,
+    height: 40,
   },
   stepRight: {
     flex: 1,
-    paddingBottom: 24,
+    paddingBottom: 28,
   },
   stepLabel: {
     fontSize: Typography.fontSize.sm,
@@ -451,17 +456,16 @@ const styles = StyleSheet.create({
     fontSize: 10,
     fontFamily: Typography.fontFamily.mono,
     color: Colors.accentPrimary,
-    fontWeight: Typography.fontWeight.bold,
-    marginTop: 4,
-    letterSpacing: 0.5,
+    fontWeight: Typography.fontWeight.black,
+    marginTop: 6,
+    letterSpacing: 1,
   },
-
   safetyCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surfaceDark,
-    padding: Spacing.lg,
-    borderRadius: Radius.lg,
+    padding: Spacing.xl,
+    borderRadius: Radius.xl,
     gap: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.borderDark,
@@ -470,14 +474,15 @@ const styles = StyleSheet.create({
   safetyTitle: {
     fontSize: 10,
     fontFamily: Typography.fontFamily.mono,
-    fontWeight: Typography.fontWeight.bold,
+    fontWeight: Typography.fontWeight.black,
     color: Colors.accentPrimary,
-    letterSpacing: 1,
-    marginBottom: 4,
+    letterSpacing: 1.5,
+    marginBottom: 6,
   },
   safetyText: {
     fontSize: Typography.fontSize.xs,
     color: Colors.textInverseMuted,
     lineHeight: 18,
+    fontFamily: Typography.fontFamily.mono,
   },
 });

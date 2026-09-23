@@ -23,189 +23,209 @@ export default function WorkerCard({ worker, onSelect, selected = false, showSco
       onPress={() => onSelect?.(worker)}
       activeOpacity={0.85}
     >
-      {/* Avatar + Status */}
-      <View style={styles.avatarContainer}>
-        <Image source={{ uri: worker.avatar }} style={styles.avatar} />
-        <View style={[styles.statusDot, { backgroundColor: worker.isOnline ? Colors.success : Colors.bg4 }]} />
-      </View>
-
-      {/* Info */}
-      <View style={styles.info}>
-        <View style={styles.nameRow}>
-          <Text style={styles.name} numberOfLines={1}>{worker.name}</Text>
-          {worker.isVerified && (
-            <Ionicons name="shield-checkmark" size={14} color={Colors.success} style={{ marginLeft: 4 }} />
-          )}
+      <View style={styles.headerRow}>
+        <View style={styles.avatarContainer}>
+          <Image source={{ uri: worker.avatar }} style={styles.avatar} />
+          {worker.isOnline && <View style={styles.onlineBadge} />}
         </View>
-
-        <View style={styles.metaRow}>
-          <Ionicons name="briefcase-outline" size={12} color={Colors.textMuted} />
-          <Text style={styles.metaText}>
-            {worker.category.charAt(0).toUpperCase() + worker.category.slice(1)}
-          </Text>
-          <View style={styles.dot} />
-          <Ionicons name="star" size={12} color={Colors.warning} />
-          <Text style={styles.metaText}>{worker.rating}</Text>
-          <View style={styles.dot} />
-          <Ionicons name="location-outline" size={12} color={Colors.textMuted} />
-          <Text style={styles.metaText}>{(worker.computedDistanceKm ?? worker.distanceKm).toFixed(1)} km</Text>
-        </View>
-
-        <View style={styles.metaRow}>
-          <Ionicons name="time-outline" size={12} color={Colors.primary} />
-          <Text style={[styles.metaText, { color: Colors.primary }]}>
-            ETA ~{worker.estimatedEta ?? worker.etaMinutes} min
-          </Text>
-          <View style={styles.dot} />
-          <Text style={styles.price}>₹{worker.pricePerHour}/hr</Text>
-        </View>
-
-        {/* Today's job load (fairness indicator) */}
-        <View style={styles.fairnessRow}>
-          <Text style={styles.fairnessLabel}>Today's load:</Text>
-          <View style={styles.jobDots}>
-            {Array.from({ length: Math.min(worker.todayJobs, 8) }).map((_, i) => (
-              <View key={i} style={styles.jobDot} />
-            ))}
-            {Array.from({ length: Math.max(0, 8 - worker.todayJobs) }).map((_, i) => (
-              <View key={`e${i}`} style={[styles.jobDot, styles.jobDotEmpty]} />
-            ))}
+        <View style={styles.info}>
+          <View style={styles.nameRow}>
+            <Text style={styles.name} numberOfLines={1}>{worker.name}</Text>
+            {worker.isVerified && (
+              <Ionicons name="shield-checkmark" size={16} color={Colors.accentPrimary} style={{ marginLeft: 4 }} />
+            )}
           </View>
-          <Text style={styles.jobCount}>{worker.todayJobs} jobs</Text>
+          <Text style={styles.category}>
+            {worker.category.charAt(0).toUpperCase() + worker.category.slice(1)} • {worker.rating} ⭐
+          </Text>
+        </View>
+        
+        {showScore && worker.score !== undefined && (
+          <View style={[styles.scoreBadge, { borderColor: scoreColor }]}>
+            <Text style={[styles.scoreText, { color: scoreColor }]}>{worker.score}</Text>
+          </View>
+        )}
+      </View>
+
+      <View style={styles.divider} />
+
+      <View style={styles.statsRow}>
+        <View style={styles.statBox}>
+          <Ionicons name="time-outline" size={16} color={Colors.textMuted} />
+          <Text style={styles.statValue}>~{worker.estimatedEta ?? worker.etaMinutes}m</Text>
+          <Text style={styles.statLabel}>ETA</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statBox}>
+          <Ionicons name="location-outline" size={16} color={Colors.textMuted} />
+          <Text style={styles.statValue}>{(worker.computedDistanceKm ?? worker.distanceKm).toFixed(1)}km</Text>
+          <Text style={styles.statLabel}>AWAY</Text>
+        </View>
+        <View style={styles.statDivider} />
+        <View style={styles.statBox}>
+          <Text style={[styles.statValue, { color: Colors.textPrimary }]}>₹{worker.pricePerHour}</Text>
+          <Text style={styles.statLabel}>PER HOUR</Text>
         </View>
       </View>
 
-      {/* Score badge */}
-      {showScore && worker.score !== undefined && (
-        <View style={[styles.scoreBadge, { borderColor: scoreColor }]}>
-          <Text style={[styles.scoreText, { color: scoreColor }]}>{worker.score}</Text>
-          <Text style={styles.scoreLabel}>score</Text>
+      {/* Fairness Indicator */}
+      <View style={styles.fairnessRow}>
+        <Text style={styles.fairnessLabel}>TODAY'S WORKLOAD</Text>
+        <View style={styles.jobDots}>
+          {Array.from({ length: Math.min(worker.todayJobs, 8) }).map((_, i) => (
+            <View key={i} style={styles.jobDotActive} />
+          ))}
+          {Array.from({ length: Math.max(0, 8 - worker.todayJobs) }).map((_, i) => (
+            <View key={`e${i}`} style={styles.jobDotEmpty} />
+          ))}
         </View>
-      )}
+      </View>
     </TouchableOpacity>
   );
 }
 
 const styles = StyleSheet.create({
   card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.bg2,
-    borderRadius: Radius.xl, // rounded cards
-    padding: Spacing.base,
-    marginBottom: Spacing.sm,
-    borderWidth: 1,
-    borderColor: Colors.glassBorder,
-    gap: Spacing.md,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.xl,
+    padding: Spacing.lg,
+    marginBottom: Spacing.md,
+    borderWidth: 2,
+    borderColor: Colors.borderLight,
     ...Shadow.sm,
   },
   cardSelected: {
-    borderColor: Colors.primary,
-    backgroundColor: Colors.primaryLight,
+    borderColor: Colors.accentPrimary,
+    backgroundColor: Colors.surfaceInteractive,
+    ...Shadow.glow,
+  },
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
   },
   avatarContainer: {
     position: 'relative',
   },
   avatar: {
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: Colors.bg1,
+    width: 64,
+    height: 64,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.canvasCream,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
-  statusDot: {
+  onlineBadge: {
     position: 'absolute',
     bottom: 2,
     right: 2,
     width: 14,
     height: 14,
     borderRadius: 7,
+    backgroundColor: Colors.success,
     borderWidth: 2,
-    borderColor: Colors.bg2,
+    borderColor: Colors.surfaceLight,
   },
-  info: { flex: 1, gap: 4 },
+  info: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   nameRow: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 2,
   },
   name: {
     color: Colors.textPrimary,
-    fontSize: Typography.fontSize.lg,
-    fontWeight: Typography.fontWeight.extrabold,
-    flex: 1,
+    fontSize: Typography.fontSize.xl,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
   },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    flexWrap: 'wrap',
-  },
-  metaText: {
+  category: {
     color: Colors.textSecondary,
-    fontSize: Typography.fontSize.xs,
+    fontSize: Typography.fontSize.sm,
     fontFamily: Typography.fontFamily.mono,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
-  price: {
-    color: Colors.textPrimary,
-    fontSize: Typography.fontSize.xs,
+  scoreBadge: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    borderWidth: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.surfaceLight,
+  },
+  scoreText: {
+    fontSize: Typography.fontSize.md,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.black,
+  },
+  divider: {
+    height: 1,
+    backgroundColor: Colors.borderLight,
+    marginVertical: Spacing.md,
+  },
+  statsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  statBox: {
+    flex: 1,
+    alignItems: 'center',
+    gap: 2,
+  },
+  statDivider: {
+    width: 1,
+    height: 30,
+    backgroundColor: Colors.borderLight,
+  },
+  statValue: {
+    fontSize: Typography.fontSize.md,
+    fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
-    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textSecondary,
+    marginTop: 4,
   },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: Colors.bg3,
+  statLabel: {
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textMuted,
+    letterSpacing: 0.5,
   },
   fairnessRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
+    justifyContent: 'space-between',
+    backgroundColor: Colors.canvasCream,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderRadius: Radius.lg,
+    marginTop: Spacing.md,
   },
   fairnessLabel: {
     color: Colors.textMuted,
     fontSize: 10,
     fontFamily: Typography.fontFamily.mono,
-    textTransform: 'uppercase',
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
   jobDots: {
     flexDirection: 'row',
-    gap: 3,
+    gap: 4,
   },
-  jobDot: {
+  jobDotActive: {
     width: 6,
-    height: 6,
+    height: 12,
     borderRadius: 3,
-    backgroundColor: Colors.textPrimary,
+    backgroundColor: Colors.textSecondary,
   },
   jobDotEmpty: {
-    backgroundColor: Colors.bg3,
-  },
-  jobCount: {
-    color: Colors.textMuted,
-    fontSize: 10,
-    fontFamily: Typography.fontFamily.mono,
-  },
-  scoreBadge: {
-    width: 46,
-    height: 46,
-    borderRadius: 23,
-    borderWidth: 2,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: Colors.bg0,
-  },
-  scoreText: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: Typography.fontWeight.black,
-    lineHeight: 18,
-  },
-  scoreLabel: {
-    color: Colors.textMuted,
-    fontSize: 8,
-    fontFamily: Typography.fontFamily.mono,
-    textTransform: 'uppercase',
+    width: 6,
+    height: 12,
+    borderRadius: 3,
+    backgroundColor: Colors.borderLight,
   },
 });

@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { TouchableOpacity, Text, StyleSheet, Animated, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors, Shadow, Typography } from '../constants/theme';
+import { Colors, Shadow, Typography, Radius } from '../constants/theme';
 
 export default function SOSButton({ onPress, disabled = false }: any) {
   const pulseAnim = useRef(new Animated.Value(1)).current;
@@ -20,13 +20,12 @@ export default function SOSButton({ onPress, disabled = false }: any) {
 
   return (
     <View style={styles.wrapper}>
-      {/* Pulsing ring */}
       <Animated.View
         style={[
           styles.ring,
           {
             transform: [{ scale: pulseAnim }],
-            opacity: disabled ? 0 : 0.35,
+            opacity: disabled ? 0 : 0.6,
           },
         ]}
       />
@@ -36,7 +35,7 @@ export default function SOSButton({ onPress, disabled = false }: any) {
         disabled={disabled}
         activeOpacity={0.85}
       >
-        <Ionicons name="alert-circle" size={22} color="#fff" />
+        <Ionicons name="alert-circle" size={28} color={Colors.surfaceLight} />
         <Text style={styles.label}>SOS</Text>
       </TouchableOpacity>
     </View>
@@ -47,38 +46,38 @@ const styles = StyleSheet.create({
   wrapper: {
     alignItems: 'center',
     justifyContent: 'center',
-    width: 72,
-    height: 72,
+    width: 90,
+    height: 90,
   },
   ring: {
     position: 'absolute',
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    backgroundColor: Colors.dangerTint,
+    width: 96,
+    height: 96,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.accentPrimary, // High-contrast neon warning
   },
   button: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    backgroundColor: Colors.danger,
+    width: 76,
+    height: 76,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.danger, // Stark red
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 2,
-    borderColor: Colors.dangerTint,
-    ...Shadow.md,
+    borderWidth: 3,
+    borderColor: Colors.accentPrimary,
+    ...Shadow.lg,
     shadowColor: Colors.danger,
   },
   buttonDisabled: {
-    backgroundColor: Colors.bg4,
-    borderColor: Colors.bg3,
+    backgroundColor: Colors.surfaceDark,
+    borderColor: Colors.borderDark,
   },
   label: {
-    color: '#fff',
-    fontSize: 11,
-    fontFamily: Typography.fontFamily.mono,
-    fontWeight: Typography.fontWeight.bold,
-    letterSpacing: 1,
-    marginTop: 1,
+    color: Colors.surfaceLight,
+    fontSize: 12,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: 1.5,
+    marginTop: 2,
   },
 });

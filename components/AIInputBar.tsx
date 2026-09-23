@@ -96,7 +96,7 @@ export default function AIInputBar({ onSubmit, loading = false, parsedIntent = n
         <View style={styles.intentCard}>
           <Ionicons name="checkmark-circle" size={14} color={Colors.success} />
           <Text style={styles.intentText}>
-            <Text style={{ color: Colors.success, fontWeight: '600' }}>
+            <Text style={{ color: Colors.success, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, letterSpacing: 0.5 }}>
               {parsedIntent.service_category.charAt(0).toUpperCase() + parsedIntent.service_category.slice(1)}
             </Text>
             {'  ·  '}

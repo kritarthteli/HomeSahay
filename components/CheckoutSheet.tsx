@@ -25,7 +25,7 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
   ];
 
   if (!checkoutData || !worker) return null;
-  const { pricing, jobId } = checkoutData;
+  const { pricing, jobId, parsedIntent } = checkoutData;
 
   const handlePay = async () => {
     setLoading(true);
@@ -45,16 +45,25 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
     }
   };
 
+  const getWhenStr = () => {
+    if (parsedIntent?.timing === 'scheduled' && parsedIntent?.scheduled_date) {
+      return `Scheduled for ${parsedIntent.scheduled_date} at ${parsedIntent.scheduled_time || '10:00 AM'}`;
+    }
+    return `Instant Arrival (~${worker.estimatedEta ?? worker.etaMinutes} mins)`;
+  };
+
+  const getWhereStr = () => {
+    return parsedIntent?.location || 'Current Verified Location';
+  };
+
   return (
     <View style={styles.sheet}>
-      {/* Handle */}
       <View style={styles.handle} />
 
-      {/* Header */}
       <View style={styles.header}>
         <View>
           <Text style={styles.title}>Review & Pay</Text>
-          <Text style={styles.subtitle}>Direct booking with transparent cooperative pricing</Text>
+          <Text style={styles.subtitle}>Direct cooperative booking</Text>
         </View>
         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
           <Ionicons name="close" size={20} color={Colors.textPrimary} />
@@ -62,20 +71,43 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* Worker summary */}
-        <View style={styles.workerCard}>
-          <Image source={{ uri: worker.avatar }} style={styles.avatar} />
-          <View style={styles.workerInfo}>
-            <Text style={styles.workerName}>{worker.name}</Text>
-            <View style={styles.workerMeta}>
-              <Ionicons name="star" size={12} color={Colors.textPrimary} />
-              <Text style={styles.workerMetaText}>{worker.rating}</Text>
-              <View style={styles.dot} />
-              <Ionicons name="shield-checkmark" size={12} color={Colors.textPrimary} />
-              <Text style={styles.workerMetaText}>Verified Partner</Text>
-              <View style={styles.dot} />
-              <Ionicons name="time-outline" size={12} color={Colors.textSecondary} />
-              <Text style={styles.workerMetaText}>ETA ~{worker.estimatedEta ?? worker.etaMinutes} min</Text>
+        {/* Progression Step 1 & 2: When and Where */}
+        <View style={styles.progressionRow}>
+          <View style={styles.progressionStep}>
+            <View style={styles.stepIcon}>
+              <Ionicons name="time-outline" size={18} color={Colors.textPrimary} />
+            </View>
+            <View style={styles.stepInfo}>
+              <Text style={styles.stepLabel}>WHEN</Text>
+              <Text style={styles.stepValue}>{getWhenStr()}</Text>
+            </View>
+          </View>
+          <View style={styles.progressionDivider} />
+          <View style={styles.progressionStep}>
+            <View style={styles.stepIcon}>
+              <Ionicons name="location-outline" size={18} color={Colors.textPrimary} />
+            </View>
+            <View style={styles.stepInfo}>
+              <Text style={styles.stepLabel}>WHERE</Text>
+              <Text style={styles.stepValue} numberOfLines={1}>{getWhereStr()}</Text>
+            </View>
+          </View>
+        </View>
+
+        {/* Progression Step 3: Worker */}
+        <View style={styles.section}>
+          <Text style={styles.sectionTitle}>SELECTED WORKER</Text>
+          <View style={styles.workerCard}>
+            <Image source={{ uri: worker.avatar }} style={styles.avatar} />
+            <View style={styles.workerInfo}>
+              <Text style={styles.workerName}>{worker.name}</Text>
+              <View style={styles.workerMeta}>
+                <Ionicons name="star" size={12} color={Colors.textPrimary} />
+                <Text style={styles.workerMetaText}>{worker.rating}</Text>
+                <View style={styles.dot} />
+                <Ionicons name="shield-checkmark" size={12} color={Colors.accentPrimary} />
+                <Text style={[styles.workerMetaText, { color: Colors.accentPrimary }]}>Verified Partner</Text>
+              </View>
             </View>
           </View>
         </View>
@@ -107,7 +139,7 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
 
         {/* Payment Method */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>SELECT PAYMENT METHOD</Text>
+          <Text style={styles.sectionTitle}>PAYMENT METHOD</Text>
           <View style={styles.methodRow}>
             {PAYMENT_METHODS.map((m) => {
               const isSelected = selectedMethod === m.id;
@@ -116,13 +148,13 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
                   key={m.id}
                   style={[
                     styles.methodCard,
-                    isSelected && { borderColor: Colors.textPrimary, backgroundColor: Colors.borderLight },
+                    isSelected && styles.methodCardSelected,
                   ]}
                   onPress={() => setSelectedMethod(m.id)}
                   activeOpacity={0.7}
                 >
-                  <Ionicons name={m.icon as any} size={20} color={isSelected ? Colors.textPrimary : Colors.textMuted} />
-                  <Text style={[styles.methodLabel, isSelected && { color: Colors.textPrimary, fontWeight: Typography.fontWeight.bold }]}>
+                  <Ionicons name={m.icon as any} size={24} color={isSelected ? Colors.textInverse : Colors.textMuted} />
+                  <Text style={[styles.methodLabel, isSelected && { color: Colors.textInverse }]}>
                     {m.label}
                   </Text>
                 </TouchableOpacity>
@@ -131,7 +163,6 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
           </View>
         </View>
 
-        {/* Error */}
         {error && (
           <View style={styles.errorCard}>
             <Ionicons name="alert-circle" size={16} color={Colors.danger} />
@@ -150,12 +181,12 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
             <ActivityIndicator color={Colors.darkSurfaceDeep} size="small" />
           ) : success ? (
             <>
-              <Ionicons name="checkmark-circle" size={20} color={Colors.darkSurfaceDeep} />
+              <Ionicons name="checkmark-circle" size={24} color={Colors.darkSurfaceDeep} />
               <Text style={styles.payBtnText}>PAYMENT CONFIRMED!</Text>
             </>
           ) : (
             <>
-              <Ionicons name="lock-closed" size={16} color={Colors.darkSurfaceDeep} />
+              <Ionicons name="lock-closed" size={20} color={Colors.darkSurfaceDeep} />
               <Text style={styles.payBtnText}>PAY ₹{pricing.totalAmount} & CONFIRM</Text>
             </>
           )}
@@ -175,12 +206,12 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing['3xl'],
   },
   handle: {
-    width: 36,
+    width: 48,
     height: 4,
     backgroundColor: Colors.borderLight,
     borderRadius: Radius.full,
     alignSelf: 'center',
-    marginBottom: Spacing.base,
+    marginBottom: Spacing.xl,
   },
   header: {
     flexDirection: 'row',
@@ -190,19 +221,43 @@ const styles = StyleSheet.create({
   },
   title: {
     color: Colors.textPrimary,
-    fontSize: Typography.fontSize.xl,
+    fontSize: Typography.fontSize['2xl'],
     fontFamily: Typography.fontFamily.display,
     fontWeight: Typography.fontWeight.black,
-    letterSpacing: -0.5,
+    letterSpacing: -1,
   },
   subtitle: {
     color: Colors.textSecondary,
     fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.mono,
     marginTop: 4,
   },
   closeBtn: {
-    width: 34,
-    height: 34,
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceLight,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
+  progressionRow: {
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    marginBottom: Spacing.xl,
+  },
+  progressionStep: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  stepIcon: {
+    width: 36,
+    height: 36,
     borderRadius: Radius.full,
     backgroundColor: Colors.canvasCream,
     justifyContent: 'center',
@@ -210,30 +265,62 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: Colors.borderLight,
   },
+  stepInfo: { flex: 1 },
+  stepLabel: {
+    color: Colors.textMuted,
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1.5,
+  },
+  stepValue: {
+    color: Colors.textPrimary,
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    marginTop: 2,
+  },
+  progressionDivider: {
+    height: 1,
+    backgroundColor: Colors.borderLight,
+    marginVertical: Spacing.md,
+  },
+  section: {
+    marginBottom: Spacing.xl,
+  },
+  sectionTitle: {
+    color: Colors.textMuted,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1.5,
+    marginBottom: Spacing.sm,
+  },
   workerCard: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
     padding: Spacing.md,
-    marginBottom: Spacing.xl,
     gap: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.borderLight,
   },
   avatar: {
-    width: 44,
-    height: 44,
+    width: 56,
+    height: 56,
     borderRadius: Radius.full,
     borderWidth: 1,
     borderColor: Colors.borderLight,
+    backgroundColor: Colors.canvasCream,
   },
   workerInfo: { flex: 1 },
   workerName: {
     color: Colors.textPrimary,
-    fontSize: Typography.fontSize.md,
+    fontSize: Typography.fontSize.lg,
     fontFamily: Typography.fontFamily.display,
-    fontWeight: Typography.fontWeight.bold,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
   },
   workerMeta: {
     flexDirection: 'row',
@@ -244,26 +331,15 @@ const styles = StyleSheet.create({
   },
   workerMetaText: {
     color: Colors.textSecondary,
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
   },
   dot: {
-    width: 3,
-    height: 3,
+    width: 4,
+    height: 4,
     borderRadius: Radius.full,
     backgroundColor: Colors.borderLight,
-  },
-  section: {
-    marginBottom: Spacing.xl,
-  },
-  sectionTitle: {
-    color: Colors.textPrimary,
-    fontSize: 10,
-    fontFamily: Typography.fontFamily.mono,
-    fontWeight: Typography.fontWeight.bold,
-    letterSpacing: 1.5,
-    marginBottom: Spacing.sm,
   },
   breakdownCard: {
     backgroundColor: Colors.surfaceLight,
@@ -296,13 +372,13 @@ const styles = StyleSheet.create({
   },
   totalLabel: {
     color: Colors.textPrimary,
-    fontSize: Typography.fontSize.md,
+    fontSize: Typography.fontSize.lg,
     fontFamily: Typography.fontFamily.display,
     fontWeight: Typography.fontWeight.black,
   },
   totalValue: {
     color: Colors.textPrimary,
-    fontSize: Typography.fontSize.lg,
+    fontSize: Typography.fontSize.xl,
     fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
   },
@@ -310,14 +386,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginTop: Spacing.sm,
-    backgroundColor: Colors.accentPrimary,
-    borderRadius: Radius.full,
-    padding: Spacing.sm,
-    paddingHorizontal: Spacing.md,
+    marginTop: Spacing.md,
+    backgroundColor: Colors.canvasDark,
+    borderRadius: Radius.md,
+    padding: Spacing.md,
   },
   cooperativeNoteText: {
-    color: Colors.textOnPrimary,
+    color: Colors.accentPrimary,
     fontSize: 10,
     fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
@@ -337,11 +412,16 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.borderLight,
-    gap: 8,
+    gap: 12,
+  },
+  methodCardSelected: {
+    borderColor: Colors.canvasDark,
+    backgroundColor: Colors.canvasDark,
+    ...Shadow.sm,
   },
   methodLabel: {
     color: Colors.textSecondary,
-    fontSize: 11,
+    fontSize: 12,
     fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
     letterSpacing: 0.5,
@@ -353,7 +433,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.dangerContainer,
     borderRadius: Radius.md,
     padding: Spacing.md,
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.md,
     borderWidth: 1,
     borderColor: Colors.danger,
   },
@@ -368,11 +448,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: Spacing.sm,
+    gap: Spacing.md,
     backgroundColor: Colors.accentPrimary,
     borderRadius: Radius.full,
-    paddingVertical: 18,
-    marginTop: Spacing.sm,
+    paddingVertical: 20,
+    marginTop: Spacing.md,
     ...Shadow.glow,
   },
   payBtnDisabled: {
@@ -381,9 +461,9 @@ const styles = StyleSheet.create({
   },
   payBtnText: {
     color: Colors.darkSurfaceDeep,
-    fontSize: 14,
-    fontFamily: Typography.fontFamily.mono,
+    fontSize: Typography.fontSize.lg,
+    fontFamily: Typography.fontFamily.display,
     fontWeight: Typography.fontWeight.black,
-    letterSpacing: 1,
+    letterSpacing: -0.5,
   },
 });

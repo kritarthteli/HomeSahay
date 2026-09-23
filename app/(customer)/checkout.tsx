@@ -10,7 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/appStore';
 import CheckoutSheet from '../../components/CheckoutSheet';
-import { Colors, Spacing, Radius, Typography } from '../../constants/theme';
+import { Colors, Spacing, Radius, Typography, Shadow } from '../../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function CheckoutScreen() {
@@ -53,7 +53,7 @@ export default function CheckoutScreen() {
 
         <View style={styles.emptySheet}>
           <View style={styles.emptyIconBox}>
-            <Ionicons name="cart-outline" size={48} color="#9CA3AF" />
+            <Ionicons name="cart-outline" size={48} color={Colors.textMuted} />
           </View>
           <Text style={styles.emptyTitle}>No Active Checkout</Text>
           <Text style={styles.emptyText}>Select a verified worker from the home screen to proceed.</Text>
@@ -73,10 +73,14 @@ export default function CheckoutScreen() {
           <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.8}>
             <Ionicons name="arrow-back" size={20} color={Colors.textInverse} />
           </TouchableOpacity>
-          <View>
-            <Text style={styles.headerTitle}>Confirm Booking</Text>
-            <Text style={styles.headerSub}>Cooperative Guaranteed Service</Text>
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Text style={styles.headerTitle}>Complete Booking</Text>
+            <View style={styles.secureTag}>
+              <Ionicons name="lock-closed" size={10} color={Colors.accentPrimary} />
+              <Text style={styles.headerSub}>SECURE COOPERATIVE CHECKOUT</Text>
+            </View>
           </View>
+          <View style={{ width: 40 }} />
         </View>
       </View>
 
@@ -107,12 +111,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.base,
-    gap: Spacing.md,
+    paddingTop: Spacing.md,
   },
   backBtn: {
-    width: 36,
-    height: 36,
+    width: 40,
+    height: 40,
     borderRadius: Radius.full,
     backgroundColor: Colors.surfaceInteractive,
     justifyContent: 'center',
@@ -127,30 +130,36 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.black,
     letterSpacing: -0.5,
   },
+  secureTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 4,
+    marginTop: 4,
+  },
   headerSub: {
-    color: Colors.textInverseMuted,
-    fontSize: 10,
+    color: Colors.accentPrimary,
+    fontSize: 9,
     fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
-    marginTop: 2,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    letterSpacing: 1,
   },
   sheetContainer: {
     flex: 1,
     backgroundColor: Colors.canvasLight,
-    borderTopLeftRadius: Radius.xl,
-    borderTopRightRadius: Radius.xl,
+    borderTopLeftRadius: Radius['2xl'],
+    borderTopRightRadius: Radius['2xl'],
     overflow: 'hidden',
+    marginTop: -Spacing.md,
   },
   emptySheet: {
     flex: 1,
     backgroundColor: Colors.canvasLight,
-    borderTopLeftRadius: Radius.xl,
-    borderTopRightRadius: Radius.xl,
+    borderTopLeftRadius: Radius['2xl'],
+    borderTopRightRadius: Radius['2xl'],
     alignItems: 'center',
     justifyContent: 'center',
     padding: Spacing.xl,
+    marginTop: -Spacing.md,
   },
   emptyIconBox: {
     width: 80,
@@ -159,7 +168,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.canvasCream,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.xl,
     borderWidth: 1,
     borderColor: Colors.borderLight,
   },
@@ -168,7 +177,7 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.display,
     fontWeight: Typography.fontWeight.black,
     color: Colors.textPrimary,
-    marginBottom: 6,
+    marginBottom: 8,
     letterSpacing: -0.5,
   },
   emptyText: {
@@ -180,16 +189,16 @@ const styles = StyleSheet.create({
   },
   exploreBtn: {
     backgroundColor: Colors.accentPrimary,
-    paddingHorizontal: Spacing.xl,
-    paddingVertical: 14,
+    paddingHorizontal: Spacing['2xl'],
+    paddingVertical: 16,
     borderRadius: Radius.full,
     ...Shadow.glow,
   },
   exploreBtnText: {
-    color: Colors.textOnPrimary,
-    fontSize: 12,
+    color: Colors.darkSurfaceDeep,
+    fontSize: 14,
     fontFamily: Typography.fontFamily.mono,
-    fontWeight: Typography.fontWeight.bold,
+    fontWeight: Typography.fontWeight.black,
     textTransform: 'uppercase',
     letterSpacing: 1,
   },

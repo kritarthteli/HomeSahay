@@ -9,12 +9,12 @@ export default function MapViewWeb({ workers = [], customerLocation, style }) {
 
   const workerMarkersJs = workers
     .map((w) => {
-      const color = w.isOnline ? '#22C55E' : '#64748B';
+      const color = w.isOnline ? '#9CFF3D' : '#D1D5DB';
       return `
         L.circleMarker([${w.location.latitude}, ${w.location.longitude}], {
           radius: 10,
           fillColor: '${color}',
-          color: '#fff',
+          color: '#0B0B0C',
           weight: 2,
           opacity: 1,
           fillOpacity: 0.9
@@ -32,9 +32,9 @@ export default function MapViewWeb({ workers = [], customerLocation, style }) {
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    html, body, #map { width: 100%; height: 100%; background: #0F172A; }
-    .leaflet-popup-content-wrapper { background: #1E293B; color: #F1F5F9; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); }
-    .leaflet-popup-tip { background: #1E293B; }
+    html, body, #map { width: 100%; height: 100%; background: #F3F2F0; }
+    .leaflet-popup-content-wrapper { background: #0B0B0C; color: #F3F2F0; border-radius: 12px; border: 1px solid #1A1A1A; }
+    .leaflet-popup-tip { background: #0B0B0C; }
     .leaflet-tile { filter: brightness(0.8) saturate(0.7) hue-rotate(200deg); }
   </style>
 </head>
@@ -50,7 +50,7 @@ export default function MapViewWeb({ workers = [], customerLocation, style }) {
   // Customer location marker
   const customerIcon = L.divIcon({
     className: '',
-    html: '<div style="width:16px;height:16px;background:#6C63FF;border:3px solid #fff;border-radius:50%;box-shadow:0 0 10px #6C63FF88;"></div>',
+    html: '<div style="width:16px;height:16px;background:#9CFF3D;border:3px solid #0B0B0C;border-radius:50%;box-shadow:0 0 10px #9CFF3D88;"></div>',
     iconSize: [16, 16],
     iconAnchor: [8, 8]
   });

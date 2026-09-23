@@ -40,58 +40,61 @@ export default function CustomerProfile() {
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.7}>
-          <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.8}>
+          <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Profile</Text>
-        <View style={{ width: 24 }} />
+        <View style={{ width: 40 }} />
       </View>
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Avatar Section */}
         <View style={styles.avatarSection}>
           <View style={styles.avatarCircle}>
-            <Ionicons name="person" size={40} color={Colors.textMuted} />
+            <Ionicons name="person" size={48} color={Colors.textMuted} />
           </View>
           <TouchableOpacity style={styles.nameRow} onPress={() => setEditProfileVisible(true)} activeOpacity={0.7}>
             <Text style={styles.nameText}>{customer.name}</Text>
-            <Ionicons name="chevron-forward" size={16} color={Colors.textPrimary} />
+            <Ionicons name="chevron-forward" size={20} color={Colors.textPrimary} />
           </TouchableOpacity>
-          <Text style={styles.coopText}>SOUTH BANGALORE COOPERATIVE</Text>
+          <View style={styles.coopTag}>
+            <Ionicons name="shield-checkmark" size={12} color={Colors.accentPrimary} />
+            <Text style={styles.coopText}>VERIFIED COOPERATIVE MEMBER</Text>
+          </View>
         </View>
 
         {/* Grid Cards */}
         <View style={styles.gridContainer}>
+          <TouchableOpacity style={styles.gridCardDark} activeOpacity={0.8}>
+            <View style={styles.iconCircleAccent}>
+              <Ionicons name="wallet" size={18} color={Colors.darkSurfaceDeep} />
+            </View>
+            <Text style={styles.gridCardTitleDark}>Sahay Cash</Text>
+            <View style={styles.gridCardFooter}>
+              <Text style={styles.gridCardSubWallet}>₹{customer.sahayCash || 0}</Text>
+              <Ionicons name="arrow-forward" size={16} color={Colors.accentPrimary} />
+            </View>
+          </TouchableOpacity>
+
           <TouchableOpacity style={styles.gridCard} activeOpacity={0.8}>
             <View style={styles.iconCircle}>
-              <Ionicons name="calendar" size={16} color={Colors.textInverse} />
+              <Ionicons name="calendar" size={18} color={Colors.textInverse} />
             </View>
             <Text style={styles.gridCardTitle}>Bookings</Text>
             <View style={styles.gridCardFooter}>
-              <Text style={styles.gridCardSub}>View all history</Text>
-              <Ionicons name="arrow-forward" size={14} color={Colors.textMuted} />
+              <Text style={styles.gridCardSub}>View history</Text>
+              <Ionicons name="arrow-forward" size={16} color={Colors.textMuted} />
             </View>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.gridCard} activeOpacity={0.8}>
             <View style={styles.iconCircle}>
-              <Ionicons name="wallet" size={16} color={Colors.textInverse} />
-            </View>
-            <Text style={styles.gridCardTitle}>Sahay Cash</Text>
-            <View style={styles.gridCardFooter}>
-              <Text style={styles.gridCardSubWallet}>₹{customer.sahayCash || 0}</Text>
-              <Ionicons name="arrow-forward" size={14} color={Colors.textMuted} />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.gridCard} activeOpacity={0.8}>
-            <View style={styles.iconCircle}>
-              <Ionicons name="help-circle" size={16} color={Colors.textInverse} />
+              <Ionicons name="help-circle" size={18} color={Colors.textInverse} />
             </View>
             <Text style={styles.gridCardTitle}>Support</Text>
             <View style={styles.gridCardFooter}>
-              <Text style={styles.gridCardSub}>Get quick help</Text>
-              <Ionicons name="arrow-forward" size={14} color={Colors.textMuted} />
+              <Text style={styles.gridCardSub}>Quick help</Text>
+              <Ionicons name="arrow-forward" size={16} color={Colors.textMuted} />
             </View>
           </TouchableOpacity>
         </View>
@@ -101,30 +104,30 @@ export default function CustomerProfile() {
         <View style={styles.listContainer}>
           <TouchableOpacity style={styles.listItem} activeOpacity={0.7}>
             <View style={styles.listIconBox}>
-              <Ionicons name="people-outline" size={18} color={Colors.textPrimary} />
+              <Ionicons name="people-outline" size={20} color={Colors.textPrimary} />
             </View>
             <Text style={styles.listText}>Your Experts</Text>
-            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+            <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
           </TouchableOpacity>
 
           <View style={styles.listDivider} />
 
           <TouchableOpacity style={styles.listItem} onPress={() => setSavedAddressVisible(true)} activeOpacity={0.7}>
             <View style={styles.listIconBox}>
-              <Ionicons name="location-outline" size={18} color={Colors.textPrimary} />
+              <Ionicons name="location-outline" size={20} color={Colors.textPrimary} />
             </View>
             <Text style={styles.listText}>Saved Addresses</Text>
-            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+            <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
           </TouchableOpacity>
 
           <View style={styles.listDivider} />
 
           <TouchableOpacity style={styles.listItem} onPress={() => router.push('/(customer)/manage-account')} activeOpacity={0.7}>
             <View style={styles.listIconBox}>
-              <Ionicons name="settings-outline" size={18} color={Colors.textPrimary} />
+              <Ionicons name="settings-outline" size={20} color={Colors.textPrimary} />
             </View>
             <Text style={styles.listText}>Settings & Preferences</Text>
-            <Ionicons name="chevron-forward" size={16} color={Colors.textMuted} />
+            <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
           </TouchableOpacity>
         </View>
 
@@ -135,7 +138,7 @@ export default function CustomerProfile() {
         <View style={styles.modalOverlay}>
           <View style={styles.bottomSheet}>
             <View style={styles.sheetHeaderRow}>
-              <View style={{ width: 34 }} />
+              <View style={{ width: 40 }} />
               <Text style={styles.sheetTitle}>Edit Profile</Text>
               <TouchableOpacity onPress={() => setEditProfileVisible(false)} style={styles.closeBtn}>
                 <Ionicons name="close" size={20} color={Colors.textPrimary} />
@@ -145,7 +148,7 @@ export default function CustomerProfile() {
             <ScrollView showsVerticalScrollIndicator={false}>
               <View style={styles.avatarEditContainer}>
                 <View style={styles.avatarEditCircle}>
-                  <Ionicons name="person" size={40} color={Colors.textMuted} />
+                  <Ionicons name="person" size={48} color={Colors.textMuted} />
                 </View>
               </View>
 
@@ -207,13 +210,13 @@ export default function CustomerProfile() {
       {/* Saved Addresses Bottom Sheet */}
       <Modal visible={savedAddressVisible} transparent animationType="slide">
         <View style={styles.modalOverlay}>
-          <TouchableOpacity style={{ flex: 1 }} onPress={() => setSavedAddressVisible(false)} />
+          <TouchableOpacity style={{ flex: 1 }} onPress={() => setSavedAddressVisible(false)} activeOpacity={1} />
           <View style={styles.bottomSheet}>
             <View style={styles.sheetHeaderRow}>
               <Text style={styles.sheetTitle}>Saved Addresses</Text>
               <TouchableOpacity style={styles.addAddressBtn} activeOpacity={0.7}>
-                <Ionicons name="add" size={16} color={Colors.textInverse} />
-                <Text style={styles.addAddressText}>ADD</Text>
+                <Ionicons name="add" size={18} color={Colors.textInverse} />
+                <Text style={styles.addAddressText}>NEW</Text>
               </TouchableOpacity>
             </View>
 
@@ -240,9 +243,6 @@ export default function CustomerProfile() {
                 </View>
               ))}
             </View>
-            <View style={styles.homeIndicatorWrapper}>
-              <View style={styles.homeIndicator} />
-            </View>
           </View>
         </View>
       </Modal>
@@ -252,67 +252,411 @@ export default function CustomerProfile() {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: Colors.canvasLight },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md },
-  backBtn: { padding: 4 },
-  headerTitle: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -0.5 },
-  scrollContent: { padding: Spacing.xl, paddingBottom: 60 },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: Spacing.xl,
+    paddingTop: Spacing.md,
+    paddingBottom: Spacing.xl,
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceInteractive,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
+  headerTitle: {
+    fontSize: Typography.fontSize.xl,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textPrimary,
+    letterSpacing: -0.5,
+  },
+  scrollContent: {
+    padding: Spacing.xl,
+    paddingBottom: 100,
+  },
 
-  avatarSection: { alignItems: 'center', marginBottom: Spacing['2xl'], marginTop: Spacing.sm },
-  avatarCircle: { width: 90, height: 90, borderRadius: Radius.full, backgroundColor: Colors.canvasCream, justifyContent: 'center', alignItems: 'center', marginBottom: Spacing.md, borderWidth: 1, borderColor: Colors.borderLight },
-  nameRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 },
-  nameText: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary },
-  coopText: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.accentPrimaryDark, letterSpacing: 1 },
+  avatarSection: {
+    alignItems: 'center',
+    marginBottom: Spacing['3xl'],
+  },
+  avatarCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.canvasCream,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+    borderWidth: 2,
+    borderColor: Colors.borderDark,
+    ...Shadow.sm,
+  },
+  nameRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 8,
+  },
+  nameText: {
+    fontSize: Typography.fontSize['3xl'],
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textPrimary,
+    letterSpacing: -1,
+  },
+  coopTag: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: Colors.canvasDark,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: Radius.full,
+    marginTop: 4,
+  },
+  coopText: {
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.accentPrimary,
+    letterSpacing: 1,
+  },
 
-  gridContainer: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: Spacing['2xl'] },
-  gridCard: { width: '48%', flexGrow: 1, backgroundColor: Colors.surfaceLight, borderRadius: Radius.lg, padding: Spacing.md, borderWidth: 1, borderColor: Colors.borderLight },
-  iconCircle: { width: 36, height: 36, borderRadius: Radius.full, backgroundColor: Colors.surfaceDark, justifyContent: 'center', alignItems: 'center', marginBottom: 16 },
-  gridCardTitle: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary, marginBottom: 6 },
-  gridCardFooter: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  gridCardSub: { fontSize: Typography.fontSize.xs, color: Colors.textSecondary },
-  gridCardSubWallet: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.accentPrimaryDark },
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: Spacing.md,
+    marginBottom: Spacing['2xl'],
+  },
+  gridCard: {
+    width: '47%',
+    flexGrow: 1,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.xl,
+    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    ...Shadow.sm,
+  },
+  gridCardDark: {
+    width: '100%',
+    backgroundColor: Colors.canvasDark,
+    borderRadius: Radius.xl,
+    padding: Spacing.xl,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    ...Shadow.glow,
+  },
+  iconCircle: {
+    width: 44,
+    height: 44,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceDark,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+  },
+  iconCircleAccent: {
+    width: 44,
+    height: 44,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.accentPrimary,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: Spacing.lg,
+  },
+  gridCardTitle: {
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textPrimary,
+    marginBottom: 8,
+  },
+  gridCardTitleDark: {
+    fontSize: Typography.fontSize.lg,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textInverse,
+    marginBottom: 8,
+  },
+  gridCardFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  gridCardSub: {
+    fontSize: 12,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textSecondary,
+    fontWeight: Typography.fontWeight.semibold,
+  },
+  gridCardSubWallet: {
+    fontSize: Typography.fontSize.xl,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.accentPrimary,
+    letterSpacing: -0.5,
+  },
 
-  sectionTitle: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textMuted, letterSpacing: 1.5, marginBottom: Spacing.sm, paddingHorizontal: 4 },
-  listContainer: { backgroundColor: Colors.surfaceLight, borderRadius: Radius.lg, borderWidth: 1, borderColor: Colors.borderLight, overflow: 'hidden' },
-  listItem: { flexDirection: 'row', alignItems: 'center', padding: Spacing.md, paddingVertical: 18 },
-  listIconBox: { width: 32, height: 32, borderRadius: Radius.full, backgroundColor: Colors.canvasCream, justifyContent: 'center', alignItems: 'center', marginRight: Spacing.md, borderWidth: 1, borderColor: Colors.borderLight },
-  listText: { flex: 1, fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.body, fontWeight: Typography.fontWeight.semibold, color: Colors.textPrimary },
-  listDivider: { height: 1, backgroundColor: Colors.borderLight, marginLeft: 64 },
+  sectionTitle: {
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textMuted,
+    letterSpacing: 1.5,
+    marginBottom: Spacing.lg,
+    paddingHorizontal: 4,
+  },
+  listContainer: {
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.xl,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    overflow: 'hidden',
+    ...Shadow.sm,
+  },
+  listItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: Spacing.lg,
+  },
+  listIconBox: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.canvasCream,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
+  listText: {
+    flex: 1,
+    fontSize: Typography.fontSize.md,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
+  },
+  listDivider: {
+    height: 1,
+    backgroundColor: Colors.borderLight,
+    marginLeft: 72,
+  },
 
-  modalOverlay: { flex: 1, backgroundColor: Colors.glassDark, justifyContent: 'flex-end' },
-  bottomSheet: { backgroundColor: Colors.canvasLight, borderTopLeftRadius: Radius.xl, borderTopRightRadius: Radius.xl, padding: Spacing.xl, maxHeight: '90%' },
-  sheetHeaderRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: Spacing.xl },
-  sheetTitle: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -0.5 },
-  closeBtn: { width: 34, height: 34, borderRadius: Radius.full, backgroundColor: Colors.canvasCream, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: Colors.borderLight },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: Colors.glassDark,
+    justifyContent: 'flex-end',
+  },
+  bottomSheet: {
+    backgroundColor: Colors.canvasLight,
+    borderTopLeftRadius: Radius['2xl'],
+    borderTopRightRadius: Radius['2xl'],
+    padding: Spacing.xl,
+    paddingTop: Spacing['2xl'],
+    maxHeight: '90%',
+  },
+  sheetHeaderRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: Spacing['2xl'],
+  },
+  sheetTitle: {
+    fontSize: Typography.fontSize['2xl'],
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textPrimary,
+    letterSpacing: -1,
+  },
+  closeBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.canvasCream,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+  },
 
-  avatarEditContainer: { alignItems: 'center', marginBottom: Spacing.xl },
-  avatarEditCircle: { width: 90, height: 90, borderRadius: Radius.full, backgroundColor: Colors.canvasCream, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: Colors.borderLight },
+  avatarEditContainer: {
+    alignItems: 'center',
+    marginBottom: Spacing['2xl'],
+  },
+  avatarEditCircle: {
+    width: 100,
+    height: 100,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.canvasCream,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: Colors.borderDark,
+  },
   
-  inputGroup: { marginBottom: Spacing.lg },
-  inputLabel: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary, letterSpacing: 1, marginBottom: 8 },
-  input: { borderWidth: 1, borderColor: Colors.borderLight, borderRadius: Radius.full, paddingHorizontal: Spacing.lg, paddingVertical: 16, fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.mono, color: Colors.textPrimary, backgroundColor: Colors.surfaceLight, outlineStyle: 'none' },
+  inputGroup: {
+    marginBottom: Spacing.xl,
+  },
+  inputLabel: {
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textMuted,
+    letterSpacing: 1.5,
+    marginBottom: Spacing.sm,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    borderRadius: Radius.lg,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 18,
+    fontSize: Typography.fontSize.md,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textPrimary,
+    backgroundColor: Colors.surfaceLight,
+    outlineStyle: 'none',
+  },
 
-  genderRow: { flexDirection: 'row', gap: Spacing.sm },
-  genderBtn: { flex: 1, borderWidth: 1, borderColor: Colors.borderLight, borderRadius: Radius.full, paddingVertical: 14, alignItems: 'center', backgroundColor: Colors.surfaceLight },
-  genderBtnActive: { borderColor: Colors.accentPrimary, backgroundColor: Colors.borderLight },
-  genderText: { fontSize: 12, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textSecondary },
-  genderTextActive: { color: Colors.textPrimary },
+  genderRow: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+  },
+  genderBtn: {
+    flex: 1,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    borderRadius: Radius.lg,
+    paddingVertical: 16,
+    alignItems: 'center',
+    backgroundColor: Colors.surfaceLight,
+  },
+  genderBtnActive: {
+    borderColor: Colors.canvasDark,
+    backgroundColor: Colors.canvasDark,
+    ...Shadow.sm,
+  },
+  genderText: {
+    fontSize: 12,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textSecondary,
+    letterSpacing: 0.5,
+  },
+  genderTextActive: {
+    color: Colors.textInverse,
+  },
 
-  updateBtn: { backgroundColor: Colors.accentPrimary, borderRadius: Radius.full, paddingVertical: 18, alignItems: 'center', marginTop: Spacing.sm, marginBottom: Spacing.xl, ...Shadow.glow },
-  updateBtnText: { color: Colors.darkSurfaceDeep, fontSize: 12, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.black, letterSpacing: 1 },
+  updateBtn: {
+    backgroundColor: Colors.accentPrimary,
+    borderRadius: Radius.full,
+    paddingVertical: 20,
+    alignItems: 'center',
+    marginTop: Spacing.lg,
+    marginBottom: Spacing['3xl'],
+    ...Shadow.glow,
+  },
+  updateBtnText: {
+    color: Colors.darkSurfaceDeep,
+    fontSize: 14,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
+  },
 
-  addAddressBtn: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceDark, borderRadius: Radius.full, paddingHorizontal: 12, paddingVertical: 8, gap: 4, borderWidth: 1, borderColor: Colors.borderDark },
-  addAddressText: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textInverse, letterSpacing: 0.5 },
-  addressList: { gap: Spacing.md, marginBottom: Spacing.xl },
-  addressItem: { flexDirection: 'row', gap: Spacing.md, alignItems: 'center', backgroundColor: Colors.surfaceLight, padding: Spacing.md, borderRadius: Radius.lg, borderWidth: 1, borderColor: Colors.borderLight },
-  addressIconBox: { width: 40, height: 40, borderRadius: Radius.full, backgroundColor: Colors.surfaceDark, justifyContent: 'center', alignItems: 'center' },
-  addressInfo: { flex: 1 },
-  addressTitleRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, marginBottom: 4 },
-  addressLabel: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
-  defaultBadge: { backgroundColor: Colors.accentPrimary, paddingHorizontal: 6, paddingVertical: 3, borderRadius: Radius.full },
-  defaultBadgeText: { fontSize: 9, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.darkSurfaceDeep },
-  addressText: { fontSize: Typography.fontSize.xs, color: Colors.textSecondary, lineHeight: 18 },
-  moreBtn: { width: 34, height: 34, borderRadius: Radius.full, borderWidth: 1, borderColor: Colors.borderLight, backgroundColor: Colors.canvasCream, justifyContent: 'center', alignItems: 'center' },
-
-  homeIndicatorWrapper: { alignItems: 'center', marginTop: Spacing.sm },
-  homeIndicator: { width: 40, height: 4, borderRadius: Radius.full, backgroundColor: Colors.borderLight }
+  addAddressBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: Colors.canvasDark,
+    borderRadius: Radius.full,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    gap: 6,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
+    ...Shadow.glow,
+  },
+  addAddressText: {
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textInverse,
+    letterSpacing: 1,
+  },
+  addressList: {
+    gap: Spacing.md,
+    marginBottom: Spacing['4xl'],
+  },
+  addressItem: {
+    flexDirection: 'row',
+    gap: Spacing.md,
+    alignItems: 'center',
+    backgroundColor: Colors.surfaceLight,
+    padding: Spacing.lg,
+    borderRadius: Radius.xl,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    ...Shadow.sm,
+  },
+  addressIconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceDark,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  addressInfo: {
+    flex: 1,
+  },
+  addressTitleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.sm,
+    marginBottom: 6,
+  },
+  addressLabel: {
+    fontSize: Typography.fontSize.md,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textPrimary,
+  },
+  defaultBadge: {
+    backgroundColor: Colors.accentPrimary,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: Radius.full,
+  },
+  defaultBadgeText: {
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.darkSurfaceDeep,
+    letterSpacing: 0.5,
+  },
+  addressText: {
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textSecondary,
+    lineHeight: 20,
+  },
+  moreBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    backgroundColor: Colors.canvasCream,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
 });

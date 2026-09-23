@@ -200,24 +200,26 @@ export default function CustomerHome() {
     <View style={styles.resultsContainer}>
       <View style={styles.resultsHeader}>
         <TouchableOpacity style={styles.backBtn} onPress={() => { setShowMap(false); setSearchResults([]); }}>
-          <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
+          <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.resultsTitle}>
           {parsedIntent?.service_category ? `${parsedIntent.service_category} nearby` : 'Search Results'}
         </Text>
       </View>
+
       <View style={styles.viewToggle}>
         <TouchableOpacity style={[styles.toggleBtn, showMap && styles.toggleBtnActive]} onPress={() => setShowMap(true)}>
-          <Ionicons name="map-outline" size={14} color={showMap ? Colors.textOnPrimary : Colors.textMuted} />
+          <Ionicons name="map-outline" size={16} color={showMap ? Colors.textInverse : Colors.textSecondary} />
           <Text style={[styles.toggleText, showMap && styles.toggleTextActive]}>MAP</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.toggleBtn, !showMap && styles.toggleBtnActive]} onPress={() => setShowMap(false)}>
-          <Ionicons name="list-outline" size={14} color={!showMap ? Colors.textOnPrimary : Colors.textMuted} />
+          <Ionicons name="list-outline" size={16} color={!showMap ? Colors.textInverse : Colors.textSecondary} />
           <Text style={[styles.toggleText, !showMap && styles.toggleTextActive]}>
             LIST {searchResults.length > 0 ? `(${searchResults.length})` : ''}
           </Text>
         </TouchableOpacity>
       </View>
+
       <View style={{ flex: 1 }}>
         {showMap ? (
           <View style={styles.mapContainer}>
@@ -228,15 +230,25 @@ export default function CustomerHome() {
           </View>
         ) : (
           <ScrollView style={styles.list} showsVerticalScrollIndicator={false}>
-            {searchLoading && (<View style={styles.loadingCard}><Text style={styles.loadingText}>🤖 AI is finding the best workers for you…</Text></View>)}
-            {!searchLoading && searchResults.length === 0 && (<View style={styles.emptyCard}><Ionicons name="search-circle-outline" size={48} color={Colors.textMuted} /><Text style={styles.emptyText}>No workers found for your request.</Text></View>)}
+            {searchLoading && (
+              <View style={styles.loadingCard}>
+                <Ionicons name="sparkles" size={24} color={Colors.accentPrimary} />
+                <Text style={styles.loadingText}>Curating experts...</Text>
+              </View>
+            )}
+            {!searchLoading && searchResults.length === 0 && (
+              <View style={styles.emptyCard}>
+                <Ionicons name="search-outline" size={48} color={Colors.textMuted} />
+                <Text style={styles.emptyText}>No specialists found right now.</Text>
+              </View>
+            )}
             {searchResults.map((w: any) => (
               <View key={w.id}>
                 <WorkerCard worker={w} selected={selectedWorker?.id === w.id} onSelect={setSelectedWorker} />
                 {selectedWorker?.id === w.id && (
                   <TouchableOpacity style={styles.bookBtn} onPress={() => handleBook(w)} disabled={bookingLoading} activeOpacity={0.8}>
-                    <Ionicons name="calendar-outline" size={16} color={Colors.textOnPrimary} />
-                    <Text style={styles.bookBtnText}>{bookingLoading ? 'BOOKING…' : `BOOK ${w.name.split(' ')[0]} — ₹${w.pricePerHour}/HR`}</Text>
+                    <Text style={styles.bookBtnText}>{bookingLoading ? 'CONFIRMING...' : `HIRE ${w.name.split(' ')[0]} • ₹${w.pricePerHour}/HR`}</Text>
+                    <Ionicons name="arrow-forward" size={18} color={Colors.textOnPrimary} />
                   </TouchableOpacity>
                 )}
               </View>
@@ -248,73 +260,112 @@ export default function CustomerHome() {
   );
 
   const CARD_GAP = 16;
-  const SERVICE_CARD_SIZE = (width - Spacing.base * 2 - CARD_GAP * 2) / 3;
+  const SERVICE_CARD_SIZE = (width - Spacing.base * 2 - CARD_GAP) / 2;
 
   const renderHomeFeed = () => (
-    <ScrollView style={styles.feedScroll} showsVerticalScrollIndicator={false} contentContainerStyle={styles.feedContent}>
+    <ScrollView style={styles.feedScroll} showsVerticalScrollIndicator={false} contentContainerStyle={styles.feedContent} bounces={false}>
       
-      {/* Editorial Hero Area */}
-      <View style={styles.editorialHero}>
-        <Text style={styles.editorialTitle}>Trusted help,{'\n'}right around{'\n'}you.</Text>
-        <Text style={styles.editorialSub}>Vetted home professionals owned by the collective. Direct bookings, zero middleman commission.</Text>
+      {/* Editorial Hero Area - Dark Section */}
+      <View style={styles.darkHeaderBlock}>
+        <SafeAreaView edges={['top']} />
+        
+        {/* Top Nav */}
+        <View style={styles.header}>
+          <View style={styles.brandContainer}>
+            <Text style={styles.brandLogoText}>HomeSahay</Text>
+          </View>
+          <View style={styles.headerRight}>
+            <View style={styles.locationHeader}>
+              <Ionicons name="location-sharp" size={12} color={Colors.textInverseMuted} />
+              <Text style={styles.locationLabel}>JP Nagar, BLR</Text>
+            </View>
+            <TouchableOpacity style={styles.cashBadge} activeOpacity={0.8}>
+              <Text style={{ fontSize: 12 }}>🪙</Text>
+              <Text style={styles.cashAmount}>₹{customer?.sahayCash ?? 200}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.profileBtn} activeOpacity={0.8} onPress={() => router.push('/(customer)/profile')}>
+              <Ionicons name="person" size={14} color={Colors.textOnPrimary} />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        {/* Hero Title */}
+        <View style={styles.editorialHero}>
+          <Text style={styles.editorialTitle}>Trusted help,{'\n'}right around{'\n'}you.</Text>
+          
+          {/* AI Search Pill */}
+          <TouchableOpacity style={styles.searchBar} onPress={() => setIsSearchVisible(true)} activeOpacity={0.9}>
+            <View style={styles.searchMic}>
+              <Ionicons name="sparkles" size={18} color={Colors.textOnPrimary} />
+            </View>
+            <Text style={styles.searchPlaceholder}>What needs fixing? (e.g. AC repair)</Text>
+          </TouchableOpacity>
+        </View>
       </View>
 
-      <FlatList
-        ref={carouselRef}
-        data={CAROUSEL_SLIDES}
-        renderItem={({ item }) => <CarouselSlide item={item} />}
-        keyExtractor={(item) => item.id}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={(e) => {
-          const idx = Math.round(e.nativeEvent.contentOffset.x / width);
-          setActiveSlide(idx);
-        }}
-        style={{ marginBottom: Spacing.sm }}
-        getItemLayout={(_, index) => ({ length: width, offset: width * index, index })}
-      />
-      <View style={styles.dotsRow}>
-        {CAROUSEL_SLIDES.map((_, i) => (
-          <View key={i} style={[styles.dot, i === activeSlide && styles.dotActive]} />
-        ))}
-      </View>
-
-      {/* Action Pills */}
+      {/* Quick Actions overlap the dark header slightly */}
       <View style={styles.actionRow}>
         <TouchableOpacity style={styles.actionCard} activeOpacity={0.8}>
           <View style={styles.actionIconWrap}>
-            <Ionicons name="calendar-outline" size={20} color={Colors.textPrimary} />
+            <Ionicons name="calendar" size={20} color={Colors.textPrimary} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={styles.actionTitle}>Schedule <Text style={styles.actionArrow}>›</Text></Text>
+            <Text style={styles.actionTitle}>Schedule</Text>
             <Text style={styles.actionSub}>Pick any time</Text>
           </View>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.actionCard, styles.actionCardInstant]} activeOpacity={0.8} onPress={() => setIsSearchVisible(true)}>
+        
+        <TouchableOpacity style={[styles.actionCard, styles.actionCardSOS]} activeOpacity={0.8} onPress={() => setIsSearchVisible(true)}>
+          <View style={[styles.actionIconWrap, { backgroundColor: Colors.dangerTint }]}>
+            <Ionicons name="flash" size={20} color={Colors.danger} />
+          </View>
           <View style={{ flex: 1 }}>
-            <View style={styles.instantBadge}>
-              <Ionicons name="flash" size={10} color={Colors.textOnPrimary} />
-              <Text style={styles.instantBadgeText}>LIVE</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Text style={[styles.actionTitle, { color: Colors.danger }]}>SOS</Text>
+              <View style={styles.instantBadge}>
+                <Text style={styles.instantBadgeText}>LIVE</Text>
+              </View>
             </View>
-            <Text style={styles.actionTitle}>SOS Urgent <Text style={styles.actionArrow}>›</Text></Text>
             <Text style={styles.actionSub}>Under 15 mins</Text>
           </View>
         </TouchableOpacity>
       </View>
 
-      {/* Categories */}
+      {/* Promotions Carousel */}
+      <View style={styles.carouselSection}>
+        <FlatList
+          ref={carouselRef}
+          data={CAROUSEL_SLIDES}
+          renderItem={({ item }) => <CarouselSlide item={item} />}
+          keyExtractor={(item) => item.id}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onMomentumScrollEnd={(e) => {
+            const idx = Math.round(e.nativeEvent.contentOffset.x / width);
+            setActiveSlide(idx);
+          }}
+          getItemLayout={(_, index) => ({ length: width, offset: width * index, index })}
+        />
+        <View style={styles.dotsRow}>
+          {CAROUSEL_SLIDES.map((_, i) => (
+            <View key={i} style={[styles.dot, i === activeSlide && styles.dotActive]} />
+          ))}
+        </View>
+      </View>
+
+      {/* Image-Led Categories */}
       <View style={styles.categoryHeader}>
-        <Text style={styles.sectionMono}>SERVICE COLLECTIVE</Text>
         <Text style={styles.sectionTitle}>Curated Categories</Text>
+        <Text style={styles.sectionMono}>BROWSE THE COLLECTIVE</Text>
       </View>
       <View style={styles.serviceGrid}>
         {HOME_CATEGORIES.map((cat) => (
-          <TouchableOpacity key={cat.id} style={{ width: SERVICE_CARD_SIZE, alignItems: 'center' }} activeOpacity={0.75} onPress={() => handleCategoryPress(cat.id)}>
-            <View style={[styles.serviceIconBox, { width: SERVICE_CARD_SIZE, height: SERVICE_CARD_SIZE }]}>
-              <Image source={cat.image} style={{ width: '100%', height: '100%', borderRadius: Radius.md }} resizeMode="cover" />
+          <TouchableOpacity key={cat.id} style={[styles.categoryCard, { width: SERVICE_CARD_SIZE }]} activeOpacity={0.75} onPress={() => handleCategoryPress(cat.id)}>
+            <Image source={cat.image} style={styles.categoryImage} resizeMode="cover" />
+            <View style={styles.categoryLabelBox}>
+              <Text style={styles.serviceLabel}>{cat.label}</Text>
             </View>
-            <Text style={styles.serviceLabel} numberOfLines={2}>{cat.label}</Text>
           </TouchableOpacity>
         ))}
       </View>
@@ -322,8 +373,7 @@ export default function CustomerHome() {
       {/* Trust Section - Obsidian Hero Card */}
       <View style={styles.trustSection}>
         <View style={styles.trustHeader}>
-          <Ionicons name="shield-checkmark" size={18} color={Colors.accentPrimary} />
-          <Text style={styles.trustHeaderMono}>THE CO-OP MODEL</Text>
+          <Ionicons name="shield-checkmark" size={24} color={Colors.accentPrimary} />
         </View>
         <Text style={styles.trustTitle}>People you can trust.</Text>
         <Text style={styles.trustSub}>Unlike corporate gig apps, HomeSahay is a worker-owned cooperative where technicians earn fair livelihoods and deliver genuine care.</Text>
@@ -336,7 +386,7 @@ export default function CustomerHome() {
           ].map((p, i) => (
             <View key={i} style={styles.trustPillar}>
               <View style={styles.trustIconRow}>
-                <Ionicons name={p.icon as any} size={16} color={Colors.textInverse} />
+                <Ionicons name={p.icon as any} size={20} color={Colors.accentPrimary} />
                 <Text style={styles.trustPillarText}>{p.label}</Text>
               </View>
               <Text style={styles.trustPillarSub}>{p.sub}</Text>
@@ -355,7 +405,7 @@ export default function CustomerHome() {
         <View style={styles.referCodeBox}>
           <Text style={styles.referCodeMono}>CODE: SAHAY100</Text>
           <TouchableOpacity style={styles.referBtn} activeOpacity={0.85}>
-            <Ionicons name="copy-outline" size={14} color={Colors.textInverse} />
+            <Ionicons name="copy-outline" size={14} color={Colors.textOnPrimary} />
             <Text style={styles.referBtnText}>COPY CODE</Text>
           </TouchableOpacity>
         </View>
@@ -406,142 +456,119 @@ export default function CustomerHome() {
         </SafeAreaView>
       </Modal>
 
-      {showMap || searchResults.length > 0 ? (
-        renderSearchResults()
-      ) : (
-        <>
-          <SafeAreaView edges={['top']} style={{ backgroundColor: Colors.canvasLight }}>
-            <View style={styles.header}>
-              <View style={styles.brandContainer}>
-                <Ionicons name="home" size={20} color={Colors.textPrimary} />
-                <Text style={styles.brandLogoText}>HomeSahay</Text>
-              </View>
-              <View style={styles.headerRight}>
-                <TouchableOpacity style={styles.cashBadge} activeOpacity={0.8}>
-                  <Text style={{ fontSize: 13 }}>🪙</Text>
-                  <Text style={styles.cashAmount}>₹{customer?.sahayCash ?? 200}</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.profileBtn} activeOpacity={0.8} onPress={() => router.push('/(customer)/profile')}>
-                  <Ionicons name="person" size={16} color={Colors.textInverse} />
-                </TouchableOpacity>
-              </View>
-            </View>
-            <View style={styles.locationHeader}>
-              <Ionicons name="location-outline" size={14} color={Colors.textMuted} />
-              <Text style={styles.locationLabel}>4th Block, JP Nagar</Text>
-              <Ionicons name="chevron-down" size={12} color={Colors.textMuted} />
-            </View>
-            <View style={{ paddingHorizontal: Spacing.base, paddingBottom: Spacing.sm }}>
-              <TouchableOpacity style={styles.searchBar} onPress={() => setIsSearchVisible(true)} activeOpacity={0.9}>
-                <Ionicons name="sparkles" size={18} color={Colors.accentPrimary} />
-                <Text style={styles.searchPlaceholder}>What needs fixing? (e.g. AC repair)</Text>
-                <View style={styles.searchMic}>
-                  <Ionicons name="mic" size={16} color={Colors.textInverse} />
-                </View>
-              </TouchableOpacity>
-            </View>
-          </SafeAreaView>
-          {renderHomeFeed()}
-        </>
-      )}
+      {showMap || searchResults.length > 0 ? renderSearchResults() : renderHomeFeed()}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   mainContainer: { flex: 1, backgroundColor: Colors.canvasLight },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingTop: Spacing.xs, backgroundColor: Colors.canvasLight },
-  brandContainer: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  brandLogoText: { fontSize: Typography.fontSize.lg, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -0.5 },
-  locationHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingVertical: Spacing.sm, gap: 4 },
-  locationLabel: { fontSize: Typography.fontSize.xs, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary, textTransform: 'uppercase' },
-  headerRight: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
-  cashBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceLight, borderRadius: Radius.full, paddingHorizontal: 10, paddingVertical: 6, gap: 4, borderWidth: 1, borderColor: Colors.borderLight },
-  cashAmount: { fontSize: Typography.fontSize.xs, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
-  profileBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: Colors.surfaceDark, justifyContent: 'center', alignItems: 'center' },
-  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceDark, borderRadius: Radius.full, paddingLeft: Spacing.md, paddingRight: 6, paddingVertical: 6, gap: Spacing.sm, ...Shadow.sm },
-  searchPlaceholder: { color: Colors.textInverseMuted, fontSize: Typography.fontSize.sm, flex: 1 },
-  searchMic: { width: 36, height: 36, borderRadius: 18, backgroundColor: Colors.accentPrimary, justifyContent: 'center', alignItems: 'center' },
   feedScroll: { flex: 1, backgroundColor: Colors.canvasLight },
   feedContent: { paddingBottom: 32 },
-  editorialHero: { paddingHorizontal: Spacing.base, paddingTop: Spacing.md, paddingBottom: Spacing.lg },
-  editorialTitle: { fontSize: Typography.fontSize.displayMobile, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, lineHeight: 44, letterSpacing: -1.5, marginBottom: Spacing.sm },
-  editorialSub: { fontSize: Typography.fontSize.sm, color: Colors.textSecondary, lineHeight: 20, maxWidth: '85%' },
-  dotsRow: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginBottom: Spacing.lg },
+  
+  // DARK HEADER SECTION
+  darkHeaderBlock: { backgroundColor: Colors.canvasDark, paddingBottom: 40 },
+  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.base, paddingTop: Spacing.xs },
+  brandContainer: { flexDirection: 'row', alignItems: 'center' },
+  brandLogoText: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textInverse, letterSpacing: -0.5 },
+  headerRight: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  locationHeader: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceInteractive, paddingHorizontal: 10, paddingVertical: 6, borderRadius: Radius.full, gap: 4 },
+  locationLabel: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textInverse, textTransform: 'uppercase' },
+  cashBadge: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceInteractive, borderRadius: Radius.full, paddingHorizontal: 10, paddingVertical: 6, gap: 4 },
+  cashAmount: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textInverse },
+  profileBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: Colors.accentPrimary, justifyContent: 'center', alignItems: 'center', borderWidth: 2, borderColor: Colors.surfaceDark },
+  
+  editorialHero: { paddingHorizontal: Spacing.base, paddingTop: Spacing.xl, paddingBottom: Spacing.xl },
+  editorialTitle: { fontSize: 44, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textInverse, lineHeight: 46, letterSpacing: -1.5, marginBottom: Spacing.xl },
+  
+  searchBar: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceLight, borderRadius: Radius.full, paddingLeft: Spacing.sm, paddingRight: Spacing.base, paddingVertical: Spacing.xs, gap: Spacing.sm, ...Shadow.lg },
+  searchMic: { width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.canvasDark, justifyContent: 'center', alignItems: 'center' },
+  searchPlaceholder: { color: Colors.textMuted, fontSize: Typography.fontSize.md, flex: 1, fontWeight: Typography.fontWeight.medium },
+
+  // QUICK ACTIONS
+  actionRow: { flexDirection: 'row', paddingHorizontal: Spacing.base, gap: Spacing.sm, marginTop: -20, zIndex: 10 },
+  actionCard: { flex: 1, backgroundColor: Colors.surfaceLight, borderRadius: Radius.xl, padding: Spacing.md, flexDirection: 'row', alignItems: 'center', gap: 12, ...Shadow.md },
+  actionCardSOS: { backgroundColor: Colors.surfaceLight, borderWidth: 1, borderColor: Colors.dangerTint },
+  actionIconWrap: { width: 48, height: 48, borderRadius: Radius.full, backgroundColor: Colors.canvasCream, justifyContent: 'center', alignItems: 'center' },
+  actionTitle: { fontSize: Typography.fontSize.lg, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary },
+  actionSub: { fontSize: Typography.fontSize.xs, color: Colors.textSecondary, marginTop: 2 },
+  instantBadge: { backgroundColor: Colors.danger, flexDirection: 'row', alignItems: 'center', borderRadius: Radius.full, paddingHorizontal: 6, paddingVertical: 2 },
+  instantBadgeText: { color: Colors.textOnDark, fontSize: 9, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold },
+
+  // CAROUSEL
+  carouselSection: { marginTop: Spacing.xl },
+  dotsRow: { flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: Spacing.sm },
   dot: { width: 6, height: 6, borderRadius: 3, backgroundColor: Colors.borderLight },
   dotActive: { width: 20, backgroundColor: Colors.surfaceDark },
-  actionRow: { flexDirection: 'row', paddingHorizontal: Spacing.base, gap: Spacing.sm, marginBottom: Spacing.xl },
-  actionCard: { flex: 1, backgroundColor: Colors.surfaceLight, borderRadius: Radius.lg, padding: Spacing.md, flexDirection: 'row', alignItems: 'center', borderWidth: 1, borderColor: Colors.borderLight, gap: 10 },
-  actionCardInstant: { backgroundColor: Colors.surfaceDark, borderColor: Colors.borderDark },
-  actionIconWrap: { width: 36, height: 36, borderRadius: Radius.full, backgroundColor: Colors.canvasCream, justifyContent: 'center', alignItems: 'center' },
-  actionTitle: { fontSize: Typography.fontSize.md, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary },
-  actionArrow: { color: Colors.textMuted },
-  actionSub: { fontSize: Typography.fontSize.xs, color: Colors.textSecondary, marginTop: 2 },
-  instantBadge: { backgroundColor: Colors.accentPrimary, flexDirection: 'row', alignItems: 'center', gap: 4, borderRadius: Radius.full, paddingHorizontal: 6, paddingVertical: 2, alignSelf: 'flex-start', marginBottom: 4 },
-  instantBadgeText: { color: Colors.textOnPrimary, fontSize: 9, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold },
-  
-  categoryHeader: { paddingHorizontal: Spacing.base, marginBottom: Spacing.sm },
-  sectionMono: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textMuted, letterSpacing: 1, marginBottom: 4 },
-  sectionTitle: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -0.5 },
+
+  // CATEGORIES
+  categoryHeader: { paddingHorizontal: Spacing.base, marginTop: Spacing.xl, marginBottom: Spacing.md },
+  sectionTitle: { fontSize: Typography.fontSize['2xl'], fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -1 },
+  sectionMono: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textMuted, letterSpacing: 1, marginTop: 4 },
   serviceGrid: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: Spacing.base, gap: 16, marginBottom: Spacing.xl },
-  serviceIconBox: { backgroundColor: Colors.canvasCream, borderRadius: Radius.md, justifyContent: 'center', alignItems: 'center', marginBottom: 8, overflow: 'hidden', borderWidth: 1, borderColor: Colors.borderLight },
-  serviceLabel: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.body, fontWeight: Typography.fontWeight.semibold, color: Colors.textPrimary, textAlign: 'center' },
-  
-  referBanner: { marginHorizontal: Spacing.base, backgroundColor: Colors.canvasCream, borderRadius: Radius.lg, padding: Spacing.lg, marginBottom: Spacing.xl, borderWidth: 1, borderColor: Colors.borderLight },
-  referHeader: { marginBottom: Spacing.sm },
-  referMono: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textSecondary, letterSpacing: 1 },
-  referTitle: { fontSize: Typography.fontSize['2xl'], fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, lineHeight: 34, letterSpacing: -1, marginBottom: Spacing.xs },
-  referSub: { fontSize: Typography.fontSize.sm, color: Colors.textSecondary, marginBottom: Spacing.lg },
-  referCodeBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.surfaceLight, borderRadius: Radius.full, paddingLeft: Spacing.md, paddingRight: 6, paddingVertical: 6, borderWidth: 1, borderColor: Colors.borderLight },
-  referCodeMono: { fontSize: Typography.fontSize.xs, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
-  referBtn: { backgroundColor: Colors.surfaceDark, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: Radius.full, paddingHorizontal: 12, paddingVertical: 8 },
-  referBtnText: { color: Colors.textInverse, fontWeight: Typography.fontWeight.bold, fontSize: 10, fontFamily: Typography.fontFamily.mono },
-  
-  trustSection: { marginHorizontal: Spacing.base, backgroundColor: Colors.canvasDark, borderRadius: Radius.lg, padding: Spacing.xl, marginBottom: Spacing.xl, borderWidth: 1, borderColor: Colors.borderDark },
-  trustHeader: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: Spacing.md },
-  trustHeaderMono: { color: Colors.accentPrimary, fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, letterSpacing: 1 },
+  categoryCard: { backgroundColor: Colors.surfaceLight, borderRadius: Radius.lg, overflow: 'hidden', ...Shadow.sm, height: 140, borderWidth: 1, borderColor: Colors.borderLight },
+  categoryImage: { width: '100%', height: '70%', backgroundColor: Colors.canvasCream },
+  categoryLabelBox: { height: '30%', justifyContent: 'center', alignItems: 'center', backgroundColor: Colors.surfaceLight },
+  serviceLabel: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
+
+  // TRUST SECTION
+  trustSection: { marginHorizontal: Spacing.base, backgroundColor: Colors.canvasDark, borderRadius: Radius['2xl'], padding: Spacing.xl, marginBottom: Spacing.xl, ...Shadow.md },
+  trustHeader: { marginBottom: Spacing.md },
   trustTitle: { fontSize: Typography.fontSize['2xl'], fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textInverse, letterSpacing: -1, marginBottom: Spacing.sm },
   trustSub: { fontSize: Typography.fontSize.sm, color: Colors.textInverseMuted, lineHeight: 22, marginBottom: Spacing.xl },
   trustPillars: { gap: Spacing.md },
-  trustPillar: { backgroundColor: Colors.surfaceInteractive, borderRadius: Radius.md, padding: Spacing.md, borderWidth: 1, borderColor: Colors.borderDark },
-  trustIconRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },
-  trustPillarText: { fontSize: Typography.fontSize.sm, fontWeight: Typography.fontWeight.bold, color: Colors.textInverse },
-  trustPillarSub: { fontSize: Typography.fontSize.xs, color: Colors.textInverseMuted, marginLeft: 24 },
+  trustPillar: { backgroundColor: Colors.surfaceInteractive, borderRadius: Radius.lg, padding: Spacing.md },
+  trustIconRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 4 },
+  trustPillarText: { fontSize: Typography.fontSize.base, fontWeight: Typography.fontWeight.bold, color: Colors.textInverse },
+  trustPillarSub: { fontSize: Typography.fontSize.xs, color: Colors.textInverseMuted, marginLeft: 30 },
 
+  // REFERRAL
+  referBanner: { marginHorizontal: Spacing.base, backgroundColor: Colors.accentPrimary, borderRadius: Radius['2xl'], padding: Spacing.xl, marginBottom: Spacing.xl, ...Shadow.glow },
+  referHeader: { marginBottom: Spacing.sm },
+  referMono: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textOnPrimary, letterSpacing: 1 },
+  referTitle: { fontSize: Typography.fontSize['3xl'], fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textOnPrimary, lineHeight: 40, letterSpacing: -1.5, marginBottom: Spacing.xs },
+  referSub: { fontSize: Typography.fontSize.sm, color: Colors.textOnPrimary, opacity: 0.8, marginBottom: Spacing.lg },
+  referCodeBox: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', backgroundColor: Colors.surfaceLight, borderRadius: Radius.full, paddingLeft: Spacing.md, paddingRight: 6, paddingVertical: 6 },
+  referCodeMono: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
+  referBtn: { backgroundColor: Colors.canvasDark, flexDirection: 'row', alignItems: 'center', gap: 6, borderRadius: Radius.full, paddingHorizontal: 16, paddingVertical: 10 },
+  referBtnText: { color: Colors.textOnDark, fontWeight: Typography.fontWeight.bold, fontSize: 12, fontFamily: Typography.fontFamily.mono },
+
+  // MODAL / SEARCH
   modalContainer: { flex: 1, backgroundColor: Colors.canvasLight },
   modalHeader: { flexDirection: 'row', alignItems: 'center', paddingHorizontal: Spacing.base, paddingBottom: Spacing.sm },
   modalBack: { padding: Spacing.xs, marginRight: Spacing.sm },
   modalTitle: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary },
   modalContent: { flex: 1 },
-  modalInputWrapper: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceLight, borderRadius: Radius.full, marginHorizontal: Spacing.base, marginTop: Spacing.md, borderWidth: 1, borderColor: Colors.borderLight },
-  modalInput: { flex: 1, paddingVertical: 14, paddingHorizontal: Spacing.sm, fontSize: Typography.fontSize.md, color: Colors.textPrimary, outlineStyle: 'none' },
-  modalSectionTitle: { fontSize: Typography.fontSize.md, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary, paddingHorizontal: Spacing.base, marginTop: Spacing.xl, marginBottom: Spacing.sm },
+  modalInputWrapper: { flexDirection: 'row', alignItems: 'center', backgroundColor: Colors.surfaceLight, borderRadius: Radius.full, marginHorizontal: Spacing.base, marginTop: Spacing.md, borderWidth: 1, borderColor: Colors.borderLight, ...Shadow.sm },
+  modalInput: { flex: 1, paddingVertical: 16, paddingHorizontal: Spacing.sm, fontSize: Typography.fontSize.md, color: Colors.textPrimary, outlineStyle: 'none' },
+  modalSectionTitle: { fontSize: Typography.fontSize.lg, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary, paddingHorizontal: Spacing.base, marginTop: Spacing.xl, marginBottom: Spacing.sm },
   trendingWrap: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: Spacing.base, gap: Spacing.sm },
-  trendingPill: { backgroundColor: Colors.surfaceLight, paddingHorizontal: Spacing.md, paddingVertical: 10, borderRadius: Radius.full, borderWidth: 1, borderColor: Colors.borderLight },
-  trendingText: { fontSize: Typography.fontSize.xs, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.semibold, color: Colors.textSecondary },
-  aiSection: { marginTop: Spacing.xl, backgroundColor: Colors.canvasCream, padding: Spacing.base, borderTopWidth: 1, borderTopColor: Colors.borderLight },
-  aiSectionTitle: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary, textTransform: 'uppercase' },
+  trendingPill: { backgroundColor: Colors.surfaceLight, paddingHorizontal: Spacing.md, paddingVertical: 12, borderRadius: Radius.full, borderWidth: 1, borderColor: Colors.borderLight },
+  trendingText: { fontSize: Typography.fontSize.xs, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
+  aiSection: { marginTop: Spacing.xl, backgroundColor: Colors.canvasDark, padding: Spacing.xl, borderTopLeftRadius: Radius.xl, borderTopRightRadius: Radius.xl, flex: 1 },
+  aiSectionTitle: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.accentPrimary, textTransform: 'uppercase' },
   aiPromptsList: { gap: Spacing.sm },
-  aiPromptItem: { backgroundColor: Colors.surfaceLight, padding: Spacing.md, borderRadius: Radius.md, borderWidth: 1, borderColor: Colors.borderLight },
-  aiPromptText: { fontSize: Typography.fontSize.sm, color: Colors.textPrimary, fontStyle: 'italic' },
+  aiPromptItem: { backgroundColor: Colors.surfaceInteractive, padding: Spacing.md, borderRadius: Radius.lg },
+  aiPromptText: { fontSize: Typography.fontSize.sm, color: Colors.textInverse, fontStyle: 'italic' },
   
+  // MAP RESULTS
   resultsContainer: { flex: 1, backgroundColor: Colors.canvasLight },
-  resultsHeader: { flexDirection: 'row', alignItems: 'center', paddingTop: 60, paddingBottom: Spacing.md, paddingHorizontal: Spacing.base, backgroundColor: Colors.canvasLight, borderBottomWidth: 1, borderBottomColor: Colors.borderLight },
-  backBtn: { marginRight: Spacing.sm },
-  resultsTitle: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -0.5 },
-  viewToggle: { flexDirection: 'row', backgroundColor: Colors.surfaceLight, padding: 4, marginHorizontal: Spacing.base, marginTop: Spacing.md, borderRadius: Radius.full, borderWidth: 1, borderColor: Colors.borderLight },
-  toggleBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 10, gap: 6, borderRadius: Radius.full },
-  toggleBtnActive: { backgroundColor: Colors.accentPrimary },
-  toggleText: { fontSize: Typography.fontSize.xs, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textSecondary, textTransform: 'uppercase' },
-  toggleTextActive: { color: Colors.textOnPrimary },
+  resultsHeader: { flexDirection: 'row', alignItems: 'center', paddingTop: 60, paddingBottom: Spacing.md, paddingHorizontal: Spacing.base, backgroundColor: Colors.canvasLight },
+  backBtn: { marginRight: Spacing.md, width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.surfaceLight, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: Colors.borderLight },
+  resultsTitle: { fontSize: Typography.fontSize['2xl'], fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -1 },
+  viewToggle: { flexDirection: 'row', backgroundColor: Colors.surfaceLight, padding: 4, marginHorizontal: Spacing.base, marginTop: Spacing.xs, borderRadius: Radius.full, borderWidth: 1, borderColor: Colors.borderLight },
+  toggleBtn: { flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: 12, gap: 6, borderRadius: Radius.full },
+  toggleBtnActive: { backgroundColor: Colors.canvasDark },
+  toggleText: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textSecondary, textTransform: 'uppercase' },
+  toggleTextActive: { color: Colors.textInverse },
   mapContainer: { flex: 1, marginTop: Spacing.sm },
-  map: { flex: 1 },
+  map: { flex: 1, borderRadius: Radius.xl, marginHorizontal: Spacing.base, marginBottom: Spacing.base, overflow: 'hidden' },
   sosWrapper: { position: 'absolute', bottom: Spacing.xl, right: Spacing.xl, alignItems: 'center' },
   list: { flex: 1, padding: Spacing.base },
-  loadingCard: { backgroundColor: Colors.surfaceLight, padding: Spacing.xl, borderRadius: Radius.lg, alignItems: 'center', borderWidth: 1, borderColor: Colors.borderLight },
-  loadingText: { color: Colors.textSecondary, fontWeight: Typography.fontWeight.semibold },
-  emptyCard: { backgroundColor: Colors.surfaceLight, padding: Spacing.xl, borderRadius: Radius.lg, alignItems: 'center', gap: Spacing.sm, borderWidth: 1, borderColor: Colors.borderLight },
-  emptyText: { color: Colors.textMuted, fontSize: Typography.fontSize.sm },
-  bookBtn: { backgroundColor: Colors.accentPrimary, flexDirection: 'row', alignItems: 'center', justifyContent: 'center', paddingVertical: Spacing.md, borderRadius: Radius.full, marginTop: -Spacing.sm, marginBottom: Spacing.base, gap: Spacing.sm, ...Shadow.glow },
-  bookBtnText: { color: Colors.textOnPrimary, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.black, fontSize: Typography.fontSize.sm, textTransform: 'uppercase', letterSpacing: 1 },
+  loadingCard: { backgroundColor: Colors.surfaceLight, padding: Spacing['2xl'], borderRadius: Radius.xl, alignItems: 'center', gap: Spacing.md, borderWidth: 1, borderColor: Colors.borderLight },
+  loadingText: { color: Colors.textPrimary, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.bold, fontSize: Typography.fontSize.lg },
+  emptyCard: { backgroundColor: Colors.canvasCream, padding: Spacing['2xl'], borderRadius: Radius.xl, alignItems: 'center', gap: Spacing.md, borderWidth: 1, borderColor: Colors.borderLight },
+  emptyText: { color: Colors.textSecondary, fontSize: Typography.fontSize.md, fontFamily: Typography.fontFamily.mono },
+  bookBtn: { backgroundColor: Colors.accentPrimary, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.xl, paddingVertical: 20, borderRadius: Radius.full, marginTop: -Spacing.lg, marginBottom: Spacing.xl, ...Shadow.glow },
+  bookBtnText: { color: Colors.textOnPrimary, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, fontSize: Typography.fontSize.xl, letterSpacing: -0.5 },
 });
