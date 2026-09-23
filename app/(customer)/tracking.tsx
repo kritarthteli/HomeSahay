@@ -15,20 +15,20 @@ import { useAppStore } from '../../store/appStore';
 import FeedbackCard from '../../components/FeedbackCard';
 import { Colors, Spacing, Radius, Shadow, Typography } from '../../constants/theme';
 
-const PHASES = [
-  { id: 'confirmed', label: 'Booking Confirmed', icon: 'checkmark-circle', color: '#10B981' },
-  { id: 'heading', label: 'Worker Heading to You', icon: 'bicycle', color: '#6366F1' },
-  { id: 'arrived', label: 'Worker Arrived at Location', icon: 'home', color: '#F59E0B' },
-  { id: 'inprogress', label: 'Work In Progress', icon: 'construct', color: '#EC4899' },
-  { id: 'completed', label: 'Job Completed!', icon: 'trophy', color: '#10B981' },
-];
-
 export default function TrackingScreen() {
   const router = useRouter();
   const { checkoutData, workers, jobs, completeJob, feedback, submitFeedback, activeCustomerId } = useAppStore();
   const [phaseIndex, setPhaseIndex] = useState(0);
-  const [etaLeft, setEtaLeft] = useState(null);
+  const [etaLeft, setEtaLeft] = useState<number | null>(null);
   const progressAnim = useRef(new Animated.Value(0)).current;
+
+  const PHASES = [
+    { id: 'confirmed', label: 'Booking Confirmed', icon: 'checkmark-circle', color: Colors.accentPrimary },
+    { id: 'heading', label: 'Worker Heading to You', icon: 'bicycle', color: Colors.accentPrimary },
+    { id: 'arrived', label: 'Worker Arrived at Location', icon: 'home', color: Colors.warning },
+    { id: 'inprogress', label: 'Work In Progress', icon: 'construct', color: Colors.accentPrimaryDim },
+    { id: 'completed', label: 'Job Completed!', icon: 'trophy', color: Colors.success },
+  ];
 
   const worker = workers.find((w) => w.id === checkoutData?.workerId) ?? workers[0];
   const currentJob = jobs.find((j) => j.id === checkoutData?.jobId);
@@ -43,8 +43,8 @@ export default function TrackingScreen() {
 
     const countdownTimer = setInterval(() => {
       setEtaLeft((t) => {
-        if (t <= 1) { clearInterval(countdownTimer); return 0; }
-        return t - 1;
+        if (t !== null && t <= 1) { clearInterval(countdownTimer); return 0; }
+        return t !== null ? t - 1 : null;
       });
     }, 60000);
 
@@ -75,23 +75,23 @@ export default function TrackingScreen() {
         <SafeAreaView edges={['top']} />
         <View style={styles.headerContent}>
           <View style={styles.topRow}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backBtn}>
-              <Ionicons name="arrow-back" size={20} color="#fff" />
+            <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.8}>
+              <Ionicons name="arrow-back" size={20} color={Colors.textInverse} />
             </TouchableOpacity>
             <View style={styles.headerTitles}>
               <Text style={styles.title}>Live Tracking</Text>
-              <Text style={styles.subtitle}>Order #{checkoutData?.jobId ?? 'HS-8492'}</Text>
+              <Text style={styles.subtitle}>ORDER #{checkoutData?.jobId ?? 'HS-8492'}</Text>
             </View>
             <View style={styles.liveTag}>
               <View style={styles.liveDot} />
-              <Text style={styles.liveText}>Active</Text>
+              <Text style={styles.liveText}>ACTIVE</Text>
             </View>
           </View>
 
           {/* ETA Snapshot */}
           <View style={styles.etaCard}>
             <View style={[styles.etaIcon, { backgroundColor: currentPhase.color + '20' }]}>
-              <Ionicons name={currentPhase.icon as any} size={28} color={currentPhase.color} />
+              <Ionicons name={currentPhase.icon as any} size={24} color={currentPhase.color} />
             </View>
             <View style={styles.etaInfo}>
               <Text style={[styles.etaStatus, { color: currentPhase.color }]}>
@@ -99,17 +99,17 @@ export default function TrackingScreen() {
               </Text>
               <Text style={styles.etaTime}>
                 {phaseIndex === 0
-                  ? `Estimated arrival: ~${etaLeft ?? eta} mins`
+                  ? `ESTIMATED ARRIVAL: ~${etaLeft ?? eta} MINS`
                   : phaseIndex === PHASES.length - 1
-                  ? 'Service successfully delivered'
-                  : 'Worker is on the way to your address'}
+                  ? 'SERVICE SUCCESSFULLY DELIVERED'
+                  : 'WORKER IS ON THE WAY TO YOUR ADDRESS'}
               </Text>
             </View>
           </View>
         </View>
       </View>
 
-      {/* Clean White Bottom Sheet */}
+      {/* Clean Ivory Bottom Sheet */}
       <View style={styles.bottomSheet}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           {/* Worker Profile Card */}
@@ -118,24 +118,24 @@ export default function TrackingScreen() {
             <View style={styles.workerInfo}>
               <Text style={styles.workerName}>{worker.name}</Text>
               <View style={styles.metaRow}>
-                <Ionicons name="star" size={13} color="#F59E0B" />
+                <Ionicons name="star" size={12} color={Colors.textPrimary} />
                 <Text style={styles.metaText}>{worker.rating}</Text>
                 <View style={styles.dot} />
                 <Text style={styles.metaText}>{worker.category.toUpperCase()}</Text>
                 <View style={styles.dot} />
-                <Ionicons name="shield-checkmark" size={13} color="#10B981" />
+                <Ionicons name="shield-checkmark" size={12} color={Colors.success} />
                 <Text style={styles.metaText}>Verified</Text>
               </View>
               <Text style={styles.coopText}>{worker.cooperative}</Text>
             </View>
-            <TouchableOpacity style={styles.callBtn}>
-              <Ionicons name="call" size={18} color="#059669" />
+            <TouchableOpacity style={styles.callBtn} activeOpacity={0.8}>
+              <Ionicons name="call" size={18} color={Colors.textInverse} />
             </TouchableOpacity>
           </View>
 
           {/* Progress Timeline */}
           <View style={styles.timelineCard}>
-            <Text style={styles.timelineTitle}>Dispatch Progress</Text>
+            <Text style={styles.timelineTitle}>DISPATCH PROGRESS</Text>
             {PHASES.map((p, i) => {
               const isPast = i < phaseIndex;
               const isCurrent = i === phaseIndex;
@@ -148,18 +148,18 @@ export default function TrackingScreen() {
                       style={[
                         styles.stepNode,
                         isCurrent && { borderColor: p.color, backgroundColor: p.color + '20' },
-                        isPast && { backgroundColor: '#10B981', borderColor: '#10B981' },
-                        isFuture && { backgroundColor: '#F3F4F6', borderColor: '#E5E7EB' },
+                        isPast && { backgroundColor: Colors.accentPrimary, borderColor: Colors.accentPrimary },
+                        isFuture && { backgroundColor: Colors.canvasCream, borderColor: Colors.borderLight },
                       ]}
                     >
                       {isPast ? (
-                        <Ionicons name="checkmark" size={12} color="#fff" />
+                        <Ionicons name="checkmark" size={12} color={Colors.darkSurfaceDeep} />
                       ) : (
                         <View
                           style={[
                             styles.nodeInner,
                             isCurrent && { backgroundColor: p.color },
-                            isFuture && { backgroundColor: '#D1D5DB' },
+                            isFuture && { backgroundColor: Colors.borderLight },
                           ]}
                         />
                       )}
@@ -168,8 +168,8 @@ export default function TrackingScreen() {
                       <View
                         style={[
                           styles.stepLine,
-                          isPast && { backgroundColor: '#10B981' },
-                          !isPast && { backgroundColor: '#E5E7EB' },
+                          isPast && { backgroundColor: Colors.accentPrimary },
+                          !isPast && { backgroundColor: Colors.borderLight },
                         ]}
                       />
                     )}
@@ -179,15 +179,15 @@ export default function TrackingScreen() {
                     <Text
                       style={[
                         styles.stepLabel,
-                        isCurrent && { color: '#111827', fontWeight: '700' },
-                        isPast && { color: '#4B5563' },
-                        isFuture && { color: '#9CA3AF' },
+                        isCurrent && { color: Colors.textPrimary, fontWeight: Typography.fontWeight.bold },
+                        isPast && { color: Colors.textSecondary },
+                        isFuture && { color: Colors.textMuted },
                       ]}
                     >
                       {p.label}
                     </Text>
                     {isCurrent && (
-                      <Text style={styles.currentStepHint}>In progress now</Text>
+                      <Text style={styles.currentStepHint}>IN PROGRESS NOW</Text>
                     )}
                   </View>
                 </View>
@@ -197,9 +197,9 @@ export default function TrackingScreen() {
 
           {/* Safety & SOS Notice */}
           <View style={styles.safetyCard}>
-            <Ionicons name="shield-checkmark" size={20} color="#6366F1" />
+            <Ionicons name="shield-checkmark" size={20} color={Colors.accentPrimary} />
             <View style={{ flex: 1 }}>
-              <Text style={styles.safetyTitle}>Cooperative Safety Shield</Text>
+              <Text style={styles.safetyTitle}>COOPERATIVE SAFETY SHIELD</Text>
               <Text style={styles.safetyText}>
                 Your session is GPS-monitored. 24/7 Cooperative SOS dispatch is on standby.
               </Text>
@@ -208,7 +208,7 @@ export default function TrackingScreen() {
           {phaseIndex === PHASES.length - 1 && worker && currentJob?.status === 'completed' && (
             <FeedbackCard title="How was your experience?" subject={worker.name}
               submitted={feedback.some((entry) => entry.jobId === currentJob.id && entry.fromRole === 'customer')}
-              onSubmit={(entry) => submitFeedback({ ...entry, jobId: currentJob.id, fromRole: 'customer', fromUserId: activeCustomerId, toWorkerId: worker.id })} />
+              onSubmit={(entry: any) => submitFeedback({ ...entry, jobId: currentJob.id, fromRole: 'customer', fromUserId: activeCustomerId, toWorkerId: worker.id })} />
           )}
         </ScrollView>
       </View>
@@ -219,11 +219,11 @@ export default function TrackingScreen() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: Colors.canvasDark,
   },
   headerBackground: {
-    backgroundColor: '#121212',
-    paddingBottom: Spacing.lg,
+    backgroundColor: Colors.canvasDark,
+    paddingBottom: Spacing.xl,
   },
   headerContent: {
     paddingHorizontal: Spacing.xl,
@@ -233,166 +233,184 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: '#1E1E22',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceInteractive,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2D2D35',
+    borderColor: Colors.borderDark,
   },
   headerTitles: {
     flex: 1,
     marginLeft: Spacing.md,
   },
   title: {
-    color: '#FFFFFF',
-    fontSize: Typography.fontSize.lg,
-    fontWeight: '800',
+    color: Colors.textInverse,
+    fontSize: Typography.fontSize.xl,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    color: '#9CA3AF',
-    fontSize: Typography.fontSize.xs,
-    marginTop: 1,
+    color: Colors.textInverseMuted,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    marginTop: 2,
+    letterSpacing: 1,
   },
   liveTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    gap: 4,
+    backgroundColor: 'transparent',
     borderRadius: Radius.full,
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.3)',
+    borderColor: Colors.borderDark,
   },
   liveDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
-    backgroundColor: '#10B981',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.accentPrimary,
   },
   liveText: {
-    color: '#34D399',
-    fontSize: 11,
-    fontWeight: '700',
+    color: Colors.accentPrimary,
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
 
   etaCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E1E22',
+    backgroundColor: Colors.surfaceDark,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     gap: Spacing.md,
     borderWidth: 1,
-    borderColor: '#2D2D35',
+    borderColor: Colors.borderDark,
   },
   etaIcon: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: Radius.full,
     justifyContent: 'center',
     alignItems: 'center',
   },
   etaInfo: { flex: 1 },
   etaStatus: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: '800',
+    fontSize: Typography.fontSize.md,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
   },
   etaTime: {
-    color: '#9CA3AF',
-    fontSize: Typography.fontSize.xs,
-    marginTop: 2,
+    color: Colors.textInverseMuted,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    marginTop: 4,
+    letterSpacing: 0.5,
   },
 
   // Bottom Sheet
   bottomSheet: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    backgroundColor: Colors.canvasLight,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
     overflow: 'hidden',
   },
   scrollContent: {
     padding: Spacing.xl,
-    paddingBottom: Spacing['3xl'],
+    paddingBottom: Spacing['4xl'],
   },
   workerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     gap: Spacing.md,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    marginBottom: Spacing.lg,
+    borderColor: Colors.borderLight,
+    marginBottom: Spacing.xl,
   },
   avatar: {
     width: 48,
     height: 48,
-    borderRadius: 24,
+    borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
   },
   workerInfo: { flex: 1 },
   workerName: {
-    color: '#111827',
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
+    color: Colors.textPrimary,
+    fontSize: Typography.fontSize.md,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.bold,
   },
   metaRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    marginTop: 2,
+    gap: 6,
+    marginTop: 4,
     flexWrap: 'wrap',
   },
   metaText: {
-    color: '#4B5563',
-    fontSize: Typography.fontSize.xs,
+    color: Colors.textSecondary,
+    fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
   },
   dot: {
-    width: 3,
-    height: 3,
-    borderRadius: 1.5,
-    backgroundColor: '#D1D5DB',
+    width: 4,
+    height: 4,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.borderLight,
   },
   coopText: {
-    fontSize: 11,
-    color: '#6366F1',
-    fontWeight: '500',
-    marginTop: 2,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textMuted,
+    fontWeight: Typography.fontWeight.bold,
+    marginTop: 4,
+    letterSpacing: 0.5,
   },
   callBtn: {
     width: 40,
     height: 40,
-    borderRadius: 20,
-    backgroundColor: '#ECFDF5',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.darkSurfaceDeep,
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#A7F3D0',
+    ...Shadow.glow,
   },
 
   // Timeline
   timelineCard: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    marginBottom: Spacing.lg,
+    borderColor: Colors.borderLight,
+    marginBottom: Spacing.xl,
   },
   timelineTitle: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
-    color: '#111827',
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textMuted,
+    letterSpacing: 1.5,
     marginBottom: Spacing.lg,
   },
   stepRow: {
@@ -401,59 +419,65 @@ const styles = StyleSheet.create({
   },
   stepLeft: {
     alignItems: 'center',
-    width: 22,
+    width: 24,
   },
   stepNode: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: 24,
+    height: 24,
+    borderRadius: Radius.full,
     borderWidth: 2,
     justifyContent: 'center',
     alignItems: 'center',
   },
   nodeInner: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
+    width: 8,
+    height: 8,
+    borderRadius: Radius.full,
   },
   stepLine: {
     width: 2,
-    height: 34,
+    height: 36,
   },
   stepRight: {
     flex: 1,
-    paddingBottom: 22,
+    paddingBottom: 24,
   },
   stepLabel: {
     fontSize: Typography.fontSize.sm,
-    fontWeight: '500',
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.semibold,
   },
   currentStepHint: {
-    fontSize: 11,
-    color: '#6366F1',
-    fontWeight: '600',
-    marginTop: 2,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.accentPrimary,
+    fontWeight: Typography.fontWeight.bold,
+    marginTop: 4,
+    letterSpacing: 0.5,
   },
 
   safetyCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#EEF2FF',
-    padding: Spacing.md,
+    backgroundColor: Colors.surfaceDark,
+    padding: Spacing.lg,
     borderRadius: Radius.lg,
     gap: Spacing.md,
     borderWidth: 1,
-    borderColor: '#C7D2FE',
+    borderColor: Colors.borderDark,
+    marginBottom: Spacing.xl,
   },
   safetyTitle: {
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
-    color: '#3730A3',
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.accentPrimary,
+    letterSpacing: 1,
+    marginBottom: 4,
   },
   safetyText: {
-    fontSize: 11,
-    color: '#4338CA',
-    marginTop: 2,
-    lineHeight: 15,
+    fontSize: Typography.fontSize.xs,
+    color: Colors.textInverseMuted,
+    lineHeight: 18,
   },
 });

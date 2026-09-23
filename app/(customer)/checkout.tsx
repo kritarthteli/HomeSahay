@@ -44,8 +44,8 @@ export default function CheckoutScreen() {
         <View style={styles.header}>
           <SafeAreaView edges={['top']} />
           <View style={styles.headerContent}>
-            <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-              <Ionicons name="arrow-back" size={20} color="#fff" />
+            <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.8}>
+              <Ionicons name="arrow-back" size={20} color={Colors.textInverse} />
             </TouchableOpacity>
             <Text style={styles.headerTitle}>Checkout</Text>
           </View>
@@ -70,8 +70,8 @@ export default function CheckoutScreen() {
       <View style={styles.header}>
         <SafeAreaView edges={['top']} />
         <View style={styles.headerContent}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()}>
-            <Ionicons name="arrow-back" size={20} color="#fff" />
+          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.8}>
+            <Ionicons name="arrow-back" size={20} color={Colors.textInverse} />
           </TouchableOpacity>
           <View>
             <Text style={styles.headerTitle}>Confirm Booking</Text>
@@ -97,11 +97,11 @@ export default function CheckoutScreen() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: Colors.canvasDark,
   },
   header: {
-    backgroundColor: '#121212',
-    paddingBottom: Spacing.lg,
+    backgroundColor: Colors.canvasDark,
+    paddingBottom: Spacing.xl,
   },
   headerContent: {
     flexDirection: 'row',
@@ -113,35 +113,41 @@ const styles = StyleSheet.create({
   backBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: '#1E1E22',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceInteractive,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2D2D35',
+    borderColor: Colors.borderDark,
   },
   headerTitle: {
-    color: '#FFFFFF',
-    fontSize: Typography.fontSize.lg,
-    fontWeight: '800',
+    color: Colors.textInverse,
+    fontSize: Typography.fontSize.xl,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
   },
   headerSub: {
-    color: '#9CA3AF',
-    fontSize: Typography.fontSize.xs,
+    color: Colors.textInverseMuted,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
     marginTop: 2,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   sheetContainer: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    backgroundColor: Colors.canvasLight,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
     overflow: 'hidden',
   },
   emptySheet: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    backgroundColor: Colors.canvasLight,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
     alignItems: 'center',
     justifyContent: 'center',
     padding: Spacing.xl,
@@ -149,34 +155,42 @@ const styles = StyleSheet.create({
   emptyIconBox: {
     width: 80,
     height: 80,
-    borderRadius: 40,
-    backgroundColor: '#F3F4F6',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.canvasCream,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
   emptyTitle: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#111827',
+    fontSize: Typography.fontSize.xl,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textPrimary,
     marginBottom: 6,
+    letterSpacing: -0.5,
   },
   emptyText: {
     fontSize: Typography.fontSize.sm,
-    color: '#6B7280',
+    color: Colors.textSecondary,
     textAlign: 'center',
     marginBottom: Spacing.xl,
     maxWidth: 260,
   },
   exploreBtn: {
-    backgroundColor: '#6366F1',
+    backgroundColor: Colors.accentPrimary,
     paddingHorizontal: Spacing.xl,
     paddingVertical: 14,
-    borderRadius: Radius.lg,
+    borderRadius: Radius.full,
+    ...Shadow.glow,
   },
   exploreBtnText: {
-    color: '#fff',
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
+    color: Colors.textOnPrimary,
+    fontSize: 12,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
 });

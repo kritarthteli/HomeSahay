@@ -12,17 +12,17 @@ import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius, Shadow, Typography } from '../constants/theme';
 import { processPayment } from '../services/mockApi';
 
-const PAYMENT_METHODS = [
-  { id: 'upi', label: 'UPI', icon: 'phone-portrait-outline', color: '#6366F1' },
-  { id: 'card', label: 'Card', icon: 'card-outline', color: '#3c20a1ff' },
-  { id: 'cash', label: 'Cash', icon: 'cash-outline', color: '#3c20a1ff' },
-];
-
-export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, onClose }) {
+export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, onClose }: any) {
   const [selectedMethod, setSelectedMethod] = useState('upi');
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState(null);
+
+  const PAYMENT_METHODS = [
+    { id: 'upi', label: 'UPI', icon: 'phone-portrait-outline', color: Colors.textPrimary },
+    { id: 'card', label: 'Card', icon: 'card-outline', color: Colors.textSecondary },
+    { id: 'cash', label: 'Cash', icon: 'cash-outline', color: Colors.textSecondary },
+  ];
 
   if (!checkoutData || !worker) return null;
   const { pricing, jobId } = checkoutData;
@@ -38,7 +38,7 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
       });
       setSuccess(true);
       setTimeout(() => onPaymentSuccess?.(result), 1200);
-    } catch (e) {
+    } catch (e: any) {
       setError(e.message);
     } finally {
       setLoading(false);
@@ -57,7 +57,7 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
           <Text style={styles.subtitle}>Direct booking with transparent cooperative pricing</Text>
         </View>
         <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
-          <Ionicons name="close" size={20} color="#374151" />
+          <Ionicons name="close" size={20} color={Colors.textPrimary} />
         </TouchableOpacity>
       </View>
 
@@ -68,13 +68,13 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
           <View style={styles.workerInfo}>
             <Text style={styles.workerName}>{worker.name}</Text>
             <View style={styles.workerMeta}>
-              <Ionicons name="star" size={13} color="#3c20a1ff" />
+              <Ionicons name="star" size={12} color={Colors.textPrimary} />
               <Text style={styles.workerMetaText}>{worker.rating}</Text>
               <View style={styles.dot} />
-              <Ionicons name="shield-checkmark" size={13} color="#3c20a1ff" />
+              <Ionicons name="shield-checkmark" size={12} color={Colors.textPrimary} />
               <Text style={styles.workerMetaText}>Verified Partner</Text>
               <View style={styles.dot} />
-              <Ionicons name="time-outline" size={13} color="#6366F1" />
+              <Ionicons name="time-outline" size={12} color={Colors.textSecondary} />
               <Text style={styles.workerMetaText}>ETA ~{worker.estimatedEta ?? worker.etaMinutes} min</Text>
             </View>
           </View>
@@ -82,9 +82,9 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
 
         {/* Price Breakdown */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Price Breakdown</Text>
+          <Text style={styles.sectionTitle}>PRICE BREAKDOWN</Text>
           <View style={styles.breakdownCard}>
-            {pricing.breakdown.map((item, i) => (
+            {pricing.breakdown.map((item: any, i: number) => (
               <View key={i} style={styles.priceRow}>
                 <Text style={styles.priceLabel}>{item.label}</Text>
                 <Text style={styles.priceValue}>₹{item.amount}</Text>
@@ -98,7 +98,7 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
           </View>
 
           <View style={styles.cooperativeNote}>
-            <Ionicons name="shield-checkmark" size={16} color="#059669" />
+            <Ionicons name="shield-checkmark" size={16} color={Colors.textOnPrimary} />
             <Text style={styles.cooperativeNoteText}>
               100% of the service fee goes directly to {worker.name.split(' ')[0]}. Zero surge fees.
             </Text>
@@ -107,7 +107,7 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
 
         {/* Payment Method */}
         <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Select Payment Method</Text>
+          <Text style={styles.sectionTitle}>SELECT PAYMENT METHOD</Text>
           <View style={styles.methodRow}>
             {PAYMENT_METHODS.map((m) => {
               const isSelected = selectedMethod === m.id;
@@ -116,12 +116,13 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
                   key={m.id}
                   style={[
                     styles.methodCard,
-                    isSelected && { borderColor: m.color, backgroundColor: m.color + '12' },
+                    isSelected && { borderColor: Colors.textPrimary, backgroundColor: Colors.borderLight },
                   ]}
                   onPress={() => setSelectedMethod(m.id)}
+                  activeOpacity={0.7}
                 >
-                  <Ionicons name={m.icon} size={22} color={isSelected ? m.color : '#6B7280'} />
-                  <Text style={[styles.methodLabel, isSelected && { color: m.color, fontWeight: '700' }]}>
+                  <Ionicons name={m.icon as any} size={20} color={isSelected ? Colors.textPrimary : Colors.textMuted} />
+                  <Text style={[styles.methodLabel, isSelected && { color: Colors.textPrimary, fontWeight: Typography.fontWeight.bold }]}>
                     {m.label}
                   </Text>
                 </TouchableOpacity>
@@ -133,7 +134,7 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
         {/* Error */}
         {error && (
           <View style={styles.errorCard}>
-            <Ionicons name="alert-circle" size={16} color="#DC2626" />
+            <Ionicons name="alert-circle" size={16} color={Colors.danger} />
             <Text style={styles.errorText}>{error}</Text>
           </View>
         )}
@@ -143,18 +144,19 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
           style={[styles.payBtn, (loading || success) && styles.payBtnDisabled]}
           onPress={handlePay}
           disabled={loading || success}
+          activeOpacity={0.8}
         >
           {loading ? (
-            <ActivityIndicator color="#fff" size="small" />
+            <ActivityIndicator color={Colors.darkSurfaceDeep} size="small" />
           ) : success ? (
             <>
-              <Ionicons name="checkmark-circle" size={20} color="#fff" />
-              <Text style={styles.payBtnText}>Payment Confirmed!</Text>
+              <Ionicons name="checkmark-circle" size={20} color={Colors.darkSurfaceDeep} />
+              <Text style={styles.payBtnText}>PAYMENT CONFIRMED!</Text>
             </>
           ) : (
             <>
-              <Ionicons name="lock-closed" size={18} color="#fff" />
-              <Text style={styles.payBtnText}>Pay ₹{pricing.totalAmount} & Confirm</Text>
+              <Ionicons name="lock-closed" size={16} color={Colors.darkSurfaceDeep} />
+              <Text style={styles.payBtnText}>PAY ₹{pricing.totalAmount} & CONFIRM</Text>
             </>
           )}
         </TouchableOpacity>
@@ -165,9 +167,9 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
 
 const styles = StyleSheet.create({
   sheet: {
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    backgroundColor: Colors.canvasLight,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.md,
     paddingBottom: Spacing['3xl'],
@@ -175,8 +177,8 @@ const styles = StyleSheet.create({
   handle: {
     width: 36,
     height: 4,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 2,
+    backgroundColor: Colors.borderLight,
+    borderRadius: Radius.full,
     alignSelf: 'center',
     marginBottom: Spacing.base,
   },
@@ -184,128 +186,143 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: Spacing.base,
+    marginBottom: Spacing.xl,
   },
   title: {
-    color: '#111827',
+    color: Colors.textPrimary,
     fontSize: Typography.fontSize.xl,
-    fontWeight: '800',
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    color: '#6B7280',
-    fontSize: Typography.fontSize.xs,
-    marginTop: 2,
+    color: Colors.textSecondary,
+    fontSize: Typography.fontSize.sm,
+    marginTop: 4,
   },
   closeBtn: {
     width: 34,
     height: 34,
-    borderRadius: 17,
-    backgroundColor: '#F3F4F6',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.canvasCream,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
   workerCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
     padding: Spacing.md,
-    marginBottom: Spacing.base,
+    marginBottom: Spacing.xl,
     gap: Spacing.md,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
   },
   avatar: {
     width: 44,
     height: 44,
-    borderRadius: 22,
+    borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
   },
   workerInfo: { flex: 1 },
   workerName: {
-    color: '#111827',
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
+    color: Colors.textPrimary,
+    fontSize: Typography.fontSize.md,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.bold,
   },
   workerMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    marginTop: 4,
+    gap: 6,
+    marginTop: 6,
     flexWrap: 'wrap',
   },
   workerMetaText: {
-    color: '#4B5563',
-    fontSize: Typography.fontSize.xs,
+    color: Colors.textSecondary,
+    fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
   },
   dot: {
     width: 3,
     height: 3,
-    borderRadius: 1.5,
-    backgroundColor: '#D1D5DB',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.borderLight,
   },
   section: {
-    marginBottom: Spacing.base,
+    marginBottom: Spacing.xl,
   },
   sectionTitle: {
-    color: '#111827',
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
+    color: Colors.textPrimary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1.5,
     marginBottom: Spacing.sm,
   },
   breakdownCard: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
-    padding: Spacing.md,
+    padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
   },
   priceRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 5,
+    paddingVertical: 6,
   },
   priceLabel: {
-    color: '#4B5563',
+    color: Colors.textSecondary,
     fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.semibold,
   },
   priceValue: {
-    color: '#111827',
+    color: Colors.textPrimary,
     fontSize: Typography.fontSize.sm,
-    fontWeight: '600',
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
   },
   divider: {
     height: 1,
-    backgroundColor: '#E5E7EB',
-    marginVertical: Spacing.sm,
+    backgroundColor: Colors.borderLight,
+    marginVertical: Spacing.md,
   },
   totalLabel: {
-    color: '#111827',
-    fontSize: Typography.fontSize.base,
-    fontWeight: '800',
+    color: Colors.textPrimary,
+    fontSize: Typography.fontSize.md,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
   },
   totalValue: {
-    color: '#059669',
+    color: Colors.textPrimary,
     fontSize: Typography.fontSize.lg,
-    fontWeight: '800',
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
   },
   cooperativeNote: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     marginTop: Spacing.sm,
-    backgroundColor: '#ECFDF5',
-    borderRadius: Radius.md,
+    backgroundColor: Colors.accentPrimary,
+    borderRadius: Radius.full,
     padding: Spacing.sm,
-    borderWidth: 1,
-    borderColor: '#A7F3D0',
+    paddingHorizontal: Spacing.md,
   },
   cooperativeNoteText: {
-    color: '#065F46',
-    fontSize: Typography.fontSize.xs,
+    color: Colors.textOnPrimary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
     flex: 1,
-    lineHeight: 16,
+    letterSpacing: 0.5,
   },
   methodRow: {
     flexDirection: 'row',
@@ -315,32 +332,36 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
     padding: Spacing.md,
-    borderWidth: 1.5,
-    borderColor: '#E5E7EB',
-    gap: 6,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    gap: 8,
   },
   methodLabel: {
-    color: '#6B7280',
-    fontSize: Typography.fontSize.xs,
-    fontWeight: '600',
+    color: Colors.textSecondary,
+    fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
   errorCard: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    backgroundColor: '#FEE2E2',
+    backgroundColor: Colors.dangerContainer,
     borderRadius: Radius.md,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
     borderWidth: 1,
-    borderColor: '#FCA5A5',
+    borderColor: Colors.danger,
   },
   errorText: {
-    color: '#DC2626',
-    fontSize: Typography.fontSize.xs,
+    color: Colors.danger,
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
     flex: 1,
   },
   payBtn: {
@@ -348,21 +369,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: '#6366F1',
-    borderRadius: Radius.lg,
-    paddingVertical: 16,
+    backgroundColor: Colors.accentPrimary,
+    borderRadius: Radius.full,
+    paddingVertical: 18,
     marginTop: Spacing.sm,
-    shadowColor: '#6366F1',
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    ...Shadow.glow,
   },
   payBtnDisabled: {
     opacity: 0.7,
+    shadowOpacity: 0,
   },
   payBtnText: {
-    color: '#fff',
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
+    color: Colors.darkSurfaceDeep,
+    fontSize: 14,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: 1,
   },
 });
