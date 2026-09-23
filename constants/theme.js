@@ -1,49 +1,73 @@
 // ============================================================
-// Design Tokens — SIH Cooperative Gig Platform
+// Design Tokens — Stitch Theme Redesign
 // ============================================================
 
+const StitchColors = {
+  canvas: '#F6F6F0',         // warm ivory
+  surface: '#E8E8E2',        // soft grey-green
+  surfaceWhite: '#FFFFFF',
+  ink: '#2A2D28',            // near-black charcoal
+  inkDeep: '#1B1D19',        // deeper charcoal
+  textPrimary: '#1B1D19',
+  textSecondary: '#5F645A',  // muted grey-green
+  textOnDark: '#F2F3EE',
+  textMutedOnDark: '#A9AEA2',
+  accentLime: '#B6FF4D',     // electric lime
+  accentOlive: '#3F6212',
+  danger: '#B42318',
+  dangerTint: '#FBE9E7',
+  border: '#D3D6CF',
+  borderDark: '#3A3E37',
+};
+
+// Map old constants to Stitch to prevent breakage
 export const Colors = {
   // Brand
-  primary: '#6C63FF',       // Deep violet — cooperative identity
-  primaryLight: '#8B85FF',
-  primaryDark: '#4A42CC',
-  accent: '#FF6B35',        // Vibrant orange — energy/action
-  accentLight: '#FF8F65',
-  success: '#22C55E',
-  warning: '#3c20a1ff',
-  error: '#EF4444',
-  sos: '#FF1744',           // High-contrast SOS red
+  primary: StitchColors.accentLime,
+  primaryLight: '#D4FF8C',
+  primaryDark: StitchColors.accentOlive,
+  accent: StitchColors.accentLime,
+  accentLight: '#E8FFB5',
+  success: '#2E500A',
+  warning: '#F59E0B',
+  error: StitchColors.danger,
+  sos: StitchColors.danger,
 
-  // Backgrounds (dark mode system)
-  bg0: '#080D1A',           // Deepest background
-  bg1: '#0F172A',           // Primary background
-  bg2: '#1E293B',           // Cards / panels
-  bg3: '#334155',           // Input fields / elevated
-  bg4: '#475569',           // Dividers / muted
+  // Backgrounds
+  bg0: StitchColors.canvas,
+  bg1: StitchColors.surface,
+  bg2: StitchColors.surfaceWhite,
+  bg3: StitchColors.border,
+  bg4: '#C2C6BC',
+
+  // Dark mode / inverse mapping for specific Stitch dark cards
+  darkSurface: StitchColors.ink,
+  darkSurfaceDeep: StitchColors.inkDeep,
 
   // Text
-  textPrimary: '#F1F5F9',
-  textSecondary: '#94A3B8',
-  textMuted: '#64748B',
-  textInverse: '#0F172A',
+  textPrimary: StitchColors.textPrimary,
+  textSecondary: StitchColors.textSecondary,
+  textMuted: '#848A7D',
+  textInverse: StitchColors.textOnDark,
+  textInverseMuted: StitchColors.textMutedOnDark,
 
-  // Role-specific accent colors
-  customerAccent: '#6C63FF',
-  workerAccent: '#22C55E',
-  adminAccent: '#3c20a1ff',
+  // Role-specific (can unify for now)
+  customerAccent: StitchColors.accentLime,
+  workerAccent: StitchColors.accentLime,
+  adminAccent: StitchColors.accentLime,
 
   // Map
-  workerPin: '#22C55E',
-  customerPin: '#6C63FF',
-  emergencyPin: '#FF1744',
+  workerPin: StitchColors.ink,
+  customerPin: StitchColors.accentLime,
+  emergencyPin: StitchColors.danger,
 
   // Overlay
-  overlay: 'rgba(8, 13, 26, 0.85)',
-  overlayLight: 'rgba(8, 13, 26, 0.5)',
+  overlay: 'rgba(27, 29, 25, 0.6)',
+  overlayLight: 'rgba(27, 29, 25, 0.2)',
 
-  // Glass
-  glass: 'rgba(255, 255, 255, 0.06)',
-  glassBorder: 'rgba(255, 255, 255, 0.12)',
+  // Borders
+  glassBorder: StitchColors.border,
+  glassBorderDark: StitchColors.borderDark,
 };
 
 export const Typography = {
@@ -51,16 +75,19 @@ export const Typography = {
     regular: 'System',
     medium: 'System',
     bold: 'System',
+    mono: 'Courier', // Will map to native monospace dynamically where needed
   },
   fontSize: {
-    xs: 11,
-    sm: 13,
-    base: 15,
-    md: 17,
+    xs: 12,
+    sm: 14,
+    base: 16,
+    md: 18,
     lg: 20,
     xl: 24,
-    '2xl': 30,
-    '3xl': 36,
+    '2xl': 32,
+    '3xl': 40,
+    '4xl': 48,
+    'display': 56, // Huge hero size
   },
   fontWeight: {
     regular: '400',
@@ -68,65 +95,66 @@ export const Typography = {
     semibold: '600',
     bold: '700',
     extrabold: '800',
+    black: '900', // WIDE geometric look
   },
   lineHeight: {
-    tight: 1.2,
-    normal: 1.5,
-    relaxed: 1.75,
+    tight: 1.1,
+    normal: 1.4,
+    relaxed: 1.6,
   },
 };
 
 export const Spacing = {
-  xxs: 2,
-  xs: 4,
-  sm: 8,
-  md: 12,
-  base: 16,
-  lg: 20,
-  xl: 24,
-  '2xl': 32,
-  '3xl': 40,
-  '4xl': 56,
-  '5xl': 72,
+  xxs: 4,
+  xs: 8,
+  sm: 12,
+  md: 16,
+  base: 24,
+  lg: 32,
+  xl: 40,
+  '2xl': 48,
+  '3xl': 64,
+  '4xl': 80,
+  '5xl': 96,
 };
 
 export const Radius = {
-  xs: 4,
-  sm: 8,
-  md: 12,
-  lg: 16,
-  xl: 20,
-  '2xl': 28,
+  xs: 8,
+  sm: 12,
+  md: 20,
+  lg: 28,
+  xl: 36,
+  '2xl': 44,
   full: 9999,
 };
 
 export const Shadow = {
   sm: {
-    shadowColor: '#000',
+    shadowColor: StitchColors.inkDeep,
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.05,
     shadowRadius: 4,
-    elevation: 3,
+    elevation: 2,
   },
   md: {
-    shadowColor: '#000',
+    shadowColor: StitchColors.inkDeep,
     shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    elevation: 6,
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    elevation: 4,
   },
   lg: {
-    shadowColor: '#6C63FF',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 16,
-    elevation: 12,
+    shadowColor: StitchColors.inkDeep,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 24,
+    elevation: 8,
   },
   glow: {
-    shadowColor: '#6C63FF',
+    shadowColor: StitchColors.accentLime,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
+    shadowOpacity: 0.25,
     shadowRadius: 20,
-    elevation: 20,
+    elevation: 10,
   },
 };
