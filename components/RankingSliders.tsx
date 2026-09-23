@@ -7,31 +7,31 @@ import { useAppStore } from '../store/appStore';
 const WEIGHT_CONFIGS = [
   {
     key: 'skillMatch',
-    label: 'Skill Match',
+    label: 'SKILL MATCH',
     icon: '🎯',
     description: 'Priority given to exact skill category match',
-    color: '#6366F1',
+    color: Colors.accentPrimaryDark,
   },
   {
     key: 'distance',
-    label: 'Distance',
+    label: 'DISTANCE',
     icon: '📍',
     description: 'Closer workers ranked higher',
-    color: '#3c20a1ff',
+    color: Colors.textPrimary,
   },
   {
     key: 'rating',
-    label: 'Customer Rating',
+    label: 'CUSTOMER RATING',
     icon: '⭐',
     description: 'Historical performance score weight',
-    color: '#3c20a1ff',
+    color: Colors.textSecondary,
   },
   {
     key: 'fairnessPenalty',
-    label: 'Fairness Penalty',
+    label: 'FAIRNESS PENALTY',
     icon: '⚖️',
     description: 'Anti-monopoly: penalizes overloaded workers',
-    color: '#EC4899',
+    color: Colors.warningDark,
   },
 ];
 
@@ -44,9 +44,9 @@ export default function RankingSliders({ rankedWorkers = [] }: { rankedWorkers?:
   return (
     <View style={styles.container}>
       {/* Balance Indicator */}
-      <View style={[styles.balanceBar, { borderColor: isBalanced ? '#3c20a1ff' : '#3c20a1ff' }]}>
-        <Text style={[styles.balanceText, { color: isBalanced ? '#065F46' : '#92400E' }]}>
-          {isBalanced ? '✓ Weights balanced (Σ = 1.0)' : `⚠ Weights sum to ${totalWeight.toFixed(2)} — adjust to 1.0`}
+      <View style={[styles.balanceBar, { borderColor: isBalanced ? Colors.textPrimary : Colors.danger }]}>
+        <Text style={[styles.balanceText, { color: isBalanced ? Colors.textPrimary : Colors.danger }]}>
+          {isBalanced ? '✓ WEIGHTS BALANCED (Σ = 1.0)' : `⚠ WEIGHTS SUM TO ${totalWeight.toFixed(2)} — ADJUST TO 1.0`}
         </Text>
       </View>
 
@@ -76,7 +76,7 @@ export default function RankingSliders({ rankedWorkers = [] }: { rankedWorkers?:
               value={value}
               onValueChange={(val) => updateRankingWeight(cfg.key, Math.round(val * 100) / 100)}
               minimumTrackTintColor={cfg.color}
-              maximumTrackTintColor="#E5E7EB"
+              maximumTrackTintColor={Colors.borderLight}
               thumbTintColor={cfg.color}
             />
           </View>
@@ -86,22 +86,22 @@ export default function RankingSliders({ rankedWorkers = [] }: { rankedWorkers?:
       {/* Live Preview of Top 3 */}
       {rankedWorkers.length > 0 && (
         <View style={styles.preview}>
-          <Text style={styles.previewTitle}>Live Top 3 Workers (Instant Recalculation)</Text>
+          <Text style={styles.previewTitle}>LIVE TOP 3 PARTNERS (INSTANT RECALCULATION)</Text>
           {rankedWorkers.slice(0, 3).map((w, i) => (
             <View key={w.id} style={styles.previewRow}>
               <Text style={styles.previewRank}>#{i + 1}</Text>
               <Text style={styles.previewName}>{w.name}</Text>
               <Text style={styles.previewScore}>
-                {w.matchScore ? `${(w.matchScore * 100).toFixed(0)} pts` : '—'}
+                {w.matchScore ? `${(w.matchScore * 100).toFixed(0)} PTS` : '—'}
               </Text>
-              <Text style={styles.previewJobs}>{w.todayJobs} jobs today</Text>
+              <Text style={styles.previewJobs}>{w.todayJobs} JOBS TODAY</Text>
             </View>
           ))}
         </View>
       )}
 
-      <TouchableOpacity onPress={resetRankingWeights} style={styles.resetBtn}>
-        <Text style={styles.resetLink}>Reset weights to default formula</Text>
+      <TouchableOpacity onPress={resetRankingWeights} style={styles.resetBtn} activeOpacity={0.7}>
+        <Text style={styles.resetLink}>RESET WEIGHTS TO DEFAULT FORMULA</Text>
       </TouchableOpacity>
     </View>
   );
@@ -110,96 +110,108 @@ export default function RankingSliders({ rankedWorkers = [] }: { rankedWorkers?:
 const styles = StyleSheet.create({
   container: { gap: Spacing.md },
   balanceBar: {
-    padding: Spacing.sm,
-    borderRadius: Radius.md,
-    borderWidth: 1.5,
-    backgroundColor: '#F9FAFB',
+    padding: Spacing.md,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    backgroundColor: Colors.canvasCream,
     alignItems: 'center',
   },
   balanceText: {
-    fontSize: Typography.fontSize.xs,
-    fontWeight: '700',
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
   },
   sliderCard: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
-    padding: Spacing.md,
+    padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    gap: Spacing.sm,
+    borderColor: Colors.borderLight,
+    gap: Spacing.md,
   },
   sliderHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: Spacing.sm,
+    gap: Spacing.md,
   },
-  sliderEmoji: { fontSize: 22 },
+  sliderEmoji: { fontSize: 24 },
   sliderInfo: { flex: 1 },
   sliderLabel: {
-    color: '#111827',
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
+    color: Colors.textPrimary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
   },
   sliderDesc: {
-    color: '#6B7280',
-    fontSize: Typography.fontSize.xs,
-    marginTop: 2,
+    color: Colors.textSecondary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    marginTop: 4,
   },
   valuePill: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: 4,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
     borderRadius: Radius.full,
     minWidth: 48,
     alignItems: 'center',
   },
   valueText: {
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '800',
+    fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
   },
   slider: { width: '100%', height: 32 },
   preview: {
-    backgroundColor: '#EEF2FF',
+    backgroundColor: Colors.canvasCream,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     gap: Spacing.xs,
     borderWidth: 1,
-    borderColor: '#C7D2FE',
+    borderColor: Colors.borderLight,
   },
   previewTitle: {
-    color: '#4338CA',
-    fontSize: Typography.fontSize.xs,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: Colors.textPrimary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
+    marginBottom: Spacing.sm,
   },
   previewRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    paddingVertical: 4,
+    paddingVertical: 6,
   },
   previewRank: {
-    color: '#6B7280',
-    fontSize: Typography.fontSize.sm,
+    color: Colors.textSecondary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
     width: 26,
-    fontWeight: '800',
   },
   previewName: {
-    color: '#111827',
+    color: Colors.textPrimary,
     fontSize: Typography.fontSize.sm,
-    fontWeight: '600',
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.bold,
     flex: 1,
   },
   previewScore: {
-    color: '#4F46E5',
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
-    width: 54,
+    color: Colors.accentPrimaryDark,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    width: 60,
     textAlign: 'right',
   },
   previewJobs: {
-    color: '#6B7280',
-    fontSize: Typography.fontSize.xs,
-    width: 80,
+    color: Colors.textSecondary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    width: 90,
     textAlign: 'right',
   },
   resetBtn: {
@@ -207,8 +219,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   resetLink: {
-    color: '#6B7280',
-    fontSize: Typography.fontSize.xs,
+    color: Colors.textSecondary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
     textDecorationLine: 'underline',
   },
 });

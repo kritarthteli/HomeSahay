@@ -23,36 +23,36 @@ export default function AnalyticsChart({
         data: data.map((d) => d.todayJobs),
         colors: data.map((d, i) =>
           (opacity = 1) =>
-            ['#3c20a1ff', '#6366F1', '#8B5CF6', '#A855F7', '#D946EF'][i % 5]
+            [Colors.accentPrimaryDark, Colors.textPrimary, Colors.textSecondary, Colors.warningDark, Colors.danger][i % 5]
         ),
       },
     ],
   };
 
   const chartConfig = {
-    backgroundColor: '#F8FAFC',
-    backgroundGradientFrom: '#F8FAFC',
-    backgroundGradientTo: '#EEF2FF',
+    backgroundColor: Colors.surfaceLight,
+    backgroundGradientFrom: Colors.surfaceLight,
+    backgroundGradientTo: Colors.canvasCream,
     decimalPlaces: 0,
-    color: (opacity = 1) => `rgba(60, 32, 161, ${opacity})`, // #3c20a1ff theme
-    labelColor: (opacity = 1) => `rgba(55, 65, 81, ${opacity})`,
+    color: (opacity = 1) => Colors.textPrimary,
+    labelColor: (opacity = 1) => Colors.textSecondary,
     barPercentage: 0.7,
     style: { borderRadius: Radius.lg },
-    propsForDots: { r: '4', strokeWidth: '2', stroke: '#3c20a1ff' },
-    propsForBackgroundLines: { stroke: '#E5E7EB', strokeDasharray: '4' },
-    fillShadowGradient: '#3c20a1ff',
+    propsForDots: { r: '4', strokeWidth: '2', stroke: Colors.textPrimary },
+    propsForBackgroundLines: { stroke: Colors.borderLight, strokeDasharray: '4' },
+    fillShadowGradient: Colors.textPrimary,
     fillShadowGradientOpacity: 0.6,
   };
 
   const fairnessColor =
-    fairnessIndex >= 0.75 ? '#059669' : fairnessIndex >= 0.5 ? '#D97706' : '#DC2626';
+    fairnessIndex >= 0.75 ? Colors.accentPrimaryDark : fairnessIndex >= 0.5 ? Colors.warningDark : Colors.danger;
 
   return (
     <View style={styles.container}>
       {/* Fairness metrics */}
       <View style={styles.metricsRow}>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Fairness Index</Text>
+          <Text style={styles.metricLabel}>FAIRNESS INDEX</Text>
           <Text style={[styles.metricValue, { color: fairnessColor }]}>
             {(fairnessIndex * 100).toFixed(0)}%
           </Text>
@@ -61,17 +61,17 @@ export default function AnalyticsChart({
           </View>
         </View>
         <View style={styles.metricCard}>
-          <Text style={styles.metricLabel}>Gini Coefficient</Text>
-          <Text style={[styles.metricValue, { color: giniCoefficient < 0.3 ? '#059669' : '#D97706' }]}>
+          <Text style={styles.metricLabel}>GINI COEFFICIENT</Text>
+          <Text style={[styles.metricValue, { color: giniCoefficient < 0.3 ? Colors.accentPrimaryDark : Colors.warningDark }]}>
             {giniCoefficient.toFixed(3)}
           </Text>
-          <Text style={styles.metricSub}>{giniCoefficient < 0.3 ? 'Equitable allocation ✓' : 'Moderate spread'}</Text>
+          <Text style={[styles.metricSub, { color: giniCoefficient < 0.3 ? Colors.accentPrimaryDark : Colors.warningDark }]}>{giniCoefficient < 0.3 ? 'EQUITABLE ALLOCATION ✓' : 'MODERATE SPREAD'}</Text>
         </View>
       </View>
 
       {/* Bar chart */}
       <View style={styles.chartWrapper}>
-        <Text style={styles.chartTitle}>Jobs Assigned Today (per Worker)</Text>
+        <Text style={styles.chartTitle}>JOBS ASSIGNED TODAY (PER WORKER)</Text>
         <BarChart
           data={chartData}
           width={Math.min(SCREEN_W - Spacing.base * 2, 540)}
@@ -102,50 +102,57 @@ const styles = StyleSheet.create({
   },
   metricCard: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
     gap: 4,
   },
   metricLabel: {
-    color: '#6B7280',
-    fontSize: Typography.fontSize.xs,
-    fontWeight: '600',
+    color: Colors.textSecondary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
   },
   metricValue: {
     fontSize: Typography.fontSize['2xl'],
-    fontWeight: '800',
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -1,
   },
   metricBar: {
     height: 4,
-    backgroundColor: '#E5E7EB',
-    borderRadius: 2,
+    backgroundColor: Colors.borderLight,
+    borderRadius: Radius.full,
     overflow: 'hidden',
     marginTop: 4,
   },
   metricFill: {
     height: '100%',
-    borderRadius: 2,
+    borderRadius: Radius.full,
   },
   metricSub: {
-    color: '#059669',
-    fontSize: 11,
-    fontWeight: '600',
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
   },
   chartWrapper: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
     overflow: 'hidden',
   },
   chartTitle: {
-    color: '#111827',
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
+    color: Colors.textPrimary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
     marginBottom: Spacing.sm,
   },
   chart: {
@@ -156,21 +163,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    backgroundColor: '#EEF2FF',
+    backgroundColor: Colors.canvasCream,
     borderRadius: Radius.md,
     padding: Spacing.sm,
     borderWidth: 1,
-    borderColor: '#C7D2FE',
+    borderColor: Colors.borderLight,
   },
   legendDot: {
     width: 8,
     height: 8,
-    borderRadius: 4,
-    backgroundColor: '#6366F1',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.textPrimary,
   },
   legendText: {
-    color: '#4338CA',
-    fontSize: Typography.fontSize.xs,
+    color: Colors.textPrimary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
     flex: 1,
     lineHeight: 16,
   },

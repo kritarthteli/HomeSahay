@@ -10,13 +10,13 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAppStore } from '../../store/appStore';
 import { fetchNearbyWorkers } from '../../services/mockApi';
 import RankingSliders from '../../components/RankingSliders';
-import { Colors, Spacing, Radius, Typography } from '../../constants/theme';
+import { Colors, Spacing, Radius, Typography, Shadow } from '../../constants/theme';
 import { BENGALURU_CENTER } from '../../data/seedData';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function RankingTuner() {
   const { rankingWeights, workers } = useAppStore();
-  const [rankedWorkers, setRankedWorkers] = useState([]);
+  const [rankedWorkers, setRankedWorkers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -44,14 +44,14 @@ export default function RankingTuner() {
         </View>
       </View>
 
-      {/* Clean White Bottom Sheet */}
+      {/* Clean Ivory Bottom Sheet */}
       <View style={styles.bottomSheet}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           {/* How it works note */}
           <View style={styles.explainer}>
-            <Ionicons name="bulb-outline" size={18} color="#D97706" />
+            <Ionicons name="bulb-outline" size={18} color={Colors.warningDark} />
             <Text style={styles.explainerText}>
-              <Text style={{ fontWeight: '700', color: '#92400E' }}>Scoring Formula: </Text>
+              <Text style={{ fontWeight: Typography.fontWeight.black }}>SCORING FORMULA: </Text>
               Score = Skill×w₁ + Distance×w₂ + Rating×w₃ + Fairness×w₄. High fairness weights prevent monopoly and distribute opportunities equitably.
             </Text>
           </View>
@@ -64,15 +64,15 @@ export default function RankingTuner() {
           {/* Full Ranked List */}
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>
-              Simulated Priority Queue (Category: "Plumber")
+              SIMULATED PRIORITY QUEUE (PLUMBER)
             </Text>
             {loading ? (
-              <ActivityIndicator color="#3c20a1ff" />
+              <ActivityIndicator color={Colors.accentPrimary} style={{ marginVertical: Spacing.xl }} />
             ) : (
               rankedWorkers.map((w, i) => (
                 <View key={w.id} style={styles.rankRow}>
-                  <View style={[styles.rankBadge, { backgroundColor: i === 0 ? '#3c20a1ff' : '#F3F4F6' }]}>
-                    <Text style={[styles.rankNum, { color: i === 0 ? '#fff' : '#6B7280' }]}>
+                  <View style={[styles.rankBadge, { backgroundColor: i === 0 ? Colors.darkSurfaceDeep : Colors.canvasCream }]}>
+                    <Text style={[styles.rankNum, { color: i === 0 ? Colors.accentPrimary : Colors.textSecondary }]}>
                       #{i + 1}
                     </Text>
                   </View>
@@ -84,7 +84,7 @@ export default function RankingTuner() {
                   </View>
                   <View style={styles.scorePill}>
                     <Text style={styles.scoreText}>
-                      {w.matchScore ? `${(w.matchScore * 100).toFixed(0)} pts` : '—'}
+                      {w.matchScore ? `${(w.matchScore * 100).toFixed(0)} PTS` : '—'}
                     </Text>
                   </View>
                 </View>
@@ -100,107 +100,121 @@ export default function RankingTuner() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: Colors.darkSurfaceDeep,
   },
   headerBackground: {
-    backgroundColor: '#121212',
-    paddingBottom: Spacing.xl,
+    backgroundColor: Colors.darkSurfaceDeep,
+    paddingBottom: Spacing['3xl'],
   },
   headerContent: {
-    paddingHorizontal: Spacing.xl,
-    paddingTop: Spacing.base,
+    paddingHorizontal: Spacing['2xl'],
+    paddingTop: Spacing.xl,
   },
   title: {
-    color: '#FFFFFF',
-    fontSize: Typography.fontSize.xl,
-    fontWeight: '800',
+    color: Colors.textInverse,
+    fontSize: Typography.fontSize['3xl'],
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -1,
   },
   subtitle: {
-    color: '#9CA3AF',
-    fontSize: Typography.fontSize.xs,
-    marginTop: 2,
+    color: Colors.textInverseMuted,
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.mono,
+    marginTop: Spacing.xs,
   },
 
   // Bottom Sheet
   bottomSheet: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    backgroundColor: Colors.canvasLight,
+    borderTopLeftRadius: Radius['2xl'],
+    borderTopRightRadius: Radius['2xl'],
     overflow: 'hidden',
+    marginTop: -Spacing.xl,
   },
   scrollContent: {
-    padding: Spacing.xl,
-    paddingBottom: Spacing['3xl'],
+    padding: Spacing['2xl'],
+    paddingBottom: Spacing['4xl'],
   },
   explainer: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    backgroundColor: '#FFFBEB',
+    backgroundColor: Colors.warningContainer,
     borderRadius: Radius.lg,
-    padding: Spacing.md,
-    gap: Spacing.sm,
+    padding: Spacing.lg,
+    gap: Spacing.md,
     borderWidth: 1,
-    borderColor: '#FDE68A',
-    marginBottom: Spacing.xl,
+    borderColor: Colors.warningDark,
+    marginBottom: Spacing['2xl'],
   },
   explainerText: {
-    fontSize: Typography.fontSize.xs,
-    color: '#92400E',
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.warningDark,
     flex: 1,
     lineHeight: 18,
   },
   section: {
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing['2xl'],
   },
   sectionTitle: {
-    color: '#111827',
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
-    marginBottom: Spacing.md,
+    color: Colors.textPrimary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
+    marginBottom: Spacing.lg,
   },
   rankRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderRadius: Radius.lg,
-    padding: Spacing.md,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.xl,
+    padding: Spacing.lg,
     marginBottom: Spacing.sm,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
     gap: Spacing.md,
+    ...Shadow.soft,
   },
   rankBadge: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 36,
+    height: 36,
+    borderRadius: Radius.full,
     justifyContent: 'center',
     alignItems: 'center',
   },
   rankNum: {
-    fontSize: 12,
-    fontWeight: '800',
+    fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.black,
   },
   rankInfo: { flex: 1 },
   rankName: {
-    color: '#111827',
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
+    color: Colors.textPrimary,
+    fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.bold,
   },
   rankMeta: {
-    color: '#6B7280',
-    fontSize: 11,
-    marginTop: 2,
+    color: Colors.textSecondary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    marginTop: 4,
   },
   scorePill: {
-    backgroundColor: '#EEF2FF',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    backgroundColor: Colors.canvasCream,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
     borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
   scoreText: {
-    color: '#4F46E5',
-    fontSize: 11,
-    fontWeight: '700',
+    color: Colors.textPrimary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
   },
 });

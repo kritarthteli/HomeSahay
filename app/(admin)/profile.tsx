@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-nati
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/appStore';
-import { Spacing, Radius } from '../../constants/theme';
+import { Colors, Spacing, Radius, Typography, Shadow } from '../../constants/theme';
 import RankingSliders from '../../components/RankingSliders';
 
 type SettingSection = 'overview' | 'algorithm' | 'cooperatives' | 'reports' | 'logs' | 'access';
@@ -52,7 +52,7 @@ export default function AdminProfile() {
             <Text style={styles.detailTitle}>Manage Cooperatives</Text>
             <Text style={styles.detailSub}>Configure cooperative zones, membership, and admin assignments.</Text>
             <View style={styles.placeholder}>
-              <Ionicons name="people-outline" size={40} color="#C7D2FE" />
+              <Ionicons name="people-outline" size={40} color={Colors.borderDark} />
               <Text style={styles.placeholderText}>Cooperative management coming soon</Text>
             </View>
           </View>
@@ -63,7 +63,7 @@ export default function AdminProfile() {
             <Text style={styles.detailTitle}>Financial Reports</Text>
             <Text style={styles.detailSub}>Revenue breakdowns, worker payouts, and platform fee summaries.</Text>
             <View style={styles.placeholder}>
-              <Ionicons name="bar-chart-outline" size={40} color="#C7D2FE" />
+              <Ionicons name="bar-chart-outline" size={40} color={Colors.borderDark} />
               <Text style={styles.placeholderText}>Report generation coming soon</Text>
             </View>
           </View>
@@ -74,7 +74,7 @@ export default function AdminProfile() {
             <Text style={styles.detailTitle}>System Logs</Text>
             <Text style={styles.detailSub}>Audit trail of all platform events, KYC actions, and dispatch decisions.</Text>
             <View style={styles.placeholder}>
-              <Ionicons name="server-outline" size={40} color="#C7D2FE" />
+              <Ionicons name="server-outline" size={40} color={Colors.borderDark} />
               <Text style={styles.placeholderText}>System log viewer coming soon</Text>
             </View>
           </View>
@@ -85,7 +85,7 @@ export default function AdminProfile() {
             <Text style={styles.detailTitle}>Access Control</Text>
             <Text style={styles.detailSub}>Manage admin roles, permissions, and two-factor authentication settings.</Text>
             <View style={styles.placeholder}>
-              <Ionicons name="lock-closed-outline" size={40} color="#C7D2FE" />
+              <Ionicons name="lock-closed-outline" size={40} color={Colors.borderDark} />
               <Text style={styles.placeholderText}>Access control coming soon</Text>
             </View>
           </View>
@@ -104,8 +104,8 @@ export default function AdminProfile() {
           <Text style={styles.pageSubtitle}>Platform configuration & system management</Text>
         </View>
         <View style={styles.adminBadge}>
-          <Ionicons name="shield-checkmark" size={14} color="#3c20a1" />
-          <Text style={styles.adminBadgeText}>System Admin · Central Hub</Text>
+          <Ionicons name="shield-checkmark" size={14} color={Colors.textPrimary} />
+          <Text style={styles.adminBadgeText}>SYSTEM ADMIN · CENTRAL HUB</Text>
         </View>
       </View>
 
@@ -115,18 +115,19 @@ export default function AdminProfile() {
         <View style={styles.menuPanel}>
           {MENU_ITEMS.map((group) => (
             <View key={group.section} style={styles.menuGroup}>
-              <Text style={styles.menuGroupLabel}>{group.section}</Text>
+              <Text style={styles.menuGroupLabel}>{group.section.toUpperCase()}</Text>
               {group.items.map((item) => (
                 <TouchableOpacity
                   key={item.id}
                   style={[styles.menuItem, activeSection === item.id && styles.menuItemActive]}
                   onPress={() => setActiveSection(item.id)}
+                  activeOpacity={0.8}
                 >
                   <View style={[styles.menuItemIcon, activeSection === item.id && styles.menuItemIconActive]}>
                     <Ionicons
                       name={item.icon}
                       size={18}
-                      color={activeSection === item.id ? '#fff' : '#6B7280'}
+                      color={activeSection === item.id ? Colors.accentPrimary : Colors.textSecondary}
                     />
                   </View>
                   <View style={{ flex: 1 }}>
@@ -136,7 +137,7 @@ export default function AdminProfile() {
                     <Text style={styles.menuItemDesc}>{item.desc}</Text>
                   </View>
                   {activeSection === item.id && (
-                    <Ionicons name="chevron-forward" size={16} color="#3c20a1" />
+                    <Ionicons name="chevron-forward" size={16} color={Colors.textInverse} />
                   )}
                 </TouchableOpacity>
               ))}
@@ -144,9 +145,9 @@ export default function AdminProfile() {
           ))}
 
           {/* Logout */}
-          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={18} color="#EF4444" />
-            <Text style={styles.logoutText}>Sign Out</Text>
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.8}>
+            <Ionicons name="log-out-outline" size={16} color={Colors.danger} />
+            <Text style={styles.logoutText}>SIGN OUT</Text>
           </TouchableOpacity>
         </View>
 
@@ -160,112 +161,109 @@ export default function AdminProfile() {
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: '#F4F6FA' },
-  pageContent: { padding: 32, paddingBottom: 48, gap: 24 },
+  page: { flex: 1, backgroundColor: Colors.canvasLight },
+  pageContent: { padding: Spacing['4xl'], paddingBottom: Spacing['4xl'], gap: Spacing['2xl'] },
 
   pageHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
-  pageTitle: { fontSize: 28, fontWeight: '800', color: '#111827' },
-  pageSubtitle: { fontSize: 14, color: '#6B7280', marginTop: 4 },
+  pageTitle: { fontSize: Typography.fontSize['3xl'], fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -1 },
+  pageSubtitle: { fontSize: Typography.fontSize.sm, color: Colors.textSecondary, marginTop: Spacing.xs },
   adminBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#EDE9FE',
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 20,
+    gap: Spacing.sm,
+    backgroundColor: Colors.surfaceLight,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 12,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
-  adminBadgeText: { fontSize: 13, fontWeight: '700', color: '#3c20a1' },
+  adminBadgeText: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary, letterSpacing: 1 },
 
-  twoCol: { flexDirection: 'row', gap: 20, alignItems: 'flex-start' },
+  twoCol: { flexDirection: 'row', gap: Spacing.xl, alignItems: 'flex-start' },
 
   menuPanel: {
     width: 280,
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 16,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.xl,
+    padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    gap: 8,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
+    borderColor: Colors.borderLight,
+    gap: Spacing.sm,
+    ...Shadow.soft,
   },
-  menuGroup: { gap: 4 },
+  menuGroup: { gap: Spacing.sm },
   menuGroupLabel: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#9CA3AF',
-    letterSpacing: 0.5,
-    paddingHorizontal: 8,
-    paddingVertical: 6,
-    textTransform: 'uppercase',
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textSecondary,
+    letterSpacing: 1,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.sm,
   },
   menuItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    padding: 10,
-    borderRadius: 10,
+    gap: Spacing.md,
+    padding: Spacing.sm,
+    borderRadius: Radius.lg,
   },
-  menuItemActive: { backgroundColor: '#EDE9FE' },
+  menuItemActive: { backgroundColor: Colors.darkSurfaceDeep },
   menuItemIcon: {
     width: 36,
     height: 36,
-    borderRadius: 10,
-    backgroundColor: '#F3F4F6',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.canvasCream,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  menuItemIconActive: { backgroundColor: '#3c20a1' },
-  menuItemLabel: { fontSize: 14, fontWeight: '600', color: '#374151' },
-  menuItemLabelActive: { color: '#3c20a1' },
-  menuItemDesc: { fontSize: 11, color: '#9CA3AF', marginTop: 1 },
+  menuItemIconActive: { backgroundColor: Colors.surfaceInteractive },
+  menuItemLabel: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.body, fontWeight: Typography.fontWeight.semibold, color: Colors.textPrimary },
+  menuItemLabelActive: { color: Colors.textInverse },
+  menuItemDesc: { fontSize: 10, fontFamily: Typography.fontFamily.mono, color: Colors.textSecondary, marginTop: 4 },
 
   logoutBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    padding: 12,
-    borderRadius: 10,
-    backgroundColor: '#FEF2F2',
-    marginTop: 8,
+    gap: Spacing.sm,
+    padding: Spacing.md,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.dangerContainer,
+    marginTop: Spacing.sm,
     borderWidth: 1,
-    borderColor: '#FECACA',
+    borderColor: Colors.danger,
+    justifyContent: 'center',
   },
-  logoutText: { color: '#EF4444', fontSize: 14, fontWeight: '700' },
+  logoutText: { color: Colors.danger, fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, letterSpacing: 1 },
 
   detailPanelWrap: { flex: 1 },
   detailPanel: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
-    padding: 28,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.xl,
+    padding: Spacing['2xl'],
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    gap: 16,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
+    borderColor: Colors.borderLight,
+    gap: Spacing.xl,
+    ...Shadow.soft,
   },
-  detailTitle: { fontSize: 20, fontWeight: '800', color: '#111827' },
-  detailSub: { fontSize: 14, color: '#6B7280', lineHeight: 22 },
+  detailTitle: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -0.5 },
+  detailSub: { fontSize: Typography.fontSize.sm, color: Colors.textSecondary, lineHeight: 22 },
 
   placeholder: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 60,
-    gap: 12,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
+    paddingVertical: 80,
+    gap: Spacing.md,
+    backgroundColor: Colors.canvasCream,
+    borderRadius: Radius.lg,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
     borderStyle: 'dashed' as any,
   },
-  placeholderText: { fontSize: 14, color: '#9CA3AF', fontWeight: '500' },
+  placeholderText: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.mono, color: Colors.textSecondary },
 });

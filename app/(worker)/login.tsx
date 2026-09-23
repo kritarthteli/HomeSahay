@@ -15,7 +15,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/appStore';
 import { MOCK_WORKERS } from '../../data/seedData';
-import { Colors, Spacing, Radius, Typography } from '../../constants/theme';
+import { Colors, Spacing, Radius, Typography, Shadow } from '../../constants/theme';
 
 export default function WorkerLogin() {
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function WorkerLogin() {
     }, 400);
   };
 
-  const handleDemoSelect = (worker) => {
+  const handleDemoSelect = (worker: any) => {
     login('worker', worker.id);
     router.replace('/(worker)');
   };
@@ -58,11 +58,11 @@ export default function WorkerLogin() {
           <View style={styles.headerContent}>
             <View style={styles.brandRow}>
               <View style={styles.logoBadge}>
-                <Ionicons name="construct" size={20} color="#fff" />
+                <Ionicons name="construct" size={20} color={Colors.darkSurfaceDeep} />
               </View>
               <Text style={styles.brandTitle}>HomeSahay</Text>
               <View style={styles.roleTag}>
-                <Text style={styles.roleTagText}>Partner</Text>
+                <Text style={styles.roleTagText}>PARTNER</Text>
               </View>
             </View>
 
@@ -75,22 +75,22 @@ export default function WorkerLogin() {
 
             <View style={styles.badgesRow}>
               <View style={styles.featureBadge}>
-                <Ionicons name="cash-outline" size={14} color="#3c20a1ff" />
+                <Ionicons name="cash-outline" size={14} color={Colors.accentPrimary} />
                 <Text style={styles.featureBadgeText}>Daily Payout</Text>
               </View>
               <View style={styles.featureBadge}>
-                <Ionicons name="shield-outline" size={14} color="#818CF8" />
+                <Ionicons name="shield-outline" size={14} color={Colors.accentPrimary} />
                 <Text style={styles.featureBadgeText}>Coop Member</Text>
               </View>
               <View style={styles.featureBadge}>
-                <Ionicons name="heart-outline" size={14} color="#F87171" />
+                <Ionicons name="heart-outline" size={14} color={Colors.accentPrimary} />
                 <Text style={styles.featureBadgeText}>Health Cover</Text>
               </View>
             </View>
           </View>
         </View>
 
-        {/* Clean White Sheet Card */}
+        {/* Clean Ivory Sheet Card */}
         <View style={styles.sheet}>
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sheetContent}>
             <Text style={styles.sheetTitle}>Partner Sign In</Text>
@@ -98,18 +98,19 @@ export default function WorkerLogin() {
 
             {/* Cooperative Society Selector */}
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Registered Cooperative</Text>
+              <Text style={styles.inputLabel}>REGISTERED COOPERATIVE</Text>
               <View style={styles.coopSelectorWrap}>
                 {COOPERATIVES.map((coop) => (
                   <TouchableOpacity
                     key={coop}
                     style={[styles.coopPill, selectedCoop === coop && styles.coopPillActive]}
                     onPress={() => setSelectedCoop(coop)}
+                    activeOpacity={0.8}
                   >
                     <Ionicons
                       name={selectedCoop === coop ? 'checkmark-circle' : 'ellipse-outline'}
-                      size={14}
-                      color={selectedCoop === coop ? '#059669' : '#9CA3AF'}
+                      size={16}
+                      color={selectedCoop === coop ? Colors.accentPrimaryDark : Colors.textMuted}
                     />
                     <Text
                       style={[styles.coopPillText, selectedCoop === coop && styles.coopPillTextActive]}
@@ -124,13 +125,13 @@ export default function WorkerLogin() {
 
             {/* Partner Mobile / ID */}
             <View style={styles.inputGroup}>
-              <Text style={styles.inputLabel}>Partner ID / Mobile</Text>
+              <Text style={styles.inputLabel}>PARTNER ID / MOBILE</Text>
               <View style={styles.inputFieldBox}>
-                <Ionicons name="person-outline" size={18} color="#9CA3AF" />
+                <Ionicons name="person-outline" size={18} color={Colors.textMuted} />
                 <TextInput
                   style={styles.textInput}
                   placeholder="e.g. W001 or 98765 43210"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={Colors.textMuted}
                   value={partnerId}
                   onChangeText={setPartnerId}
                 />
@@ -140,15 +141,15 @@ export default function WorkerLogin() {
             {/* 4-digit Passcode */}
             <View style={styles.inputGroup}>
               <View style={styles.labelRow}>
-                <Text style={styles.inputLabel}>Security PIN</Text>
+                <Text style={styles.inputLabel}>SECURITY PIN</Text>
                 <Text style={styles.demoPinHint}>Default PIN: 1234</Text>
               </View>
               <View style={styles.inputFieldBox}>
-                <Ionicons name="key-outline" size={18} color="#9CA3AF" />
+                <Ionicons name="key-outline" size={18} color={Colors.textMuted} />
                 <TextInput
                   style={styles.textInput}
                   placeholder="Enter 4-digit PIN"
-                  placeholderTextColor="#9CA3AF"
+                  placeholderTextColor={Colors.textMuted}
                   secureTextEntry
                   keyboardType="number-pad"
                   maxLength={4}
@@ -163,21 +164,23 @@ export default function WorkerLogin() {
               style={[styles.primaryBtn, loading && styles.btnDisabled]}
               onPress={() => handleLogin()}
               disabled={loading}
+              activeOpacity={0.8}
             >
-              <Text style={styles.primaryBtnText}>{loading ? 'Authenticating…' : 'Enter Partner Workspace'}</Text>
-              <Ionicons name="arrow-forward" size={18} color="#fff" />
+              <Text style={styles.primaryBtnText}>{loading ? 'AUTHENTICATING…' : 'ENTER WORKSPACE'}</Text>
+              <Ionicons name="arrow-forward" size={18} color={Colors.darkSurfaceDeep} />
             </TouchableOpacity>
 
             {/* Beginner Training CTA */}
             <TouchableOpacity
               style={styles.trainingBtn}
               onPress={() => router.push('/(worker)/training')}
+              activeOpacity={0.8}
             >
-              <Ionicons name="school-outline" size={18} color="#059669" />
+              <Ionicons name="school-outline" size={18} color={Colors.accentPrimaryDark} />
               <Text style={styles.trainingBtnText}>Beginner? Join Training Program</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.trainingBtn} onPress={() => router.push('/(worker)/register')}>
-              <Ionicons name="person-add-outline" size={18} color="#059669" />
+            <TouchableOpacity style={styles.trainingBtn} onPress={() => router.push('/(worker)/register')} activeOpacity={0.8}>
+              <Ionicons name="person-add-outline" size={18} color={Colors.accentPrimaryDark} />
               <Text style={styles.trainingBtnText}>New partner? Create your profile</Text>
             </TouchableOpacity>
 
@@ -195,6 +198,7 @@ export default function WorkerLogin() {
                   key={w.id}
                   style={styles.demoCard}
                   onPress={() => handleDemoSelect(w)}
+                  activeOpacity={0.7}
                 >
                   <View style={styles.demoAvatar}>
                     <Text style={styles.demoAvatarText}>{w.name.charAt(0)}</Text>
@@ -203,7 +207,7 @@ export default function WorkerLogin() {
                     <View style={styles.workerNameRow}>
                       <Text style={styles.demoName}>{w.name}</Text>
                       <View style={styles.verifiedTag}>
-                        <Ionicons name="checkmark-circle" size={12} color="#3c20a1ff" />
+                        <Ionicons name="checkmark-circle" size={12} color={Colors.accentPrimaryDark} />
                         <Text style={styles.verifiedTagText}>Verified</Text>
                       </View>
                     </View>
@@ -212,8 +216,8 @@ export default function WorkerLogin() {
                     </Text>
                   </View>
                   <View style={styles.demoLoginBtn}>
-                    <Text style={styles.demoLoginBtnText}>Enter</Text>
-                    <Ionicons name="chevron-forward" size={14} color="#059669" />
+                    <Text style={styles.demoLoginBtnText}>ENTER</Text>
+                    <Ionicons name="chevron-forward" size={14} color={Colors.textPrimary} />
                   </View>
                 </TouchableOpacity>
               ))}
@@ -226,10 +230,10 @@ export default function WorkerLogin() {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#121212' },
-  container: { flex: 1, backgroundColor: '#121212' },
+  root: { flex: 1, backgroundColor: Colors.darkSurfaceDeep },
+  container: { flex: 1, backgroundColor: Colors.darkSurfaceDeep },
   header: {
-    backgroundColor: '#121212',
+    backgroundColor: Colors.darkSurfaceDeep,
     paddingBottom: Spacing.xl,
   },
   headerContent: {
@@ -240,46 +244,51 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   logoBadge: {
     width: 36,
     height: 36,
-    borderRadius: 10,
-    backgroundColor: '#3c20a1ff',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.accentPrimary,
     justifyContent: 'center',
     alignItems: 'center',
+    ...Shadow.glow,
   },
   brandTitle: {
     fontSize: Typography.fontSize.xl,
-    fontWeight: '800',
-    color: '#fff',
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textInverse,
     letterSpacing: -0.5,
   },
   roleTag: {
-    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+    backgroundColor: 'transparent',
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.4)',
+    borderColor: Colors.borderDark,
   },
   roleTagText: {
-    color: '#6EE7B7',
-    fontSize: 11,
-    fontWeight: '600',
+    color: Colors.textInverseMuted,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
   heroHeadline: {
-    fontSize: 26,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    lineHeight: 32,
-    marginBottom: 6,
+    fontSize: 32,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textInverse,
+    lineHeight: 38,
+    letterSpacing: -1,
+    marginBottom: 12,
   },
   heroSub: {
-    fontSize: Typography.fontSize.sm,
-    color: '#9CA3AF',
-    marginBottom: Spacing.md,
+    fontSize: Typography.fontSize.base,
+    color: Colors.textInverseMuted,
+    marginBottom: Spacing.lg,
+    lineHeight: 24,
   },
   badgesRow: {
     flexDirection: 'row',
@@ -289,146 +298,155 @@ const styles = StyleSheet.create({
   featureBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E1E22',
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    backgroundColor: Colors.darkSurface,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
     borderRadius: Radius.full,
-    gap: 5,
+    gap: 6,
     borderWidth: 1,
-    borderColor: '#2D2D35',
+    borderColor: Colors.borderDark,
   },
   featureBadgeText: {
-    color: '#E5E7EB',
+    color: Colors.textInverse,
     fontSize: 12,
-    fontWeight: '500',
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.medium,
   },
 
   // Sheet
   sheet: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    backgroundColor: Colors.canvasLight,
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
     overflow: 'hidden',
   },
   sheetContent: {
     padding: Spacing.xl,
-    paddingBottom: Spacing['3xl'],
+    paddingBottom: Spacing['4xl'],
   },
   sheetTitle: {
-    fontSize: 22,
-    fontWeight: '700',
-    color: '#111827',
+    fontSize: Typography.fontSize['2xl'],
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textPrimary,
+    letterSpacing: -1,
     marginBottom: 4,
   },
   sheetSubtitle: {
-    fontSize: Typography.fontSize.sm,
-    color: '#6B7280',
-    marginBottom: Spacing.lg,
+    fontSize: Typography.fontSize.base,
+    color: Colors.textSecondary,
+    marginBottom: Spacing.xl,
   },
   inputGroup: {
-    marginBottom: Spacing.base,
+    marginBottom: Spacing.lg,
   },
   inputLabel: {
-    fontSize: Typography.fontSize.xs,
-    fontWeight: '600',
-    color: '#374151',
+    fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
     textTransform: 'uppercase',
-    letterSpacing: 0.5,
-    marginBottom: 6,
+    letterSpacing: 1,
+    marginBottom: 8,
   },
   labelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    marginBottom: 8,
   },
   demoPinHint: {
-    fontSize: 12,
-    color: '#059669',
-    fontWeight: '600',
+    fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.accentPrimaryDark,
+    fontWeight: Typography.fontWeight.bold,
   },
   coopSelectorWrap: {
-    gap: 6,
+    gap: 8,
   },
   coopPill: {
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: Spacing.md,
-    paddingVertical: 10,
-    borderRadius: Radius.md,
+    paddingVertical: 14,
+    borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#F9FAFB',
-    gap: 8,
+    borderColor: Colors.borderLight,
+    backgroundColor: Colors.surfaceLight,
+    gap: 10,
   },
   coopPillActive: {
-    borderColor: '#3c20a1ff',
-    backgroundColor: '#ECFDF5',
+    borderColor: Colors.accentPrimary,
+    backgroundColor: Colors.borderLight,
   },
   coopPillText: {
-    fontSize: Typography.fontSize.xs,
-    color: '#4B5563',
-    fontWeight: '500',
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textSecondary,
+    fontWeight: Typography.fontWeight.semibold,
   },
   coopPillTextActive: {
-    color: '#065F46',
-    fontWeight: '700',
+    color: Colors.textPrimary,
+    fontWeight: Typography.fontWeight.bold,
   },
   inputFieldBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1.5,
-    borderColor: '#E5E7EB',
-    borderRadius: Radius.lg,
-    backgroundColor: '#F9FAFB',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceLight,
     paddingHorizontal: Spacing.md,
-    gap: 10,
+    gap: 12,
   },
   textInput: {
     flex: 1,
-    paddingVertical: 14,
+    paddingVertical: 16,
     fontSize: Typography.fontSize.base,
-    color: '#111827',
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textPrimary,
     outlineStyle: 'none',
   },
   primaryBtn: {
-    backgroundColor: '#3c20a1ff',
+    backgroundColor: Colors.accentPrimary,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 16,
-    borderRadius: Radius.lg,
-    marginTop: Spacing.xs,
-    gap: 8,
-    shadowColor: '#3c20a1ff',
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    paddingVertical: 18,
+    borderRadius: Radius.full,
+    marginTop: Spacing.sm,
+    gap: 10,
+    ...Shadow.glow,
   },
   btnDisabled: {
     opacity: 0.6,
+    shadowOpacity: 0,
   },
   primaryBtnText: {
-    color: '#fff',
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
+    color: Colors.darkSurfaceDeep,
+    fontSize: 14,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: 1,
   },
   trainingBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 14,
-    borderRadius: Radius.lg,
+    paddingVertical: 16,
+    borderRadius: Radius.full,
     marginTop: Spacing.sm,
-    backgroundColor: '#ECFDF5',
+    backgroundColor: Colors.canvasCream,
     borderWidth: 1,
-    borderColor: '#A7F3D0',
-    gap: 8,
+    borderColor: Colors.borderLight,
+    gap: 10,
   },
   trainingBtnText: {
-    color: '#059669',
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
+    color: Colors.textPrimary,
+    fontSize: 12,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
   },
 
   // Divider
@@ -441,13 +459,14 @@ const styles = StyleSheet.create({
   dividerLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#E5E7EB',
+    backgroundColor: Colors.borderLight,
   },
   dividerText: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#9CA3AF',
-    letterSpacing: 0.8,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textMuted,
+    letterSpacing: 1.5,
   },
 
   // Demo Profiles
@@ -459,23 +478,25 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: '#F3F4F6',
-    borderRadius: Radius.lg,
-    backgroundColor: '#F9FAFB',
+    borderColor: Colors.borderLight,
+    borderRadius: Radius.md,
+    backgroundColor: Colors.surfaceLight,
   },
   demoAvatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#ECFDF5',
+    width: 44,
+    height: 44,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.canvasCream,
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
   demoAvatarText: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
-    color: '#059669',
+    fontSize: Typography.fontSize.lg,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
   },
   demoInfo: {
     flex: 1,
@@ -486,41 +507,46 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   demoName: {
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
-    color: '#111827',
+    fontSize: Typography.fontSize.md,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
   },
   verifiedTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ECFDF5',
+    backgroundColor: Colors.accentPrimary,
     paddingHorizontal: 6,
     paddingVertical: 2,
     borderRadius: Radius.full,
     gap: 2,
   },
   verifiedTagText: {
-    fontSize: 10,
-    color: '#059669',
-    fontWeight: '600',
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.darkSurfaceDeep,
+    fontWeight: Typography.fontWeight.bold,
   },
   demoCategory: {
     fontSize: Typography.fontSize.xs,
-    color: '#6B7280',
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textSecondary,
     marginTop: 2,
   },
   demoLoginBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ECFDF5',
-    paddingHorizontal: 10,
-    paddingVertical: 6,
+    backgroundColor: Colors.canvasCream,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
     borderRadius: Radius.full,
-    gap: 2,
+    gap: 4,
   },
   demoLoginBtnText: {
-    fontSize: 12,
-    fontWeight: '600',
-    color: '#059669',
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
   },
 });

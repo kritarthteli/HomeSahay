@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Platform } from 'react-native
 import { Slot, Stack, useRouter, usePathname } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../../store/appStore';
+import { Colors, Spacing, Radius, Typography, Shadow } from '../../constants/theme';
 
 const NAV_ITEMS = [
   { label: 'Analytics', icon: 'bar-chart-outline' as const, path: '/(admin)' },
@@ -35,18 +36,18 @@ export default function AdminLayout() {
           {/* Logo */}
         <View style={styles.logoArea}>
           <View style={styles.logoIcon}>
-            <Ionicons name="shield-checkmark" size={22} color="#fff" />
+            <Ionicons name="shield-checkmark" size={20} color={Colors.darkSurfaceDeep} />
           </View>
           <View>
             <Text style={styles.logoTitle}>HomeSahay</Text>
-            <Text style={styles.logoSub}>Admin Hub</Text>
+            <Text style={styles.logoSub}>ADMIN HUB</Text>
           </View>
         </View>
 
         {/* Live indicator */}
         <View style={styles.liveTag}>
           <View style={styles.liveDot} />
-          <Text style={styles.liveText}>Live Monitoring</Text>
+          <Text style={styles.liveText}>LIVE MONITORING</Text>
         </View>
 
         {/* Nav */}
@@ -58,14 +59,15 @@ export default function AdminLayout() {
                 key={item.path}
                 style={[styles.navItem, active && styles.navItemActive]}
                 onPress={() => router.push(item.path as any)}
+                activeOpacity={0.8}
               >
                 <Ionicons
                   name={item.icon}
-                  size={20}
-                  color={active ? '#fff' : 'rgba(255,255,255,0.55)'}
+                  size={18}
+                  color={active ? Colors.textInverse : Colors.textInverseMuted}
                 />
                 <Text style={[styles.navLabel, active && styles.navLabelActive]}>
-                  {item.label}
+                  {item.label.toUpperCase()}
                 </Text>
                 {active && <View style={styles.navActivePill} />}
               </TouchableOpacity>
@@ -78,11 +80,11 @@ export default function AdminLayout() {
 
         {/* Cooperative info */}
         <View style={styles.sidebarFooter}>
-          <Text style={styles.footerCoopName}>JP Nagar Workers Cooperative</Text>
-          <Text style={styles.footerRole}>Cooperative Admin</Text>
-          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout}>
-            <Ionicons name="log-out-outline" size={16} color="#EF4444" />
-            <Text style={styles.logoutText}>Sign Out</Text>
+          <Text style={styles.footerCoopName}>JP NAGAR COOPERATIVE</Text>
+          <Text style={styles.footerRole}>COOPERATIVE ADMIN</Text>
+          <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.8}>
+            <Ionicons name="log-out-outline" size={16} color={Colors.danger} />
+            <Text style={styles.logoutText}>SIGN OUT</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -100,126 +102,145 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: '#F4F6FA',
+    backgroundColor: Colors.canvasLight,
     minHeight: '100vh' as any,
   },
   sidebar: {
-    width: 240,
-    backgroundColor: '#1E1B4B',
-    paddingTop: 32,
-    paddingBottom: 24,
-    paddingHorizontal: 16,
+    width: 260,
+    backgroundColor: Colors.darkSurfaceDeep,
+    paddingTop: Spacing['3xl'],
+    paddingBottom: Spacing.xl,
+    paddingHorizontal: Spacing.lg,
     flexShrink: 0,
     minHeight: '100vh' as any,
   },
   logoArea: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 24,
-    paddingHorizontal: 4,
+    gap: Spacing.md,
+    marginBottom: Spacing.xl,
+    paddingHorizontal: Spacing.xs,
   },
   logoIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 12,
-    backgroundColor: '#3c20a1',
+    width: 36,
+    height: 36,
+    borderRadius: Radius.lg,
+    backgroundColor: Colors.accentPrimary,
     justifyContent: 'center',
     alignItems: 'center',
   },
   logoTitle: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '800',
+    color: Colors.textInverse,
+    fontSize: Typography.fontSize.base,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
   },
   logoSub: {
-    color: 'rgba(255,255,255,0.5)',
-    fontSize: 11,
-    fontWeight: '500',
+    color: Colors.textInverseMuted,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
   },
   liveTag: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
+    gap: Spacing.sm,
+    backgroundColor: Colors.accentPrimaryDim,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 6,
     borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.3)',
+    borderColor: Colors.accentPrimary,
     alignSelf: 'flex-start',
-    marginBottom: 28,
+    marginBottom: Spacing['2xl'],
+    marginLeft: Spacing.xs,
   },
   liveDot: {
     width: 6,
     height: 6,
-    borderRadius: 3,
-    backgroundColor: '#10B981',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.accentPrimaryDark,
   },
   liveText: {
-    color: '#10B981',
-    fontSize: 11,
-    fontWeight: '700',
+    color: Colors.accentPrimaryDark,
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
   },
   nav: {
-    gap: 4,
+    gap: Spacing.xs,
   },
   navItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    paddingVertical: 11,
-    paddingHorizontal: 12,
-    borderRadius: 10,
+    gap: Spacing.md,
+    paddingVertical: 12,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radius.lg,
     position: 'relative',
   },
   navItemActive: {
-    backgroundColor: 'rgba(255,255,255,0.12)',
+    backgroundColor: Colors.surfaceInteractive,
   },
   navLabel: {
-    color: 'rgba(255,255,255,0.55)',
-    fontSize: 14,
-    fontWeight: '600',
+    color: Colors.textInverseMuted,
+    fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
     flex: 1,
   },
   navLabelActive: {
-    color: '#fff',
+    color: Colors.textInverse,
   },
   navActivePill: {
     width: 4,
     height: 20,
-    borderRadius: 2,
-    backgroundColor: '#7C3AED',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.accentPrimary,
+    ...Shadow.glow,
   },
   sidebarFooter: {
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255,255,255,0.1)',
-    paddingTop: 16,
-    gap: 4,
+    borderTopColor: Colors.borderDark,
+    paddingTop: Spacing.xl,
+    gap: Spacing.xs,
+    paddingHorizontal: Spacing.xs,
   },
   footerCoopName: {
-    color: 'rgba(255,255,255,0.7)',
-    fontSize: 12,
-    fontWeight: '700',
+    color: Colors.textInverse,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
   footerRole: {
-    color: 'rgba(255,255,255,0.35)',
-    fontSize: 11,
-    marginBottom: 12,
+    color: Colors.textInverseMuted,
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    marginBottom: Spacing.md,
   },
   logoutBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 10,
-    borderRadius: 8,
-    backgroundColor: 'rgba(239,68,68,0.1)',
+    gap: Spacing.sm,
+    paddingVertical: 10,
+    paddingHorizontal: Spacing.md,
+    borderRadius: Radius.md,
+    backgroundColor: Colors.dangerContainer,
+    borderWidth: 1,
+    borderColor: Colors.danger,
+    alignSelf: 'flex-start',
   },
   logoutText: {
-    color: '#EF4444',
-    fontSize: 13,
-    fontWeight: '700',
+    color: Colors.danger,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
   },
   content: {
     flex: 1,

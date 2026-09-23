@@ -9,7 +9,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { Colors, Spacing, Radius, Shadow, Typography } from '../constants/theme';
 
-export default function WorkerCard({ worker, onSelect, selected = false, showScore = true }) {
+export default function WorkerCard({ worker, onSelect, selected = false, showScore = true }: { worker: any, onSelect?: any, selected?: boolean, showScore?: boolean }) {
   const scoreColor =
     worker.score >= 80
       ? Colors.success

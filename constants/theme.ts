@@ -37,14 +37,18 @@ export const StitchColors = {
 
 // Aliased to existing app properties to maintain compatibility while migrating
 export const Colors = {
+  ...StitchColors,
   primary: StitchColors.accentPrimary,
   primaryLight: StitchColors.accentPrimaryDim,
   primaryDark: '#3E7300',
   accent: StitchColors.accentPrimary,
   accentLight: '#E8FFB5',
+  accentPrimaryDark: '#70C729', // Darker neon lime
+  dangerTint: StitchColors.dangerContainer,
   
   success: '#386A00',
   warning: '#F59E0B',
+  warningDark: '#D97706',
   error: StitchColors.danger,
   sos: StitchColors.danger,
 
@@ -110,7 +114,7 @@ export const Typography = {
     bold: '700',
     extrabold: '800',
     black: '900', // Syne-like display weight
-  },
+  } as const,
   lineHeight: {
     tight: 1.1,
     normal: 1.4,
@@ -137,10 +141,18 @@ export const Radius = {
   md: 24,      // 1.5rem
   lg: 32,      // 2rem
   xl: 48,      // 3rem
+  '2xl': 64,   // 4rem
   full: 9999,
 };
 
 export const Shadow = {
+  soft: {
+    shadowColor: '#0A0A0A',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04,
+    shadowRadius: 8,
+    elevation: 2,
+  },
   sm: {
     shadowColor: '#0A0A0A',
     shadowOffset: { width: 0, height: 2 },

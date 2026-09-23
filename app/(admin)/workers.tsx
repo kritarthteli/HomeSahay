@@ -11,14 +11,14 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../../store/appStore';
-import { Spacing, Radius } from '../../constants/theme';
+import { Colors, Spacing, Radius, Typography, Shadow } from '../../constants/theme';
 
 const CATEGORY_COLORS: Record<string, { color: string; bg: string }> = {
-  plumber:     { color: '#2563EB', bg: '#EFF6FF' },
-  electrician: { color: '#D97706', bg: '#FEF3C7' },
-  cleaner:     { color: '#059669', bg: '#ECFDF5' },
-  cook:        { color: '#DB2777', bg: '#FDF2F8' },
-  carpenter:   { color: '#7C3AED', bg: '#EDE9FE' },
+  plumber:     { color: Colors.accentPrimaryDark, bg: Colors.canvasCream },
+  electrician: { color: Colors.warningDark, bg: Colors.warningContainer },
+  cleaner:     { color: Colors.success, bg: Colors.surfaceInteractive },
+  cook:        { color: Colors.danger, bg: Colors.dangerContainer },
+  carpenter:   { color: Colors.accentPrimary, bg: Colors.darkSurfaceDeep },
 };
 
 const DOC_LABELS: Record<string, string> = {
@@ -109,12 +109,12 @@ export default function WorkersList() {
           </View>
           <View style={styles.headerStats}>
             <View style={styles.statPill}>
-              <View style={[styles.statDot, { backgroundColor: '#10B981' }]} />
-              <Text style={styles.statPillText}>{statusCounts.online} Online</Text>
+              <View style={[styles.statDot, { backgroundColor: Colors.accentPrimary }]} />
+              <Text style={styles.statPillText}>{statusCounts.online} ONLINE</Text>
             </View>
             <View style={styles.statPill}>
-              <View style={[styles.statDot, { backgroundColor: '#F59E0B' }]} />
-              <Text style={styles.statPillText}>{statusCounts.pending} Pending KYC</Text>
+              <View style={[styles.statDot, { backgroundColor: Colors.warningDark }]} />
+              <Text style={styles.statPillText}>{statusCounts.pending} PENDING KYC</Text>
             </View>
           </View>
         </View>
@@ -122,17 +122,17 @@ export default function WorkersList() {
         {/* Search + Filters */}
         <View style={styles.filterBar}>
           <View style={styles.searchBox}>
-            <Ionicons name="search-outline" size={18} color="#9CA3AF" />
+            <Ionicons name="search-outline" size={18} color={Colors.textMuted} />
             <TextInput
               style={styles.searchInput}
               placeholder="Search workers by name, skill, or cooperative…"
-              placeholderTextColor="#9CA3AF"
+              placeholderTextColor={Colors.textMuted}
               value={search}
               onChangeText={setSearch}
             />
             {search.length > 0 && (
-              <TouchableOpacity onPress={() => setSearch('')}>
-                <Ionicons name="close-circle" size={18} color="#9CA3AF" />
+              <TouchableOpacity onPress={() => setSearch('')} activeOpacity={0.7}>
+                <Ionicons name="close-circle" size={18} color={Colors.textMuted} />
               </TouchableOpacity>
             )}
           </View>
@@ -144,9 +144,10 @@ export default function WorkersList() {
                 key={s}
                 style={[styles.filterChip, filterStatus === s && styles.filterChipActive]}
                 onPress={() => setFilterStatus(s)}
+                activeOpacity={0.8}
               >
                 <Text style={[styles.filterChipText, filterStatus === s && styles.filterChipTextActive]}>
-                  {s.charAt(0).toUpperCase() + s.slice(1)} ({statusCounts[s]})
+                  {s.toUpperCase()} ({statusCounts[s]})
                 </Text>
               </TouchableOpacity>
             ))}
@@ -164,15 +165,16 @@ export default function WorkersList() {
                   key={cat}
                   style={[
                     styles.catChip,
-                    active && style ? { backgroundColor: style.bg, borderColor: style.color } : active && { backgroundColor: '#EDE9FE', borderColor: '#3c20a1' },
+                    active && style ? { backgroundColor: style.bg, borderColor: style.color } : active && { backgroundColor: Colors.textPrimary, borderColor: Colors.textPrimary },
                   ]}
                   onPress={() => setFilterCategory(cat)}
+                  activeOpacity={0.8}
                 >
                   <Text style={[
                     styles.catChipText,
-                    active && style ? { color: style.color } : active && { color: '#3c20a1' },
+                    active && style ? { color: style.color } : active && { color: Colors.canvasLight },
                   ]}>
-                    {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                    {cat.toUpperCase()}
                   </Text>
                 </TouchableOpacity>
               );
@@ -184,25 +186,25 @@ export default function WorkersList() {
         <View style={styles.tableCard}>
           {/* Table Header */}
           <View style={styles.tableHead}>
-            <Text style={[styles.thCell, { flex: 2 }]}>Worker</Text>
-            <Text style={styles.thCell}>Category</Text>
-            <Text style={styles.thCell}>Cooperative</Text>
-            <Text style={styles.thCell}>Status</Text>
-            <Text style={styles.thCell}>Rating</Text>
-            <Text style={styles.thCell}>Jobs Today</Text>
+            <Text style={[styles.thCell, { flex: 2 }]}>WORKER</Text>
+            <Text style={styles.thCell}>CATEGORY</Text>
+            <Text style={styles.thCell}>COOPERATIVE</Text>
+            <Text style={styles.thCell}>STATUS</Text>
+            <Text style={styles.thCell}>RATING</Text>
+            <Text style={styles.thCell}>JOBS TODAY</Text>
             <Text style={styles.thCell}>KYC</Text>
-            <Text style={[styles.thCell, { textAlign: 'center' }]}>Details</Text>
+            <Text style={[styles.thCell, { textAlign: 'center' }]}>DETAILS</Text>
           </View>
 
           {filtered.length === 0 && (
             <View style={styles.emptyRow}>
-              <Ionicons name="search-outline" size={32} color="#D1D5DB" />
+              <Ionicons name="search-outline" size={32} color={Colors.textMuted} />
               <Text style={styles.emptyText}>No workers match your filters</Text>
             </View>
           )}
 
           {filtered.map((w: any, i: number) => {
-            const catStyle = CATEGORY_COLORS[w.category] || { color: '#6B7280', bg: '#F3F4F6' };
+            const catStyle = CATEGORY_COLORS[w.category] || { color: Colors.textSecondary, bg: Colors.borderLight };
             return (
               <TouchableOpacity
                 key={w.id}
@@ -223,7 +225,7 @@ export default function WorkersList() {
                 <View style={styles.tdCell}>
                   <View style={[styles.catTag, { backgroundColor: catStyle.bg }]}>
                     <Text style={[styles.catTagText, { color: catStyle.color }]}>
-                      {w.category}
+                      {w.category.toUpperCase()}
                     </Text>
                   </View>
                 </View>
@@ -235,9 +237,9 @@ export default function WorkersList() {
 
                 {/* Status */}
                 <View style={styles.tdCell}>
-                  <View style={[styles.statusDot, { backgroundColor: w.isOnline ? '#DCFCE7' : '#F3F4F6' }]}>
-                    <View style={[styles.dotInner, { backgroundColor: w.isOnline ? '#10B981' : '#9CA3AF' }]} />
-                    <Text style={[styles.statusText, { color: w.isOnline ? '#059669' : '#6B7280' }]}>
+                  <View style={[styles.statusDot, { backgroundColor: w.isOnline ? Colors.accentPrimaryDim : Colors.surfaceInteractive }]}>
+                    <View style={[styles.dotInner, { backgroundColor: w.isOnline ? Colors.accentPrimaryDark : Colors.textMuted }]} />
+                    <Text style={[styles.statusText, { color: w.isOnline ? Colors.accentPrimaryDark : Colors.textSecondary }]}>
                       {w.isOnline ? 'Online' : 'Offline'}
                     </Text>
                   </View>
@@ -259,26 +261,26 @@ export default function WorkersList() {
                   <View style={[
                     styles.kycBadge,
                     {
-                      backgroundColor: w.kyc_status === 'approved' ? '#ECFDF5' : '#FEF3C7',
+                      backgroundColor: w.kyc_status === 'approved' ? Colors.canvasCream : Colors.warningContainer,
                     },
                   ]}>
                     <Ionicons
                       name={w.kyc_status === 'approved' ? 'checkmark-circle' : 'time-outline'}
-                      size={13}
-                      color={w.kyc_status === 'approved' ? '#059669' : '#D97706'}
+                      size={14}
+                      color={w.kyc_status === 'approved' ? Colors.textPrimary : Colors.warningDark}
                     />
-                    <Text style={[styles.kycText, { color: w.kyc_status === 'approved' ? '#059669' : '#D97706' }]}>
-                      {w.kyc_status === 'approved' ? 'Verified' : 'Pending'}
+                    <Text style={[styles.kycText, { color: w.kyc_status === 'approved' ? Colors.textPrimary : Colors.warningDark }]}>
+                      {w.kyc_status === 'approved' ? 'VERIFIED' : 'PENDING'}
                     </Text>
                   </View>
                 </View>
 
                 {/* View button */}
                 <View style={[styles.tdCell, { alignItems: 'center' }]}>
-                  <TouchableOpacity style={styles.viewBtn} onPress={() => setSelectedWorker(w)}>
-                    <Ionicons name="eye-outline" size={15} color="#3c20a1" />
-                    <Text style={styles.viewBtnText}>View</Text>
-                  </TouchableOpacity>
+                  <View style={styles.viewBtn}>
+                    <Ionicons name="eye-outline" size={16} color={Colors.textPrimary} />
+                    <Text style={styles.viewBtnText}>VIEW</Text>
+                  </View>
                 </View>
               </TouchableOpacity>
             );
@@ -298,9 +300,9 @@ export default function WorkersList() {
             <View style={styles.modalCard}>
               {/* Modal Header */}
               <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Worker Profile</Text>
-                <TouchableOpacity onPress={() => setSelectedWorker(null)} style={styles.closeBtn}>
-                  <Ionicons name="close" size={20} color="#6B7280" />
+                <Text style={styles.modalTitle}>Partner Profile</Text>
+                <TouchableOpacity onPress={() => setSelectedWorker(null)} style={styles.closeBtn} activeOpacity={0.7}>
+                  <Ionicons name="close" size={20} color={Colors.textPrimary} />
                 </TouchableOpacity>
               </View>
 
@@ -314,21 +316,21 @@ export default function WorkersList() {
                         <Text style={styles.modalName}>{selectedWorker.name}</Text>
                         {selectedWorker.isVerified && (
                           <View style={styles.verifiedBadge}>
-                            <Ionicons name="shield-checkmark" size={14} color="#3c20a1" />
-                            <Text style={styles.verifiedText}>Verified</Text>
+                            <Ionicons name="shield-checkmark" size={14} color={Colors.textPrimary} />
+                            <Text style={styles.verifiedText}>VERIFIED</Text>
                           </View>
                         )}
                       </View>
                       <Text style={styles.modalCoop}>{selectedWorker.cooperative}</Text>
                       <View style={styles.identityMeta}>
-                        <View style={[styles.catTag, { backgroundColor: CATEGORY_COLORS[selectedWorker.category]?.bg || '#F3F4F6' }]}>
-                          <Text style={[styles.catTagText, { color: CATEGORY_COLORS[selectedWorker.category]?.color || '#6B7280' }]}>
-                            {selectedWorker.category}
+                        <View style={[styles.catTag, { backgroundColor: CATEGORY_COLORS[selectedWorker.category]?.bg || Colors.borderLight }]}>
+                          <Text style={[styles.catTagText, { color: CATEGORY_COLORS[selectedWorker.category]?.color || Colors.textSecondary }]}>
+                            {selectedWorker.category.toUpperCase()}
                           </Text>
                         </View>
-                        <View style={[styles.statusDot, { backgroundColor: selectedWorker.isOnline ? '#DCFCE7' : '#F3F4F6' }]}>
-                          <View style={[styles.dotInner, { backgroundColor: selectedWorker.isOnline ? '#10B981' : '#9CA3AF' }]} />
-                          <Text style={[styles.statusText, { color: selectedWorker.isOnline ? '#059669' : '#6B7280' }]}>
+                        <View style={[styles.statusDot, { backgroundColor: selectedWorker.isOnline ? Colors.accentPrimaryDim : Colors.surfaceInteractive }]}>
+                          <View style={[styles.dotInner, { backgroundColor: selectedWorker.isOnline ? Colors.accentPrimaryDark : Colors.textMuted }]} />
+                          <Text style={[styles.statusText, { color: selectedWorker.isOnline ? Colors.accentPrimaryDark : Colors.textSecondary }]}>
                             {selectedWorker.isOnline ? 'Online' : 'Offline'}
                           </Text>
                         </View>
@@ -340,15 +342,15 @@ export default function WorkersList() {
                 {/* Stats Grid */}
                 <View style={styles.statsGrid}>
                   {[
-                    { label: 'Rating', value: `⭐ ${selectedWorker.rating}`, icon: 'star' as const },
-                    { label: 'Total Jobs', value: selectedWorker.totalJobs, icon: 'briefcase-outline' as const },
-                    { label: 'Today Earnings', value: `₹${selectedWorker.todayEarnings}`, icon: 'cash-outline' as const },
-                    { label: 'Experience', value: `${selectedWorker.yearsExperience} yrs`, icon: 'time-outline' as const },
-                    { label: 'Rate/Hour', value: `₹${selectedWorker.pricePerHour}`, icon: 'pricetag-outline' as const },
-                    { label: 'Jobs Today', value: selectedWorker.todayJobs, icon: 'today-outline' as const },
+                    { label: 'RATING', value: `⭐ ${selectedWorker.rating}`, icon: 'star' as const },
+                    { label: 'TOTAL JOBS', value: selectedWorker.totalJobs, icon: 'briefcase-outline' as const },
+                    { label: 'TODAY EARNINGS', value: `₹${selectedWorker.todayEarnings}`, icon: 'cash-outline' as const },
+                    { label: 'EXPERIENCE', value: `${selectedWorker.yearsExperience} yrs`, icon: 'time-outline' as const },
+                    { label: 'RATE/HOUR', value: `₹${selectedWorker.pricePerHour}`, icon: 'pricetag-outline' as const },
+                    { label: 'JOBS TODAY', value: selectedWorker.todayJobs, icon: 'today-outline' as const },
                   ].map((stat) => (
                     <View key={stat.label} style={styles.statCard}>
-                      <Ionicons name={stat.icon} size={18} color="#6B7280" />
+                      <Ionicons name={stat.icon} size={18} color={Colors.textPrimary} />
                       <Text style={styles.statValue}>{stat.value}</Text>
                       <Text style={styles.statLabel}>{stat.label}</Text>
                     </View>
@@ -357,7 +359,7 @@ export default function WorkersList() {
 
                 {/* Skills */}
                 <View style={styles.modalSection}>
-                  <Text style={styles.sectionLabel}>Skills</Text>
+                  <Text style={styles.sectionLabel}>SKILLS</Text>
                   <View style={styles.skillsRow}>
                     {selectedWorker.skills.map((s: string) => (
                       <View key={s} style={styles.skillChip}>
@@ -369,11 +371,11 @@ export default function WorkersList() {
 
                 {/* Languages */}
                 <View style={styles.modalSection}>
-                  <Text style={styles.sectionLabel}>Languages</Text>
+                  <Text style={styles.sectionLabel}>LANGUAGES</Text>
                   <View style={styles.skillsRow}>
                     {selectedWorker.languages.map((l: string) => (
-                      <View key={l} style={[styles.skillChip, { backgroundColor: '#EEF2FF' }]}>
-                        <Text style={[styles.skillChipText, { color: '#3730A3' }]}>{l}</Text>
+                      <View key={l} style={[styles.skillChip, { backgroundColor: Colors.canvasCream }]}>
+                        <Text style={[styles.skillChipText, { color: Colors.textPrimary }]}>{l}</Text>
                       </View>
                     ))}
                   </View>
@@ -381,7 +383,7 @@ export default function WorkersList() {
 
                 {/* Documents */}
                 <View style={styles.modalSection}>
-                  <Text style={styles.sectionLabel}>Documents</Text>
+                  <Text style={styles.sectionLabel}>DOCUMENTS</Text>
                   <View style={styles.docsGrid}>
                     {Object.entries(MOCK_WORKER_DOCS[selectedWorker.id] || {}).map(([key, doc]) => (
                       <View key={key} style={styles.docCard}>
@@ -389,22 +391,23 @@ export default function WorkersList() {
                           <Ionicons
                             name={doc.verified ? 'checkmark-circle' : doc.uploaded ? 'time-outline' : 'close-circle'}
                             size={20}
-                            color={doc.verified ? '#059669' : doc.uploaded ? '#D97706' : '#EF4444'}
+                            color={doc.verified ? Colors.textPrimary : doc.uploaded ? Colors.warningDark : Colors.danger}
                           />
                           <Text style={styles.docName}>{DOC_LABELS[key]}</Text>
                         </View>
                         <View style={[
                           styles.docStatus,
                           {
-                            backgroundColor: doc.verified ? '#ECFDF5' : doc.uploaded ? '#FEF3C7' : '#FEF2F2',
+                            backgroundColor: doc.verified ? Colors.canvasCream : doc.uploaded ? Colors.warningContainer : Colors.dangerContainer,
                           },
                         ]}>
                           <Text style={{
-                            fontSize: 11,
-                            fontWeight: '600',
-                            color: doc.verified ? '#059669' : doc.uploaded ? '#D97706' : '#EF4444',
+                            fontSize: 10,
+                            fontFamily: Typography.fontFamily.mono,
+                            fontWeight: Typography.fontWeight.bold,
+                            color: doc.verified ? Colors.textPrimary : doc.uploaded ? Colors.warningDark : Colors.danger,
                           }}>
-                            {doc.verified ? 'Verified ✓' : doc.uploaded ? 'Pending review' : 'Not uploaded'}
+                            {doc.verified ? 'VERIFIED' : doc.uploaded ? 'PENDING' : 'NOT UPLOADED'}
                           </Text>
                         </View>
                       </View>
@@ -414,18 +417,18 @@ export default function WorkersList() {
 
                 {/* Location */}
                 <View style={styles.modalSection}>
-                  <Text style={styles.sectionLabel}>Location Info</Text>
+                  <Text style={styles.sectionLabel}>LOCATION INFO</Text>
                   <View style={styles.locationRow}>
                     <View style={styles.locItem}>
-                      <Ionicons name="location-outline" size={16} color="#6B7280" />
+                      <Ionicons name="location-outline" size={16} color={Colors.textSecondary} />
                       <Text style={styles.locText}>{selectedWorker.distanceKm} km from hub</Text>
                     </View>
                     <View style={styles.locItem}>
-                      <Ionicons name="time-outline" size={16} color="#6B7280" />
+                      <Ionicons name="time-outline" size={16} color={Colors.textSecondary} />
                       <Text style={styles.locText}>{selectedWorker.etaMinutes} min ETA</Text>
                     </View>
                     <View style={styles.locItem}>
-                      <Ionicons name="map-outline" size={16} color="#6B7280" />
+                      <Ionicons name="map-outline" size={16} color={Colors.textSecondary} />
                       <Text style={styles.locText}>{selectedWorker.location.latitude.toFixed(4)}°N, {selectedWorker.location.longitude.toFixed(4)}°E</Text>
                     </View>
                   </View>
@@ -440,252 +443,252 @@ export default function WorkersList() {
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: '#F4F6FA' },
+  page: { flex: 1, backgroundColor: Colors.canvasLight },
   scroll: { flex: 1 },
-  pageContent: { padding: 32, paddingBottom: 48, gap: 20 },
+  pageContent: { padding: Spacing['4xl'], paddingBottom: Spacing['4xl'], gap: Spacing['2xl'] },
 
   pageHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
   },
-  pageTitle: { fontSize: 28, fontWeight: '800', color: '#111827' },
-  pageSubtitle: { fontSize: 14, color: '#6B7280', marginTop: 4 },
-  headerStats: { flexDirection: 'row', gap: 10 },
+  pageTitle: { fontSize: Typography.fontSize['3xl'], fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -1 },
+  pageSubtitle: { fontSize: Typography.fontSize.sm, color: Colors.textSecondary, marginTop: Spacing.xs },
+  headerStats: { flexDirection: 'row', gap: Spacing.sm },
   statPill: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    backgroundColor: '#fff',
-    paddingHorizontal: 14,
-    paddingVertical: 8,
-    borderRadius: 20,
+    gap: Spacing.sm,
+    backgroundColor: Colors.surfaceLight,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 12,
+    borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
   },
-  statDot: { width: 8, height: 8, borderRadius: 4 },
-  statPillText: { fontSize: 13, fontWeight: '600', color: '#374151' },
+  statDot: { width: 8, height: 8, borderRadius: Radius.full },
+  statPillText: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary, letterSpacing: 1 },
 
-  filterBar: { gap: 12 },
+  filterBar: { gap: Spacing.lg },
   searchBox: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    backgroundColor: '#fff',
-    borderRadius: 12,
-    paddingHorizontal: 14,
-    paddingVertical: 12,
+    gap: Spacing.sm,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.full,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 14,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
   },
   searchInput: {
     flex: 1,
-    fontSize: 14,
-    color: '#111827',
-    // @ts-ignore
-    outlineStyle: 'none',
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textPrimary,
+    outlineStyle: 'none' as any,
   },
-  statusFilters: { flexDirection: 'row', gap: 8 },
+  statusFilters: { flexDirection: 'row', gap: Spacing.sm },
   filterChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 7,
-    borderRadius: 20,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 10,
+    borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#fff',
+    borderColor: Colors.borderLight,
+    backgroundColor: Colors.surfaceLight,
   },
-  filterChipActive: { backgroundColor: '#EDE9FE', borderColor: '#3c20a1' },
-  filterChipText: { fontSize: 13, fontWeight: '600', color: '#6B7280' },
-  filterChipTextActive: { color: '#3c20a1' },
+  filterChipActive: { backgroundColor: Colors.textPrimary, borderColor: Colors.textPrimary },
+  filterChipText: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textSecondary, letterSpacing: 1 },
+  filterChipTextActive: { color: Colors.canvasLight },
 
-  catScroll: { marginBottom: 4 },
-  catFilters: { flexDirection: 'row', gap: 8, paddingBottom: 4 },
+  catScroll: { marginBottom: Spacing.sm },
+  catFilters: { flexDirection: 'row', gap: Spacing.sm, paddingBottom: 4 },
   catChip: {
-    paddingHorizontal: 14,
-    paddingVertical: 6,
-    borderRadius: 20,
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: 10,
+    borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#fff',
+    borderColor: Colors.borderLight,
+    backgroundColor: Colors.surfaceLight,
   },
-  catChipText: { fontSize: 13, fontWeight: '600', color: '#6B7280' },
+  catChipText: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textSecondary, letterSpacing: 1 },
 
   tableCard: {
-    backgroundColor: '#fff',
-    borderRadius: 16,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.xl,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
     overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.04,
-    shadowRadius: 8,
+    ...Shadow.soft,
   },
   tableHead: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F8FAFC',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    backgroundColor: Colors.canvasCream,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
+    borderBottomColor: Colors.borderLight,
   },
   thCell: {
     flex: 1,
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#6B7280',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textSecondary,
+    letterSpacing: 1,
   },
   tableRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
+    paddingVertical: Spacing.lg,
+    paddingHorizontal: Spacing.xl,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: Colors.borderLight,
   },
-  tableRowEven: { backgroundColor: '#FAFAFA' },
+  tableRowEven: { backgroundColor: Colors.canvasLight },
   tdCell: { flex: 1, justifyContent: 'center' },
 
-  avatar: { width: 40, height: 40, borderRadius: 20, borderWidth: 1, borderColor: '#E5E7EB' },
-  workerName: { fontSize: 14, fontWeight: '700', color: '#111827' },
-  workerExp: { fontSize: 11, color: '#9CA3AF', marginTop: 1 },
+  avatar: { width: 44, height: 44, borderRadius: Radius.full, borderWidth: 1, borderColor: Colors.borderLight },
+  workerName: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
+  workerExp: { fontSize: 11, fontFamily: Typography.fontFamily.mono, color: Colors.textSecondary, marginTop: 4 },
 
-  catTag: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20, alignSelf: 'flex-start' },
-  catTagText: { fontSize: 11, fontWeight: '700' },
+  catTag: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: Radius.full, alignSelf: 'flex-start' },
+  catTagText: { fontSize: 9, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, letterSpacing: 1 },
 
-  coopText: { fontSize: 12, color: '#4B5563', lineHeight: 18 },
+  coopText: { fontSize: Typography.fontSize.xs, fontFamily: Typography.fontFamily.body, color: Colors.textPrimary, lineHeight: 18 },
 
-  statusDot: { flexDirection: 'row', alignItems: 'center', gap: 5, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20, alignSelf: 'flex-start' },
-  dotInner: { width: 6, height: 6, borderRadius: 3 },
-  statusText: { fontSize: 11, fontWeight: '700' },
+  statusDot: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: Radius.full, alignSelf: 'flex-start' },
+  dotInner: { width: 6, height: 6, borderRadius: Radius.full },
+  statusText: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold },
 
-  ratingText: { fontSize: 13, fontWeight: '700', color: '#111827' },
+  ratingText: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
 
-  jobsText: { fontSize: 13, fontWeight: '700', color: '#111827' },
-  earningsText: { fontSize: 11, color: '#059669', fontWeight: '600', marginTop: 1 },
+  jobsText: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
+  earningsText: { fontSize: 11, fontFamily: Typography.fontFamily.mono, color: Colors.accentPrimaryDark, fontWeight: Typography.fontWeight.bold, marginTop: 4 },
 
-  kycBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20, alignSelf: 'flex-start' },
-  kycText: { fontSize: 11, fontWeight: '700' },
+  kycBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 10, paddingVertical: 6, borderRadius: Radius.full, alignSelf: 'flex-start' },
+  kycText: { fontSize: 9, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, letterSpacing: 1 },
 
   viewBtn: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
-    backgroundColor: '#EDE9FE',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
+    gap: 6,
+    backgroundColor: Colors.canvasCream,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
-  viewBtnText: { color: '#3c20a1', fontSize: 12, fontWeight: '700' },
+  viewBtnText: { color: Colors.textPrimary, fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, letterSpacing: 1 },
 
   emptyRow: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 60,
-    gap: 12,
+    paddingVertical: 80,
+    gap: Spacing.md,
   },
-  emptyText: { fontSize: 14, color: '#9CA3AF' },
+  emptyText: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.mono, color: Colors.textMuted },
 
   // Modal
   modalOverlay: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.45)',
+    backgroundColor: 'rgba(0,0,0,0.6)',
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 24,
+    padding: Spacing['2xl'],
   },
   modalCard: {
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 28,
+    backgroundColor: Colors.canvasLight,
+    borderRadius: Radius.xl,
+    padding: Spacing['2xl'],
     width: '100%' as any,
-    maxWidth: 680,
+    maxWidth: 720,
     maxHeight: '90vh' as any,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 20 },
-    shadowOpacity: 0.2,
-    shadowRadius: 40,
+    ...Shadow.soft,
   },
   modalHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
-    paddingBottom: 16,
+    marginBottom: Spacing.xl,
+    paddingBottom: Spacing.lg,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: Colors.borderLight,
   },
-  modalTitle: { fontSize: 20, fontWeight: '800', color: '#111827' },
+  modalTitle: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -0.5 },
   closeBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: '#F3F4F6',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceLight,
     justifyContent: 'center',
     alignItems: 'center',
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
 
-  modalSection: { marginBottom: 20 },
-  sectionLabel: { fontSize: 12, fontWeight: '700', color: '#9CA3AF', letterSpacing: 0.5, textTransform: 'uppercase', marginBottom: 10 },
+  modalSection: { marginBottom: Spacing['2xl'] },
+  sectionLabel: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textMuted, letterSpacing: 1, textTransform: 'uppercase', marginBottom: Spacing.sm },
 
-  identityRow: { flexDirection: 'row', gap: 16, alignItems: 'flex-start' },
-  modalAvatar: { width: 72, height: 72, borderRadius: 36, borderWidth: 2, borderColor: '#E5E7EB' },
-  identityInfo: { flex: 1, gap: 6 },
-  identityNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
-  modalName: { fontSize: 22, fontWeight: '800', color: '#111827' },
-  verifiedBadge: { flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: '#EDE9FE', paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20 },
-  verifiedText: { fontSize: 11, fontWeight: '700', color: '#3c20a1' },
-  modalCoop: { fontSize: 13, color: '#6B7280' },
-  identityMeta: { flexDirection: 'row', gap: 8, flexWrap: 'wrap' },
+  identityRow: { flexDirection: 'row', gap: Spacing.xl, alignItems: 'flex-start' },
+  modalAvatar: { width: 80, height: 80, borderRadius: Radius.full, borderWidth: 1, borderColor: Colors.borderLight },
+  identityInfo: { flex: 1, gap: 8 },
+  identityNameRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm, flexWrap: 'wrap' },
+  modalName: { fontSize: Typography.fontSize['2xl'], fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -1 },
+  verifiedBadge: { flexDirection: 'row', alignItems: 'center', gap: 6, backgroundColor: Colors.canvasCream, paddingHorizontal: 10, paddingVertical: 4, borderRadius: Radius.full, borderWidth: 1, borderColor: Colors.borderLight },
+  verifiedText: { fontSize: 9, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary, letterSpacing: 1 },
+  modalCoop: { fontSize: Typography.fontSize.sm, color: Colors.textSecondary, fontFamily: Typography.fontFamily.body },
+  identityMeta: { flexDirection: 'row', gap: Spacing.sm, flexWrap: 'wrap', marginTop: 4 },
 
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 10,
-    marginBottom: 20,
+    gap: Spacing.md,
+    marginBottom: Spacing['2xl'],
   },
   statCard: {
     flex: 1,
-    minWidth: 90,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    padding: 14,
+    minWidth: 100,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.lg,
+    padding: Spacing.lg,
     alignItems: 'center',
-    gap: 4,
+    gap: 8,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
   },
-  statValue: { fontSize: 16, fontWeight: '800', color: '#111827' },
-  statLabel: { fontSize: 11, color: '#6B7280', textAlign: 'center' },
+  statValue: { fontSize: Typography.fontSize.lg, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary },
+  statLabel: { fontSize: 10, fontFamily: Typography.fontFamily.mono, color: Colors.textSecondary, textAlign: 'center', letterSpacing: 0.5 },
 
-  skillsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  skillsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.sm },
   skillChip: {
-    backgroundColor: '#F3F4F6',
-    paddingHorizontal: 12,
-    paddingVertical: 5,
-    borderRadius: 20,
+    backgroundColor: Colors.surfaceLight,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 8,
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
-  skillChipText: { fontSize: 12, fontWeight: '600', color: '#374151' },
+  skillChipText: { fontSize: 11, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.semibold, color: Colors.textPrimary },
 
-  docsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
+  docsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: Spacing.md },
   docCard: {
     flex: 1,
-    minWidth: 140,
-    backgroundColor: '#F9FAFB',
-    borderRadius: 12,
-    padding: 14,
+    minWidth: 160,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.lg,
+    padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    gap: 10,
+    borderColor: Colors.borderLight,
+    gap: Spacing.md,
   },
-  docCardTop: { flexDirection: 'row', alignItems: 'center', gap: 8 },
-  docName: { fontSize: 13, fontWeight: '600', color: '#374151', flex: 1 },
-  docStatus: { paddingHorizontal: 8, paddingVertical: 4, borderRadius: 20 },
+  docCardTop: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  docName: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.body, fontWeight: Typography.fontWeight.semibold, color: Colors.textPrimary, flex: 1 },
+  docStatus: { paddingHorizontal: 10, paddingVertical: 6, borderRadius: Radius.full, alignSelf: 'flex-start' },
 
-  locationRow: { flexDirection: 'row', gap: 16, flexWrap: 'wrap' },
-  locItem: { flexDirection: 'row', alignItems: 'center', gap: 6 },
-  locText: { fontSize: 13, color: '#4B5563' },
+  locationRow: { flexDirection: 'row', gap: Spacing.xl, flexWrap: 'wrap' },
+  locItem: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  locText: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.body, color: Colors.textSecondary },
 });

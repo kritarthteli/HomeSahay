@@ -49,7 +49,7 @@ export default function WorkerDashboard() {
   const todayJobs = getTodayJobs(activeWorkerId);
   const completedJobs = todayJobs.filter((j) => j.status === 'completed');
 
-  const handleStatusToggle = async (value) => {
+  const handleStatusToggle = async (value: boolean) => {
     setTogglingStatus(true);
     await updateWorkerStatus(worker.id, value);
     updateWorkerOnlineStatus(worker.id, value);
@@ -62,17 +62,17 @@ export default function WorkerDashboard() {
   };
 
   const handleSimulateJob = () => {
-    setIncomingJob(DEMO_INCOMING_JOB);
+    setIncomingJob(DEMO_INCOMING_JOB as any);
     setShowJobModal(true);
   };
 
-  const handleAccept = (job) => {
+  const handleAccept = (job: any) => {
     acceptJob(job.id);
     setShowJobModal(false);
     addNotification({ type: 'job', title: 'Job Accepted!', message: `Head to ${job.address}` });
   };
 
-  const handleReject = (reason) => {
+  const handleReject = (reason: string) => {
     setShowJobModal(false);
     addNotification({
       type: 'info',
@@ -97,7 +97,7 @@ export default function WorkerDashboard() {
                 <View style={styles.nameRow}>
                   <Text style={styles.name}>{worker.name}</Text>
                   {worker.isVerified && (
-                    <Ionicons name="shield-checkmark" size={16} color="#fff" />
+                    <Ionicons name="shield-checkmark" size={14} color={Colors.accentPrimary} />
                   )}
                 </View>
                 <Text style={styles.cooperative}>{worker.cooperative}</Text>
@@ -110,19 +110,19 @@ export default function WorkerDashboard() {
                 logout('worker');
                 router.replace('/(worker)/login');
               }}
-              title="Sign Out"
+              activeOpacity={0.7}
             >
-              <Ionicons name="log-out-outline" size={18} color="#9CA3AF" />
+              <Ionicons name="log-out-outline" size={18} color={Colors.textInverseMuted} />
             </TouchableOpacity>
           </View>
 
           {/* Status Toggle Card */}
           <View style={[styles.statusCard, worker.isOnline && styles.statusCardOnline]}>
             <View style={styles.statusLeft}>
-              <View style={[styles.statusIndicator, { backgroundColor: worker.isOnline ? '#fff' : '#6B7280' }]} />
+              <View style={[styles.statusIndicator, { backgroundColor: worker.isOnline ? Colors.accentPrimary : Colors.textMuted }]} />
               <View>
                 <Text style={styles.statusTitle}>
-                  {worker.isOnline ? 'Active — Accepting Jobs' : 'Offline Mode'}
+                  {worker.isOnline ? 'ACTIVE — ACCEPTING JOBS' : 'OFFLINE MODE'}
                 </Text>
                 <Text style={styles.statusSubtitle}>
                   {worker.isOnline ? 'Receiving priority dispatch requests' : 'Toggle on to start receiving jobs'}
@@ -133,9 +133,9 @@ export default function WorkerDashboard() {
               value={worker.isOnline}
               onValueChange={handleStatusToggle}
               disabled={togglingStatus}
-              trackColor={{ false: '#374151', true: 'rgba(16, 185, 129, 0.4)' }}
-              thumbColor={worker.isOnline ? '#fff' : '#9CA3AF'}
-              ios_backgroundColor="#374151"
+              trackColor={{ false: Colors.borderDark, true: Colors.accentPrimaryDim }}
+              thumbColor={worker.isOnline ? Colors.accentPrimary : Colors.textInverseMuted}
+              ios_backgroundColor={Colors.borderDark}
             />
           </View>
 
@@ -147,7 +147,7 @@ export default function WorkerDashboard() {
                 <Text style={styles.earningsAmount}>₹{worker.todayEarnings.toLocaleString('en-IN')}</Text>
               </View>
               <View style={styles.goalPill}>
-                <Text style={styles.goalText}>Daily Goal: {Math.round(earningsProgress)}%</Text>
+                <Text style={styles.goalText}>GOAL: {Math.round(earningsProgress)}%</Text>
               </View>
             </View>
             <View style={styles.progressBarBg}>
@@ -157,33 +157,35 @@ export default function WorkerDashboard() {
         </View>
       </View>
 
-      {/* Clean White Bottom Sheet */}
+      {/* Clean Ivory Bottom Sheet */}
       <View style={styles.bottomSheet}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           {/* Quick Metrics Grid */}
           <View style={styles.statsGrid}>
             <View style={styles.statCard}>
-              <Ionicons name="cash-outline" size={20} color="#059669" />
+              <Ionicons name="cash-outline" size={18} color={Colors.textPrimary} />
               <Text style={styles.statValue}>₹{worker.pricePerHour}/hr</Text>
-              <Text style={styles.statLabel}>Hourly Rate</Text>
+              <Text style={styles.statLabel}>HOURLY RATE</Text>
             </View>
             <View style={styles.statCard}>
-              <Ionicons name="star" size={20} color="#3c20a1ff" />
+              <Ionicons name="star" size={18} color={Colors.textPrimary} />
               <Text style={styles.statValue}>{worker.rating} ★</Text>
-              <Text style={styles.statLabel}>Quality Rating</Text>
+              <Text style={styles.statLabel}>RATING</Text>
             </View>
             <View style={styles.statCard}>
-              <Ionicons name="briefcase-outline" size={20} color="#6366F1" />
+              <Ionicons name="briefcase-outline" size={18} color={Colors.textPrimary} />
               <Text style={styles.statValue}>{worker.totalJobs}</Text>
-              <Text style={styles.statLabel}>Total Jobs</Text>
+              <Text style={styles.statLabel}>TOTAL JOBS</Text>
             </View>
           </View>
 
           {/* Weekly Work Volume Chart */}
           <View style={styles.sectionCard}>
             <View style={styles.sectionHeader}>
-              <Text style={styles.sectionTitle}>This Week's Jobs</Text>
-              <Text style={styles.sectionSub}>7-Day Dispatch Trend</Text>
+              <View>
+                <Text style={styles.sectionTitle}>WORK VOLUME</Text>
+                <Text style={styles.sectionSub}>7-Day Dispatch Trend</Text>
+              </View>
             </View>
             <View style={styles.weekBars}>
               {['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map((day, i) => {
@@ -202,17 +204,17 @@ export default function WorkerDashboard() {
 
           {/* Simulate Incoming Dispatch Alert */}
           {worker.isOnline && (
-            <TouchableOpacity style={styles.demoBtn} onPress={handleSimulateJob}>
-              <Ionicons name="notifications" size={18} color="#fff" />
-              <Text style={styles.demoBtnText}>Simulate Incoming Job Alert</Text>
+            <TouchableOpacity style={styles.demoBtn} onPress={handleSimulateJob} activeOpacity={0.8}>
+              <Ionicons name="notifications" size={18} color={Colors.darkSurfaceDeep} />
+              <Text style={styles.demoBtnText}>SIMULATE INCOMING JOB</Text>
             </TouchableOpacity>
           )}
 
           {/* Cooperative Benefit Card */}
           <View style={styles.benefitCard}>
-            <Ionicons name="shield-checkmark" size={24} color="#3c20a1ff" />
+            <Ionicons name="shield-checkmark" size={24} color={Colors.accentPrimary} />
             <View style={styles.benefitInfo}>
-              <Text style={styles.benefitTitle}>Cooperative Guaranteed Protection</Text>
+              <Text style={styles.benefitTitle}>COOPERATIVE PROTECTION</Text>
               <Text style={styles.benefitSub}>
                 Zero platform commissions · Instant payout · ₹2,00,000 accidental coverage
               </Text>
@@ -235,10 +237,10 @@ export default function WorkerDashboard() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: Colors.canvasDark,
   },
   headerBackground: {
-    backgroundColor: '#121212',
+    backgroundColor: Colors.canvasDark,
     paddingBottom: Spacing.xl,
   },
   headerContent: {
@@ -249,7 +251,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: Spacing.md,
+    marginBottom: Spacing.lg,
   },
   workerProfileRow: {
     flexDirection: 'row',
@@ -259,9 +261,9 @@ const styles = StyleSheet.create({
   avatar: {
     width: 48,
     height: 48,
-    borderRadius: 24,
-    borderWidth: 2,
-    borderColor: '#2D2D35',
+    borderRadius: Radius.full,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
   workerInfo: {
     justifyContent: 'center',
@@ -272,41 +274,45 @@ const styles = StyleSheet.create({
     gap: 6,
   },
   name: {
-    color: '#fff',
+    color: Colors.textInverse,
     fontSize: Typography.fontSize.lg,
-    fontWeight: '700',
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
   },
   cooperative: {
-    color: '#fff',
-    fontSize: Typography.fontSize.xs,
-    fontWeight: '500',
+    color: Colors.textInverseMuted,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
     marginTop: 2,
+    letterSpacing: 0.5,
   },
   logoutBtn: {
     width: 36,
     height: 36,
-    borderRadius: 18,
-    backgroundColor: '#1E1E22',
+    borderRadius: Radius.full,
+    backgroundColor: Colors.surfaceInteractive,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#2D2D35',
+    borderColor: Colors.borderDark,
   },
 
   // Status Card
   statusCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#1E1E22',
+    backgroundColor: Colors.surfaceDark,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: '#2D2D35',
+    borderColor: Colors.borderDark,
     marginBottom: Spacing.md,
   },
   statusCardOnline: {
-    borderColor: 'rgba(16, 185, 129, 0.4)',
-    backgroundColor: '#13211B',
+    borderColor: Colors.accentPrimary,
+    backgroundColor: Colors.accentPrimaryDim,
   },
   statusLeft: {
     flex: 1,
@@ -315,118 +321,131 @@ const styles = StyleSheet.create({
     gap: Spacing.sm,
   },
   statusIndicator: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 8,
+    height: 8,
+    borderRadius: Radius.full,
   },
   statusTitle: {
-    color: '#fff',
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '600',
+    color: Colors.textInverse,
+    fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
   statusSubtitle: {
-    color: '#9CA3AF',
+    color: Colors.textInverseMuted,
     fontSize: 11,
-    marginTop: 1,
+    fontFamily: Typography.fontFamily.mono,
+    marginTop: 2,
   },
 
   // Earnings
   earningsSnapshot: {
-    backgroundColor: '#1A1A1E',
+    backgroundColor: Colors.darkSurfaceDeep,
     borderRadius: Radius.lg,
-    padding: Spacing.md,
+    padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: '#2D2D35',
+    borderColor: Colors.borderDark,
   },
   earningsRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: Spacing.xs,
+    marginBottom: Spacing.md,
   },
   earningsLabel: {
-    color: '#9CA3AF',
+    color: Colors.textInverseMuted,
     fontSize: 10,
-    fontWeight: '700',
-    letterSpacing: 0.5,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1,
   },
   earningsAmount: {
-    color: '#FFFFFF',
-    fontSize: 22,
-    fontWeight: '800',
-    marginTop: 2,
+    color: Colors.textInverse,
+    fontSize: Typography.fontSize['2xl'],
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    marginTop: 4,
+    letterSpacing: -1,
   },
   goalPill: {
-    backgroundColor: 'rgba(16, 185, 129, 0.15)',
+    backgroundColor: Colors.surfaceInteractive,
     paddingHorizontal: 8,
-    paddingVertical: 3,
+    paddingVertical: 4,
     borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.3)',
+    borderColor: Colors.borderDark,
   },
   goalText: {
-    color: '#fff',
-    fontSize: 11,
-    fontWeight: '600',
+    color: Colors.textInverse,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
   progressBarBg: {
-    height: 6,
-    backgroundColor: '#2D2D35',
-    borderRadius: 3,
+    height: 4,
+    backgroundColor: Colors.surfaceInteractive,
+    borderRadius: Radius.full,
     overflow: 'hidden',
-    marginTop: 6,
+    marginTop: 4,
   },
   progressBarFill: {
     height: '100%',
-    backgroundColor: '#fff',
-    borderRadius: 3,
+    backgroundColor: Colors.accentPrimary,
+    borderRadius: Radius.full,
+    ...Shadow.glow,
   },
 
   // Bottom Sheet
   bottomSheet: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    backgroundColor: Colors.canvasLight,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
     overflow: 'hidden',
   },
   scrollContent: {
     padding: Spacing.xl,
-    paddingBottom: Spacing['3xl'],
+    paddingBottom: Spacing['4xl'],
   },
   statsGrid: {
     flexDirection: 'row',
     gap: Spacing.sm,
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.xl,
   },
   statCard: {
     flex: 1,
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     alignItems: 'center',
-    gap: 4,
+    gap: 8,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
   },
   statValue: {
-    color: '#111827',
-    fontSize: Typography.fontSize.base,
-    fontWeight: '800',
+    color: Colors.textPrimary,
+    fontSize: Typography.fontSize.md,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
   },
   statLabel: {
-    color: '#6B7280',
-    fontSize: 11,
+    color: Colors.textSecondary,
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
 
   // Section Card
   sectionCard: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
     padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    marginBottom: Spacing.lg,
+    borderColor: Colors.borderLight,
+    marginBottom: Spacing.xl,
   },
   sectionHeader: {
     flexDirection: 'row',
@@ -435,13 +454,17 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.lg,
   },
   sectionTitle: {
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
-    color: '#111827',
+    fontSize: 11,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
+    letterSpacing: 1,
+    marginBottom: 4,
   },
   sectionSub: {
     fontSize: 11,
-    color: '#6B7280',
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textSecondary,
   },
   weekBars: {
     flexDirection: 'row',
@@ -453,23 +476,26 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flex: 1,
     justifyContent: 'flex-end',
-    gap: 4,
+    gap: 6,
   },
   weekBarCount: {
-    color: '#4B5563',
+    color: Colors.textPrimary,
     fontSize: 10,
-    fontWeight: '600',
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
   },
   weekBar: {
-    width: 22,
-    backgroundColor: '#3c20a1ff',
-    borderRadius: 4,
-    minHeight: 10,
+    width: 16,
+    backgroundColor: Colors.borderDark,
+    borderRadius: Radius.full,
+    minHeight: 12,
   },
   weekDay: {
-    color: '#6B7280',
+    color: Colors.textSecondary,
     fontSize: 10,
-    marginTop: 2,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.semibold,
+    marginTop: 4,
   },
 
   demoBtn: {
@@ -477,43 +503,45 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     gap: Spacing.sm,
-    backgroundColor: '#3c20a1ff',
-    borderRadius: Radius.lg,
-    paddingVertical: 16,
-    marginBottom: Spacing.lg,
-    shadowColor: '#3c20a1ff',
-    shadowOpacity: 0.25,
-    shadowRadius: 10,
-    shadowOffset: { width: 0, height: 4 },
+    backgroundColor: Colors.accentPrimary,
+    borderRadius: Radius.full,
+    paddingVertical: 18,
+    marginBottom: Spacing.xl,
+    ...Shadow.glow,
   },
   demoBtnText: {
-    color: '#fff',
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
+    color: Colors.darkSurfaceDeep,
+    fontSize: 12,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: 1,
   },
 
   benefitCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#ECFDF5',
-    padding: Spacing.md,
+    backgroundColor: Colors.darkSurfaceDeep,
+    padding: Spacing.lg,
     borderRadius: Radius.lg,
     gap: Spacing.md,
     borderWidth: 1,
-    borderColor: '#A7F3D0',
+    borderColor: Colors.borderDark,
   },
   benefitInfo: {
     flex: 1,
   },
   benefitTitle: {
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
-    color: '#065F46',
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.accentPrimary,
+    letterSpacing: 1,
+    marginBottom: 4,
   },
   benefitSub: {
     fontSize: 11,
-    color: '#047857',
-    marginTop: 2,
-    lineHeight: 15,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textInverseMuted,
+    lineHeight: 16,
   },
 });

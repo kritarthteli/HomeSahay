@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView } from 
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/appStore';
-import { Radius } from '../../constants/theme';
+import { Colors, Spacing, Radius, Typography, Shadow } from '../../constants/theme';
 
 export default function AdminLogin() {
   const router = useRouter();
@@ -45,11 +45,11 @@ export default function AdminLogin() {
           {/* Logo */}
           <View style={styles.brandLogoRow}>
             <View style={styles.logoIcon}>
-              <Ionicons name="shield-checkmark" size={28} color="#fff" />
+              <Ionicons name="shield-checkmark" size={24} color={Colors.darkSurfaceDeep} />
             </View>
             <View>
               <Text style={styles.brandName}>HomeSahay</Text>
-              <Text style={styles.brandTagline}>Admin Hub</Text>
+              <Text style={styles.brandTagline}>ADMIN HUB</Text>
             </View>
           </View>
 
@@ -66,7 +66,7 @@ export default function AdminLogin() {
             {FEATURES.map((f) => (
               <View key={f.label} style={styles.featureItem}>
                 <View style={styles.featureIcon}>
-                  <Ionicons name={f.icon} size={18} color="#fff" />
+                  <Ionicons name={f.icon} size={18} color={Colors.textInverse} />
                 </View>
                 <View>
                   <Text style={styles.featureLabel}>{f.label}</Text>
@@ -91,18 +91,19 @@ export default function AdminLogin() {
 
           {/* Branch Selector */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Cooperative Branch</Text>
+            <Text style={styles.fieldLabel}>COOPERATIVE BRANCH</Text>
             <View style={styles.branchPicker}>
               {BRANCHES.map((b) => (
                 <TouchableOpacity
                   key={b}
                   style={[styles.branchOption, selectedBranch === b && styles.branchOptionActive]}
                   onPress={() => setSelectedBranch(b)}
+                  activeOpacity={0.8}
                 >
                   <Ionicons
                     name={selectedBranch === b ? 'radio-button-on' : 'radio-button-off'}
-                    size={16}
-                    color={selectedBranch === b ? '#3c20a1' : '#9CA3AF'}
+                    size={18}
+                    color={selectedBranch === b ? Colors.textPrimary : Colors.textMuted}
                   />
                   <Text style={[styles.branchOptionText, selectedBranch === b && styles.branchOptionTextActive]}>
                     {b}
@@ -114,35 +115,35 @@ export default function AdminLogin() {
 
           {/* Email Field */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Email Address</Text>
+            <Text style={styles.fieldLabel}>EMAIL ADDRESS</Text>
             <View style={styles.inputWrapper}>
-              <Ionicons name="mail-outline" size={18} color="#9CA3AF" style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={18} color={Colors.textMuted} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 value={email}
                 onChangeText={setEmail}
                 keyboardType="email-address"
                 autoCapitalize="none"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={Colors.textMuted}
               />
             </View>
           </View>
 
           {/* Password Field */}
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Password</Text>
+            <Text style={styles.fieldLabel}>PASSWORD</Text>
             <View style={styles.inputWrapper}>
-              <Ionicons name="lock-closed-outline" size={18} color="#9CA3AF" style={styles.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={18} color={Colors.textMuted} style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
                 value={password}
                 onChangeText={setPassword}
                 secureTextEntry={!showPassword}
                 placeholder="Enter your password"
-                placeholderTextColor="#9CA3AF"
+                placeholderTextColor={Colors.textMuted}
               />
               <TouchableOpacity onPress={() => setShowPassword(!showPassword)} style={styles.eyeBtn}>
-                <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={18} color="#9CA3AF" />
+                <Ionicons name={showPassword ? 'eye-off-outline' : 'eye-outline'} size={18} color={Colors.textMuted} />
               </TouchableOpacity>
             </View>
           </View>
@@ -152,20 +153,21 @@ export default function AdminLogin() {
             style={[styles.signInBtn, loading && styles.signInBtnLoading]}
             onPress={handleLogin}
             disabled={loading}
+            activeOpacity={0.8}
           >
             {loading ? (
-              <Text style={styles.signInBtnText}>Signing in…</Text>
+              <Text style={styles.signInBtnText}>SIGNING IN…</Text>
             ) : (
               <>
-                <Text style={styles.signInBtnText}>Sign In to Hub</Text>
-                <Ionicons name="arrow-forward" size={18} color="#fff" />
+                <Text style={styles.signInBtnText}>SIGN IN TO HUB</Text>
+                <Ionicons name="arrow-forward" size={16} color={Colors.darkSurfaceDeep} />
               </>
             )}
           </TouchableOpacity>
 
           {/* Demo note */}
           <View style={styles.demoNote}>
-            <Ionicons name="information-circle-outline" size={15} color="#6B7280" />
+            <Ionicons name="information-circle-outline" size={16} color={Colors.textSecondary} />
             <Text style={styles.demoNoteText}>
               Demo mode — credentials are pre-filled. Click Sign In to access the portal.
             </Text>
@@ -186,144 +188,150 @@ const styles = StyleSheet.create({
   // Left Panel
   brandPanel: {
     width: '42%' as any,
-    backgroundColor: '#1E1B4B',
-    padding: 48,
+    backgroundColor: Colors.darkSurfaceDeep,
+    padding: Spacing['4xl'],
     justifyContent: 'space-between',
     minHeight: '100vh' as any,
   },
-  brandContent: { flex: 1, justifyContent: 'center', gap: 32 },
-  brandLogoRow: { flexDirection: 'row', alignItems: 'center', gap: 16 },
+  brandContent: { flex: 1, justifyContent: 'center', gap: Spacing['2xl'] },
+  brandLogoRow: { flexDirection: 'row', alignItems: 'center', gap: Spacing.md },
   logoIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 16,
-    backgroundColor: '#3c20a1',
+    width: 48,
+    height: 48,
+    borderRadius: Radius.xl,
+    backgroundColor: Colors.accentPrimary,
     justifyContent: 'center',
     alignItems: 'center',
+    ...Shadow.glow,
   },
-  brandName: { color: '#fff', fontSize: 22, fontWeight: '800' },
-  brandTagline: { color: 'rgba(255,255,255,0.5)', fontSize: 13 },
+  brandName: { color: Colors.textInverse, fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, letterSpacing: -0.5 },
+  brandTagline: { color: Colors.textInverseMuted, fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, letterSpacing: 1 },
   brandHeadline: {
-    color: '#fff',
-    fontSize: 38,
-    fontWeight: '900',
+    color: Colors.textInverse,
+    fontSize: 42,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
     lineHeight: 48,
+    letterSpacing: -1.5,
   },
   brandSubtitle: {
-    color: 'rgba(255,255,255,0.6)',
-    fontSize: 15,
-    lineHeight: 24,
+    color: Colors.textInverseMuted,
+    fontSize: Typography.fontSize.md,
+    lineHeight: 26,
   },
-  featureList: { gap: 16 },
+  featureList: { gap: Spacing.xl },
   featureItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 14,
+    gap: Spacing.md,
   },
   featureIcon: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
-    backgroundColor: 'rgba(255,255,255,0.12)',
+    width: 40,
+    height: 40,
+    borderRadius: Radius.lg,
+    backgroundColor: Colors.surfaceInteractive,
     justifyContent: 'center',
     alignItems: 'center',
     flexShrink: 0,
+    borderWidth: 1,
+    borderColor: Colors.borderDark,
   },
-  featureLabel: { color: '#fff', fontSize: 14, fontWeight: '700' },
-  featureDesc: { color: 'rgba(255,255,255,0.5)', fontSize: 12, marginTop: 2 },
-  brandVersion: { color: 'rgba(255,255,255,0.25)', fontSize: 12 },
+  featureLabel: { color: Colors.textInverse, fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.bold, marginBottom: 2 },
+  featureDesc: { color: Colors.textInverseMuted, fontSize: 11, fontFamily: Typography.fontFamily.mono },
+  brandVersion: { color: Colors.textInverseMuted, fontSize: 10, fontFamily: Typography.fontFamily.mono },
 
   // Right Form
   formSide: {
     flex: 1,
-    backgroundColor: '#F4F6FA',
+    backgroundColor: Colors.canvasLight,
   },
   formContent: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 48,
+    padding: Spacing['4xl'],
     minHeight: '100vh' as any,
   },
   formCard: {
     width: '100%' as any,
     maxWidth: 440,
-    backgroundColor: '#fff',
-    borderRadius: 20,
-    padding: 36,
-    gap: 20,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.xl,
+    padding: Spacing['2xl'],
+    gap: Spacing.xl,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.08,
-    shadowRadius: 24,
+    borderColor: Colors.borderLight,
+    ...Shadow.soft,
   },
-  formHeader: { gap: 4 },
-  formTitle: { fontSize: 26, fontWeight: '800', color: '#111827' },
-  formSubtitle: { fontSize: 14, color: '#6B7280' },
+  formHeader: { gap: 6 },
+  formTitle: { fontSize: Typography.fontSize['3xl'], fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -1 },
+  formSubtitle: { fontSize: Typography.fontSize.sm, color: Colors.textSecondary },
 
-  fieldGroup: { gap: 8 },
-  fieldLabel: { fontSize: 13, fontWeight: '700', color: '#374151' },
+  fieldGroup: { gap: Spacing.sm },
+  fieldLabel: { fontSize: 10, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary, letterSpacing: 1, marginBottom: 4 },
 
-  branchPicker: { gap: 6 },
+  branchPicker: { gap: Spacing.sm },
   branchOption: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    padding: 12,
-    borderRadius: 10,
+    gap: Spacing.md,
+    padding: Spacing.md,
+    borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    backgroundColor: '#F9FAFB',
+    borderColor: Colors.borderLight,
+    backgroundColor: Colors.surfaceLight,
   },
   branchOptionActive: {
-    borderColor: '#3c20a1',
-    backgroundColor: '#EDE9FE',
+    borderColor: Colors.textPrimary,
+    backgroundColor: Colors.borderLight,
   },
-  branchOptionText: { fontSize: 13, color: '#6B7280', flex: 1 },
-  branchOptionTextActive: { color: '#3c20a1', fontWeight: '600' },
+  branchOptionText: { fontSize: Typography.fontSize.sm, fontFamily: Typography.fontFamily.body, color: Colors.textSecondary, flex: 1 },
+  branchOptionTextActive: { color: Colors.textPrimary, fontWeight: Typography.fontWeight.bold },
 
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
-    borderRadius: 10,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.full,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    paddingHorizontal: 12,
-    height: 48,
+    borderColor: Colors.borderLight,
+    paddingHorizontal: Spacing.md,
+    height: 54,
   },
-  inputIcon: { marginRight: 10 },
+  inputIcon: { marginRight: Spacing.md },
   input: {
     flex: 1,
-    fontSize: 14,
-    color: '#111827',
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textPrimary,
     height: '100%' as any,
     outlineStyle: 'none' as any,
   },
-  eyeBtn: { padding: 4 },
+  eyeBtn: { padding: 8 },
 
   signInBtn: {
-    backgroundColor: '#3c20a1',
-    borderRadius: 12,
-    paddingVertical: 14,
+    backgroundColor: Colors.accentPrimary,
+    borderRadius: Radius.full,
+    paddingVertical: 18,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
     gap: 10,
-    marginTop: 4,
+    marginTop: Spacing.sm,
+    ...Shadow.glow,
   },
   signInBtnLoading: { opacity: 0.7 },
-  signInBtnText: { color: '#fff', fontSize: 15, fontWeight: '800' },
+  signInBtnText: { color: Colors.darkSurfaceDeep, fontSize: 12, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.black, letterSpacing: 1 },
 
   demoNote: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 8,
-    backgroundColor: '#F3F4F6',
-    borderRadius: 10,
-    padding: 12,
+    gap: Spacing.sm,
+    backgroundColor: Colors.canvasCream,
+    borderRadius: Radius.lg,
+    padding: Spacing.md,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
   },
-  demoNoteText: { flex: 1, fontSize: 12, color: '#6B7280', lineHeight: 18 },
+  demoNoteText: { flex: 1, fontSize: 11, fontFamily: Typography.fontFamily.mono, color: Colors.textSecondary, lineHeight: 18 },
 });

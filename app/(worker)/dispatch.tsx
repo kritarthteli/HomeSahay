@@ -28,22 +28,22 @@ export default function DispatchScreen() {
   const inProgressJobs = myJobs.filter((j) => j.status === 'in_progress' || j.status === 'accepted');
   const completedJobs = myJobs.filter((j) => j.status === 'completed');
 
-  const handleSimulate = (job) => {
+  const handleSimulate = (job: any) => {
     setCurrentJob(job);
     setShowModal(true);
   };
 
-  const handleAccept = (job) => {
+  const handleAccept = (job: any) => {
     acceptJob(job.id);
     setShowModal(false);
     addNotification({ type: 'job', title: `Job Accepted!`, message: `Head to ${job.address}` });
   };
 
-  const handleReject = (reason) => {
+  const handleReject = (reason: string) => {
     setShowModal(false);
   };
 
-  const handleComplete = (jobId) => {
+  const handleComplete = (jobId: string) => {
     completeJob(jobId);
     addNotification({ type: 'success', title: 'Job Completed!', message: 'Payment will be processed shortly.' });
   };
@@ -56,23 +56,23 @@ export default function DispatchScreen() {
         <View style={styles.headerContent}>
           <Text style={styles.title}>Dispatch Queue</Text>
           <Text style={styles.subtitle}>
-            Live order matching for {worker?.name?.split(' ')[0] ?? 'Partner'}
+            LIVE MATCHING FOR {worker?.name?.split(' ')[0].toUpperCase() ?? 'PARTNER'}
           </Text>
         </View>
       </View>
 
-      {/* Clean White Bottom Sheet */}
+      {/* Clean Ivory Bottom Sheet */}
       <View style={styles.bottomSheet}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           {/* Demo dispatch triggers */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Simulate Incoming Jobs</Text>
+            <Text style={styles.sectionTitle}>SIMULATE INCOMING JOBS</Text>
             {DEMO_JOBS.map((job) => (
               <View key={job.id} style={styles.demoCard}>
                 <View
                   style={[
                     styles.urgencyDot,
-                    { backgroundColor: job.urgency === 'emergency' ? '#EF4444' : '#6366F1' },
+                    { backgroundColor: job.urgency === 'emergency' ? Colors.danger : Colors.accentPrimary },
                   ]}
                 />
                 <View style={styles.demoInfo}>
@@ -81,7 +81,7 @@ export default function DispatchScreen() {
                   <Text
                     style={[
                       styles.demoUrgency,
-                      { color: job.urgency === 'emergency' ? '#DC2626' : '#4B5563' },
+                      { color: job.urgency === 'emergency' ? Colors.danger : Colors.textSecondary },
                     ]}
                   >
                     {job.urgency.toUpperCase()} · ₹{job.amount}
@@ -90,12 +90,13 @@ export default function DispatchScreen() {
                 <TouchableOpacity
                   style={[
                     styles.dispatchBtn,
-                    { backgroundColor: job.urgency === 'emergency' ? '#EF4444' : '#3c20a1ff' },
+                    { backgroundColor: job.urgency === 'emergency' ? Colors.danger : Colors.accentPrimary },
                   ]}
                   onPress={() => handleSimulate(job)}
+                  activeOpacity={0.8}
                 >
-                  <Ionicons name="notifications" size={14} color="#fff" />
-                  <Text style={styles.dispatchBtnText}>Test Alert</Text>
+                  <Ionicons name="notifications" size={14} color={Colors.darkSurfaceDeep} />
+                  <Text style={[styles.dispatchBtnText, { color: Colors.darkSurfaceDeep }]}>TEST</Text>
                 </TouchableOpacity>
               </View>
             ))}
@@ -104,22 +105,23 @@ export default function DispatchScreen() {
           {/* In Progress */}
           {inProgressJobs.length > 0 && (
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Active Jobs In Progress</Text>
+              <Text style={styles.sectionTitle}>ACTIVE JOBS IN PROGRESS</Text>
               {inProgressJobs.map((job) => (
                 <View key={job.id} style={styles.jobCard}>
                   <View style={styles.jobMeta}>
                     <Text style={styles.jobCategory}>{job.category.toUpperCase()}</Text>
                     <View style={styles.inProgressTag}>
-                      <Text style={styles.inProgressTagText}>In Progress</Text>
+                      <Text style={styles.inProgressTagText}>IN PROGRESS</Text>
                     </View>
                   </View>
                   <Text style={styles.jobAmount}>₹{job.amount}</Text>
                   <TouchableOpacity
                     style={styles.completeBtn}
                     onPress={() => handleComplete(job.id)}
+                    activeOpacity={0.8}
                   >
-                    <Ionicons name="checkmark-circle" size={16} color="#fff" />
-                    <Text style={styles.completeBtnText}>Mark Completed</Text>
+                    <Ionicons name="checkmark-circle" size={16} color={Colors.darkSurfaceDeep} />
+                    <Text style={styles.completeBtnText}>MARK COMPLETED</Text>
                   </TouchableOpacity>
                 </View>
               ))}
@@ -128,11 +130,11 @@ export default function DispatchScreen() {
 
           {/* Completed Today */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Completed Today ({completedJobs.length})</Text>
+            <Text style={styles.sectionTitle}>COMPLETED TODAY ({completedJobs.length})</Text>
             {completedJobs.length === 0 ? (
               <View style={styles.emptyCard}>
-                <Ionicons name="checkmark-done-circle-outline" size={36} color="#9CA3AF" />
-                <Text style={styles.emptyText}>No completed jobs yet today.</Text>
+                <Ionicons name="checkmark-done-circle-outline" size={32} color={Colors.textMuted} />
+                <Text style={styles.emptyText}>NO COMPLETED JOBS YET TODAY.</Text>
               </View>
             ) : (
               completedJobs.map((job) => (
@@ -140,13 +142,13 @@ export default function DispatchScreen() {
                   <View style={styles.completedSummary}>
                     <View style={{ flex: 1 }}>
                       <Text style={styles.completedCategory}>{job.category.toUpperCase()}</Text>
-                      <Text style={styles.completedTime}>{job.time ?? 'Today'} · Customer: {job.customerName || 'Customer'}</Text>
+                      <Text style={styles.completedTime}>{job.time ?? 'Today'} · {job.customerName || 'Customer'}</Text>
                     </View>
                     <Text style={styles.completedAmount}>+₹{job.amount}</Text>
                   </View>
                   <FeedbackCard title="Rate the customer" subject={job.customerName || 'your customer'}
                     submitted={feedback.some((entry) => entry.jobId === job.id && entry.fromRole === 'worker')}
-                    onSubmit={(entry) => submitFeedback({ ...entry, jobId: job.id, fromRole: 'worker', fromUserId: activeWorkerId, toCustomerId: job.customerId })} />
+                    onSubmit={(entry: any) => submitFeedback({ ...entry, jobId: job.id, fromRole: 'worker', fromUserId: activeWorkerId, toCustomerId: job.customerId })} />
                 </View>
               ))
             )}
@@ -168,10 +170,10 @@ export default function DispatchScreen() {
 const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
-    backgroundColor: '#121212',
+    backgroundColor: Colors.canvasDark,
   },
   headerBackground: {
-    backgroundColor: '#121212',
+    backgroundColor: Colors.canvasDark,
     paddingBottom: Spacing.xl,
   },
   headerContent: {
@@ -179,170 +181,195 @@ const styles = StyleSheet.create({
     paddingTop: Spacing.base,
   },
   title: {
-    color: '#FFFFFF',
+    color: Colors.textInverse,
     fontSize: Typography.fontSize.xl,
-    fontWeight: '800',
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: -0.5,
   },
   subtitle: {
-    color: '#9CA3AF',
-    fontSize: Typography.fontSize.xs,
+    color: Colors.textInverseMuted,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
     marginTop: 2,
+    letterSpacing: 1,
   },
 
   // Bottom Sheet
   bottomSheet: {
     flex: 1,
-    backgroundColor: '#FFFFFF',
-    borderTopLeftRadius: 28,
-    borderTopRightRadius: 28,
+    backgroundColor: Colors.canvasLight,
+    borderTopLeftRadius: Radius.xl,
+    borderTopRightRadius: Radius.xl,
     overflow: 'hidden',
   },
   scrollContent: {
     padding: Spacing.xl,
-    paddingBottom: Spacing['3xl'],
+    paddingBottom: Spacing['4xl'],
   },
   section: {
     marginBottom: Spacing.xl,
   },
   sectionTitle: {
-    color: '#111827',
-    fontSize: Typography.fontSize.base,
-    fontWeight: '700',
-    marginBottom: Spacing.md,
+    color: Colors.textMuted,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 1.5,
+    marginBottom: Spacing.sm,
   },
   demoCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
     gap: Spacing.md,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
   },
   urgencyDot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    width: 8,
+    height: 8,
+    borderRadius: Radius.full,
   },
   demoInfo: {
     flex: 1,
   },
   demoCustomer: {
-    color: '#111827',
+    color: Colors.textPrimary,
     fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.bold,
   },
   demoAddress: {
-    color: '#6B7280',
+    color: Colors.textSecondary,
     fontSize: Typography.fontSize.xs,
-    marginTop: 1,
+    marginTop: 2,
   },
   demoUrgency: {
-    fontSize: 11,
-    fontWeight: '600',
-    marginTop: 2,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    marginTop: 4,
+    letterSpacing: 0.5,
   },
   dispatchBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 4,
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: Radius.full,
   },
   dispatchBtnText: {
-    color: '#fff',
-    fontSize: 12,
-    fontWeight: '700',
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
   jobCard: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.surfaceLight,
     borderRadius: Radius.lg,
-    padding: Spacing.md,
+    padding: Spacing.lg,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
     marginBottom: Spacing.sm,
   },
   jobMeta: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 6,
+    marginBottom: 8,
   },
   jobCategory: {
-    fontSize: 11,
-    fontWeight: '700',
-    color: '#4B5563',
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textSecondary,
+    letterSpacing: 0.5,
   },
   inProgressTag: {
-    backgroundColor: '#FEF3C7',
+    backgroundColor: Colors.warning,
     paddingHorizontal: 8,
-    paddingVertical: 2,
+    paddingVertical: 3,
     borderRadius: Radius.full,
   },
   inProgressTagText: {
-    color: '#D97706',
-    fontSize: 10,
-    fontWeight: '700',
+    color: Colors.darkSurfaceDeep,
+    fontSize: 9,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    letterSpacing: 0.5,
   },
   jobAmount: {
-    fontSize: 20,
-    fontWeight: '800',
-    color: '#111827',
-    marginBottom: Spacing.md,
+    fontSize: Typography.fontSize['xl'],
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.black,
+    color: Colors.textPrimary,
+    marginBottom: Spacing.lg,
   },
   completeBtn: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    backgroundColor: '#3c20a1ff',
-    borderRadius: Radius.md,
-    paddingVertical: 12,
+    gap: 8,
+    backgroundColor: Colors.accentPrimary,
+    borderRadius: Radius.full,
+    paddingVertical: 16,
+    ...Shadow.glow,
   },
   completeBtnText: {
-    color: '#fff',
-    fontSize: Typography.fontSize.sm,
-    fontWeight: '700',
+    color: Colors.darkSurfaceDeep,
+    fontSize: 12,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.black,
+    letterSpacing: 1,
   },
   completedCard: {
     flexDirection: 'column',
-    backgroundColor: '#F9FAFB',
-    borderRadius: Radius.md,
+    backgroundColor: Colors.surfaceLight,
+    borderRadius: Radius.lg,
     padding: Spacing.md,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
-    marginBottom: Spacing.xs,
+    borderColor: Colors.borderLight,
+    marginBottom: Spacing.sm,
   },
   completedSummary: { flexDirection: 'row', alignItems: 'center' },
   completedCategory: {
-    fontSize: 12,
-    fontWeight: '700',
-    color: '#111827',
+    fontSize: Typography.fontSize.sm,
+    fontFamily: Typography.fontFamily.display,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textPrimary,
   },
   completedTime: {
     fontSize: 11,
-    color: '#9CA3AF',
-    marginTop: 1,
+    fontFamily: Typography.fontFamily.mono,
+    color: Colors.textSecondary,
+    marginTop: 2,
   },
   completedAmount: {
     fontSize: Typography.fontSize.base,
-    fontWeight: '800',
-    color: '#059669',
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.accentPrimaryDark,
   },
   emptyCard: {
-    backgroundColor: '#F9FAFB',
+    backgroundColor: Colors.canvasCream,
     borderRadius: Radius.lg,
     padding: Spacing.xl,
     alignItems: 'center',
-    gap: 6,
+    gap: 8,
     borderWidth: 1,
-    borderColor: '#E5E7EB',
+    borderColor: Colors.borderLight,
   },
   emptyText: {
-    fontSize: Typography.fontSize.xs,
-    color: '#9CA3AF',
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.textMuted,
+    letterSpacing: 1,
   },
 });
