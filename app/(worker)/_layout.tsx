@@ -1,6 +1,6 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { Colors } from '../../constants/theme';
+import { Colors, Typography, Radius, Shadow, Spacing } from '../../constants/theme';
 
 export default function WorkerLayout() {
   return (
@@ -9,18 +9,30 @@ export default function WorkerLayout() {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          backgroundColor: '#FFFFFF',
-          borderTopColor: '#E5E7EB',
-          borderTopWidth: 1,
-          height: 60,
-          paddingBottom: 6,
-          paddingTop: 6,
+          backgroundColor: Colors.darkSurface,
+          borderTopWidth: 0,
+          position: 'absolute',
+          bottom: Spacing.base,
+          left: Spacing.base,
+          right: Spacing.base,
+          height: 64,
+          borderRadius: Radius.full,
+          paddingBottom: 0,
+          paddingHorizontal: Spacing.sm,
+          ...Shadow.lg,
+          elevation: 12,
         },
-        tabBarActiveTintColor: '#3c20a1ff',
-        tabBarInactiveTintColor: '#9CA3AF',
+        tabBarActiveTintColor: Colors.primary,
+        tabBarInactiveTintColor: Colors.textMuted,
         tabBarLabelStyle: {
-          fontSize: 11,
-          fontWeight: '600',
+          fontSize: 10,
+          fontFamily: Typography.fontFamily.mono,
+          fontWeight: Typography.fontWeight.bold,
+          textTransform: 'uppercase',
+          marginBottom: 6,
+        },
+        tabBarItemStyle: {
+          paddingVertical: 8,
         },
       }}
     >
