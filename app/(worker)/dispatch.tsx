@@ -10,6 +10,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useAppStore } from '../../store/appStore';
 import JobModal from '../../components/JobModal';
+import FeedbackCard from '../../components/FeedbackCard';
 import { Colors, Spacing, Radius, Shadow, Typography } from '../../constants/theme';
 
 const DEMO_JOBS = [
@@ -18,7 +19,7 @@ const DEMO_JOBS = [
 ];
 
 export default function DispatchScreen() {
-  const { workers, activeWorkerId, jobs, acceptJob, rejectJob, addNotification, completeJob } = useAppStore();
+  const { workers, activeWorkerId, jobs, acceptJob, rejectJob, addNotification, completeJob, feedback, submitFeedback } = useAppStore();
   const worker = workers.find((w) => w.id === activeWorkerId);
   const [showModal, setShowModal] = useState(false);
   const [currentJob, setCurrentJob] = useState(null);
@@ -136,11 +137,16 @@ export default function DispatchScreen() {
             ) : (
               completedJobs.map((job) => (
                 <View key={job.id} style={styles.completedCard}>
-                  <View style={{ flex: 1 }}>
-                    <Text style={styles.completedCategory}>{job.category.toUpperCase()}</Text>
-                    <Text style={styles.completedTime}>{job.time ?? 'Today'}</Text>
+                  <View style={styles.completedSummary}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={styles.completedCategory}>{job.category.toUpperCase()}</Text>
+                      <Text style={styles.completedTime}>{job.time ?? 'Today'} · Customer: {job.customerName || 'Customer'}</Text>
+                    </View>
+                    <Text style={styles.completedAmount}>+₹{job.amount}</Text>
                   </View>
-                  <Text style={styles.completedAmount}>+₹{job.amount}</Text>
+                  <FeedbackCard title="Rate the customer" subject={job.customerName || 'your customer'}
+                    submitted={feedback.some((entry) => entry.jobId === job.id && entry.fromRole === 'worker')}
+                    onSubmit={(entry) => submitFeedback({ ...entry, jobId: job.id, fromRole: 'worker', fromUserId: activeWorkerId, toCustomerId: job.customerId })} />
                 </View>
               ))
             )}
@@ -302,8 +308,7 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   completedCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: 'column',
     backgroundColor: '#F9FAFB',
     borderRadius: Radius.md,
     padding: Spacing.md,
@@ -311,6 +316,7 @@ const styles = StyleSheet.create({
     borderColor: '#E5E7EB',
     marginBottom: Spacing.xs,
   },
+  completedSummary: { flexDirection: 'row', alignItems: 'center' },
   completedCategory: {
     fontSize: 12,
     fontWeight: '700',

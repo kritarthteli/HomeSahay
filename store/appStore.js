@@ -38,6 +38,57 @@ export const useAppStore = create((set, get) => ({
   // ── Workers ───────────────────────────────────────────────
   workers: MOCK_WORKERS,
 
+  registerWorker: (profile) => {
+    const id = `w${Date.now()}`;
+    const worker = {
+      id,
+      name: profile.name.trim(),
+      avatar: '',
+      skills: profile.skills,
+      category: profile.skills[0],
+      rating: null,
+      totalJobs: 0,
+      todayJobs: 0,
+      todayEarnings: 0,
+      isVerified: false,
+      isOnline: false,
+      location: null,
+      serviceArea: profile.serviceArea,
+      distanceKm: null,
+      etaMinutes: null,
+      cooperative: profile.cooperative,
+      yearsExperience: Number(profile.yearsExperience) || null,
+      certifications: profile.certifications,
+      availability: profile.availability,
+      phone: profile.phone,
+      email: profile.email,
+      kyc_status: 'pending',
+      profileNote: 'Registration details are saved in this demo session only.',
+    };
+    set((state) => ({ workers: [...state.workers, worker] }));
+    return id;
+  },
+
+  feedback: [],
+  submitFeedback: (entry) =>
+    set((state) => {
+      const duplicate = state.feedback.some((item) => item.jobId === entry.jobId && item.fromRole === entry.fromRole);
+      if (duplicate) return state;
+      const nextFeedback = { ...entry, id: `f${Date.now()}`, createdAt: new Date().toISOString() };
+      return {
+        feedback: [...state.feedback, nextFeedback],
+        jobs: state.jobs.map((job) => job.id === entry.jobId ? { ...job, [`${entry.fromRole}FeedbackSubmitted`]: true } : job),
+        workers: entry.fromRole === 'customer' ? state.workers.map((worker) => {
+          if (worker.id !== entry.toWorkerId) return worker;
+          const count = worker.feedbackCount ?? worker.totalJobs ?? 0;
+          const previousAverage = worker.feedbackAverage ?? worker.rating;
+          const nextCount = count + 1;
+          const nextAverage = previousAverage == null ? entry.rating : ((previousAverage * count) + entry.rating) / nextCount;
+          return { ...worker, feedbackCount: nextCount, feedbackAverage: Number(nextAverage.toFixed(1)), rating: Number(nextAverage.toFixed(1)) };
+        }) : state.workers,
+      };
+    }),
+
   updateWorkerOnlineStatus: (workerId, isOnline) =>
     set((state) => ({
       workers: state.workers.map((w) =>

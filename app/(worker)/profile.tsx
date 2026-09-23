@@ -8,8 +8,9 @@ import { Colors, Spacing, Radius, Typography } from '../../constants/theme';
 
 export default function WorkerProfile() {
   const router = useRouter();
-  const { getActiveWorker, logout } = useAppStore();
+  const { getActiveWorker, logout, feedback, jobs } = useAppStore();
   const worker = getActiveWorker();
+  const activeJobs = jobs.filter((job) => job.workerId === worker?.id && ['accepted', 'in_progress'].includes(job.status)).length;
 
   const handleLogout = () => {
     logout('worker');
@@ -37,15 +38,15 @@ export default function WorkerProfile() {
           </View>
           <Text style={styles.nameText}>{worker.name}</Text>
           <View style={styles.badge}>
-            <Ionicons name="checkmark-circle" size={12} color="#3c20a1ff" />
-            <Text style={styles.badgeText}>Verified Expert</Text>
+            <Ionicons name={worker.isVerified ? 'checkmark-circle' : 'time-outline'} size={12} color={worker.isVerified ? '#3c20a1ff' : '#B45309'} />
+            <Text style={[styles.badgeText, !worker.isVerified && { color: '#92400E' }]}>{worker.isVerified ? 'Verified Expert' : 'Verification pending'}</Text>
           </View>
         </View>
 
         {/* Stats Row */}
         <View style={styles.statsRow}>
           <View style={styles.statBox}>
-            <Text style={styles.statValue}>{worker.rating} ★</Text>
+            <Text style={styles.statValue}>{worker.rating ? `${worker.rating} ★` : '—'}</Text>
             <Text style={styles.statLabel}>Rating</Text>
           </View>
           <View style={styles.statBox}>
@@ -53,9 +54,30 @@ export default function WorkerProfile() {
             <Text style={styles.statLabel}>Jobs Done</Text>
           </View>
           <View style={styles.statBox}>
-            <Text style={styles.statValue}>{worker.yearsExperience} yrs</Text>
+            <Text style={styles.statValue}>{worker.yearsExperience != null ? `${worker.yearsExperience} yrs` : '—'}</Text>
             <Text style={styles.statLabel}>Experience</Text>
           </View>
+        </View>
+
+        <Text style={styles.sectionTitle}>Services & experience</Text>
+        <View style={styles.infoCard}>
+          <Text style={styles.infoLabel}>Service categories</Text>
+          <Text style={styles.infoValue}>{(worker.skills || []).length ? worker.skills.map((s) => s.replace(/_/g, ' ')).join(' · ') : 'Not provided yet'}</Text>
+          <Text style={styles.infoLabel}>Service area</Text>
+          <Text style={styles.infoValue}>{worker.serviceArea || (worker.location ? 'Location available' : 'Not provided yet')}</Text>
+          <Text style={styles.infoLabel}>Availability</Text>
+          <Text style={styles.infoValue}>{worker.availability || 'Not provided yet'}</Text>
+          <Text style={styles.infoLabel}>Certifications</Text>
+          <Text style={styles.infoValue}>{worker.certifications?.length ? worker.certifications.join(' · ') : 'None listed'}</Text>
+          <Text style={styles.infoLabel}>Cooperative</Text>
+          <Text style={styles.infoValue}>{worker.cooperative || 'Not provided yet'}</Text>
+          {worker.profileNote && <Text style={styles.note}>{worker.profileNote}</Text>}
+        </View>
+        <View style={styles.workloadCard}><Ionicons name="briefcase-outline" size={18} color="#3c20a1"/><Text style={styles.workloadText}>{activeJobs} active {activeJobs === 1 ? 'job' : 'jobs'} · {worker.isOnline ? 'Available for dispatch' : 'Currently offline'}</Text></View>
+
+        <Text style={styles.sectionTitle}>Recent feedback</Text>
+        <View style={styles.infoCard}>
+          {feedback.filter((entry) => entry.toWorkerId === worker.id && entry.fromRole === 'customer').length === 0 ? <Text style={styles.infoValue}>No customer feedback yet.</Text> : feedback.filter((entry) => entry.toWorkerId === worker.id && entry.fromRole === 'customer').map((entry) => <View key={entry.id} style={styles.review}><Text style={styles.reviewStars}>{'★'.repeat(entry.rating)}{'☆'.repeat(5 - entry.rating)}</Text><Text style={styles.infoValue}>{entry.comment || 'Rating only'}</Text></View>)}
         </View>
 
         {/* List Menu */}
@@ -111,6 +133,14 @@ const styles = StyleSheet.create({
   statBox: { flex: 1, backgroundColor: '#fff', padding: Spacing.md, borderRadius: Radius.lg, borderWidth: 1, borderColor: '#F3F4F6', alignItems: 'center' },
   statValue: { fontSize: 18, fontWeight: '800', color: '#3c20a1ff', marginBottom: 2 },
   statLabel: { fontSize: 11, color: '#9CA3AF', fontWeight: '600' },
+  workloadCard: { flexDirection: 'row', alignItems: 'center', gap: 9, backgroundColor: '#F5F3FF', borderRadius: Radius.md, padding: Spacing.md, marginTop: -Spacing.md, marginBottom: Spacing.xl },
+  workloadText: { color: '#4C1D95', fontWeight: '700', fontSize: 12, flex: 1 },
+  infoCard: { backgroundColor: '#fff', padding: Spacing.md, borderRadius: Radius.lg, borderWidth: 1, borderColor: '#F3F4F6', marginBottom: Spacing.xl },
+  infoLabel: { fontSize: 11, color: '#9CA3AF', fontWeight: '700', marginTop: Spacing.sm, textTransform: 'uppercase' },
+  infoValue: { fontSize: 14, lineHeight: 20, color: '#374151', marginTop: 3, textTransform: 'capitalize' },
+  note: { fontSize: 11, lineHeight: 16, color: '#6B7280', marginTop: 12 },
+  review: { borderBottomWidth: 1, borderBottomColor: '#F3F4F6', paddingVertical: 9 },
+  reviewStars: { color: '#D97706', fontSize: 14, marginBottom: 4 },
   
   sectionTitle: { fontSize: 14, color: '#9CA3AF', fontWeight: '600', marginBottom: Spacing.sm, paddingHorizontal: 4 },
   listContainer: { backgroundColor: '#fff', borderRadius: Radius.lg, borderWidth: 1, borderColor: '#F3F4F6', overflow: 'hidden', marginBottom: Spacing.xl },

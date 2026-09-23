@@ -176,6 +176,10 @@ export default function WorkerLogin() {
               <Ionicons name="school-outline" size={18} color="#059669" />
               <Text style={styles.trainingBtnText}>Beginner? Join Training Program</Text>
             </TouchableOpacity>
+            <TouchableOpacity style={styles.trainingBtn} onPress={() => router.push('/(worker)/register')}>
+              <Ionicons name="person-add-outline" size={18} color="#059669" />
+              <Text style={styles.trainingBtnText}>New partner? Create your profile</Text>
+            </TouchableOpacity>
 
             {/* Quick Demo Login Divider */}
             <View style={styles.dividerRow}>

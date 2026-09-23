@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/appStore';
+import FeedbackCard from '../../components/FeedbackCard';
 import { Colors, Spacing, Radius, Shadow, Typography } from '../../constants/theme';
 
 const PHASES = [
@@ -24,12 +25,13 @@ const PHASES = [
 
 export default function TrackingScreen() {
   const router = useRouter();
-  const { checkoutData, workers } = useAppStore();
+  const { checkoutData, workers, jobs, completeJob, feedback, submitFeedback, activeCustomerId } = useAppStore();
   const [phaseIndex, setPhaseIndex] = useState(0);
   const [etaLeft, setEtaLeft] = useState(null);
   const progressAnim = useRef(new Animated.Value(0)).current;
 
   const worker = workers.find((w) => w.id === checkoutData?.workerId) ?? workers[0];
+  const currentJob = jobs.find((j) => j.id === checkoutData?.jobId);
   const eta = checkoutData?.estimatedArrival ?? worker?.etaMinutes ?? 12;
 
   useEffect(() => {
@@ -51,6 +53,10 @@ export default function TrackingScreen() {
       clearInterval(countdownTimer);
     };
   }, [eta]);
+
+  useEffect(() => {
+    if (phaseIndex === PHASES.length - 1 && checkoutData?.jobId && currentJob?.status !== 'completed') completeJob(checkoutData.jobId);
+  }, [phaseIndex, checkoutData?.jobId]);
 
   useEffect(() => {
     Animated.timing(progressAnim, {
@@ -199,6 +205,11 @@ export default function TrackingScreen() {
               </Text>
             </View>
           </View>
+          {phaseIndex === PHASES.length - 1 && worker && currentJob?.status === 'completed' && (
+            <FeedbackCard title="How was your experience?" subject={worker.name}
+              submitted={feedback.some((entry) => entry.jobId === currentJob.id && entry.fromRole === 'customer')}
+              onSubmit={(entry) => submitFeedback({ ...entry, jobId: currentJob.id, fromRole: 'customer', fromUserId: activeCustomerId, toWorkerId: worker.id })} />
+          )}
         </ScrollView>
       </View>
     </View>

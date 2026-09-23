@@ -31,6 +31,7 @@ export default function WorkerLayout() {
           tabBarStyle: { display: 'none' },
         }}
       />
+      <Tabs.Screen name="register" options={{ href: null, tabBarStyle: { display: 'none' } }} />
       <Tabs.Screen
         name="index"
         options={{
