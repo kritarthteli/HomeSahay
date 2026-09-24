@@ -141,6 +141,7 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.display,
     fontWeight: Typography.fontWeight.black,
     letterSpacing: -0.5,
+    flexShrink: 1,
   },
   category: {
     color: Colors.textSecondary,

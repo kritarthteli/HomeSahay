@@ -2,6 +2,8 @@
 // Design Tokens — Stitch (Obsidian Kinetic) Theme
 // ============================================================
 
+import { Platform } from 'react-native';
+
 export const StitchColors = {
   // Core Canvases
   canvasLight: '#FAFAF6',        // Chalk cream / Warm off-white
@@ -92,7 +94,7 @@ export const Typography = {
     // but we use strict weights (800/900) to mimic Syne and Plus Jakarta Sans.
     display: 'System', 
     body: 'System',
-    mono: 'Courier', 
+    mono: Platform.OS === 'ios' ? 'Courier' : 'monospace', 
   },
   fontSize: {
     xs: 10,
@@ -123,25 +125,25 @@ export const Typography = {
 };
 
 export const Spacing = {
-  xxs: 6,      // 0.375rem
-  xs: 12,      // 0.75rem
-  sm: 16,      // 1rem
-  md: 20,      // 1.25rem
-  base: 24,    // 1.5rem
-  lg: 32,      // 2rem
-  xl: 48,      // 3rem
-  '2xl': 56,   // 3.5rem
-  '3xl': 64,
-  '4xl': 80,
+  xxs: 4,
+  xs: 8,
+  sm: 12,
+  md: 14,
+  base: 16,
+  lg: 20,
+  xl: 24,
+  '2xl': 32,
+  '3xl': 40,
+  '4xl': 48,
 };
 
 export const Radius = {
-  xs: 8,       // 0.5rem
-  sm: 16,      // 1rem
-  md: 24,      // 1.5rem
-  lg: 32,      // 2rem
-  xl: 48,      // 3rem
-  '2xl': 64,   // 4rem
+  xs: 6,
+  sm: 10,
+  md: 16,
+  lg: 20,
+  xl: 24,
+  '2xl': 32,
   full: 9999,
 };
 

@@ -80,12 +80,7 @@ export default function AdminAnalytics() {
       <View style={styles.pageHeader}>
         <View>
           <Text style={styles.pageTitle}>Governance & Analytics</Text>
-          <Text style={styles.pageSubtitle}>JP Nagar Workers Cooperative · Live Monitoring</Text>
-        </View>
-        <View style={styles.headerActions}>
-          <View style={styles.giniPill}>
-            <Text style={styles.giniPillText}>GINI: {summary.giniCoefficient} · EQUITABLE</Text>
-          </View>
+          <Text style={styles.pageSubtitle}>JP Nagar Workers Cooperative</Text>
         </View>
       </View>
 
@@ -171,8 +166,15 @@ export default function AdminAnalytics() {
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: Colors.canvasLight },
-  pageContent: { padding: Spacing['4xl'], paddingBottom: Spacing['4xl'], gap: Spacing['2xl'] },
+  page: { flex: 1, backgroundColor: Colors.canvasCream },
+  pageContent: { 
+    padding: 48, 
+    paddingBottom: 64, 
+    gap: 40, 
+    maxWidth: 1400, 
+    alignSelf: 'center', 
+    width: '100%' 
+  },
 
   loadingScreen: {
     flex: 1,
@@ -209,12 +211,12 @@ const styles = StyleSheet.create({
   kpiCard: {
     flex: 1,
     backgroundColor: Colors.surfaceLight,
-    borderRadius: Radius.xl,
-    padding: Spacing['2xl'],
+    borderRadius: 24,
+    padding: 24,
     borderWidth: 1,
     borderColor: Colors.borderLight,
     gap: Spacing.md,
-    ...Shadow.soft,
+    ...Shadow.lg,
   },
   kpiCardTop: {
     flexDirection: 'row',
@@ -245,11 +247,11 @@ const styles = StyleSheet.create({
   twoCol: { flexDirection: 'row', gap: Spacing.xl },
   panel: {
     backgroundColor: Colors.surfaceLight,
-    borderRadius: Radius.xl,
-    padding: Spacing['2xl'],
+    borderRadius: 24,
+    padding: 32,
     borderWidth: 1,
     borderColor: Colors.borderLight,
-    ...Shadow.soft,
+    ...Shadow.md,
   },
   panelHeader: { marginBottom: Spacing.xl, gap: Spacing.xs },
   panelTitle: { fontSize: Typography.fontSize.lg, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -0.5 },

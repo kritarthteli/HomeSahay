@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useAppStore } from '../store/appStore';
 import { Colors, Spacing, Radius, Shadow, Typography } from '../constants/theme';
 
@@ -46,6 +47,7 @@ export default function RoleSwitcher() {
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const { role, setRole } = useAppStore();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   const currentRole = ROLES.find((r) => r.id === role) ?? ROLES[0];
 
@@ -66,7 +68,7 @@ export default function RoleSwitcher() {
   return (
     <>
       {/* Floating Action Button */}
-      <Animated.View style={[styles.fab, { transform: [{ scale: scaleAnim }] }]}>
+      <Animated.View style={[styles.fab, { transform: [{ scale: scaleAnim }], top: Math.max(insets.top, 10) + 10 }]}>
         <TouchableOpacity onPress={handlePress} style={styles.fabInner} activeOpacity={0.85}>
           <View style={[styles.fabIcon, { backgroundColor: currentRole.color }]}>
             <Ionicons name={currentRole.icon} size={16} color={currentRole.id === 'worker' ? Colors.darkSurfaceDeep : Colors.canvasLight} />
@@ -117,7 +119,6 @@ export default function RoleSwitcher() {
 const styles = StyleSheet.create({
   fab: {
     position: 'absolute',
-    top: Platform.OS === 'ios' ? 56 : 44,
     right: Spacing.md,
     zIndex: 999,
     ...Shadow.glow,

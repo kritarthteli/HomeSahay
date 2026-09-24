@@ -8,18 +8,20 @@ import {
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/appStore';
 import JobModal from '../../components/JobModal';
 import FeedbackCard from '../../components/FeedbackCard';
 import { Colors, Spacing, Radius, Shadow, Typography } from '../../constants/theme';
 
 const DEMO_JOBS = [
-  { id: 'demo1', category: 'plumber', customerName: 'Arjun M.', address: 'JP Nagar 6th Phase', amount: 500, distance: '0.6', urgency: 'emergency' },
-  { id: 'demo2', category: 'plumber', customerName: 'Kavitha R.', address: 'Jayanagar 3rd Block', amount: 380, distance: '0.9', urgency: 'normal' },
+  { id: 'demo1', category: 'plumber', customerName: 'Arjun M.', address: 'JP Nagar 6th Phase', amount: 500, distance: '0.6', urgency: 'emergency', customerId: 'c002' },
+  { id: 'demo2', category: 'plumber', customerName: 'Kavitha R.', address: 'Jayanagar 3rd Block', amount: 380, distance: '0.9', urgency: 'normal', customerId: 'c003' },
 ];
 
 export default function DispatchScreen() {
-  const { workers, activeWorkerId, jobs, acceptJob, rejectJob, addNotification, completeJob, feedback, submitFeedback } = useAppStore();
+  const router = useRouter();
+  const { workers, activeWorkerId, jobs, acceptJob, rejectJob, addNotification, completeJob, feedback, submitFeedback, addJob } = useAppStore();
   const worker = workers.find((w) => w.id === activeWorkerId);
   const [showModal, setShowModal] = useState(false);
   const [currentJob, setCurrentJob] = useState(null);
@@ -34,9 +36,21 @@ export default function DispatchScreen() {
   };
 
   const handleAccept = (job: any) => {
-    acceptJob(job.id);
+    const exists = jobs.some(j => j.id === job.id);
+    if (!exists) {
+      addJob({
+        ...job,
+        workerId: activeWorkerId,
+        customerId: job.customerId || 'c001',
+        status: 'accepted',
+        createdAt: new Date().toISOString()
+      });
+    } else {
+      acceptJob(job.id);
+    }
     setShowModal(false);
     addNotification({ type: 'job', title: `Job Accepted!`, message: `Head to ${job.address}` });
+    router.push('/(worker)/track');
   };
 
   const handleReject = (reason: string) => {
@@ -200,8 +214,8 @@ const styles = StyleSheet.create({
   bottomSheet: {
     flex: 1,
     backgroundColor: Colors.canvasLight,
-    borderTopLeftRadius: Radius.xl,
-    borderTopRightRadius: Radius.xl,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
     overflow: 'hidden',
   },
   scrollContent: {

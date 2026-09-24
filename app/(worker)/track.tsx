@@ -5,71 +5,45 @@ import {
   StyleSheet,
   Animated,
   TouchableOpacity,
-  Image,
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/appStore';
-import FeedbackCard from '../../components/FeedbackCard';
 import MapViewComponent from '../../components/MapViewComponent';
 import { Colors, Spacing, Radius, Shadow, Typography } from '../../constants/theme';
 import { BENGALURU_CENTER } from '../../data/seedData';
 
-export default function TrackingScreen() {
+export default function WorkerTrackingScreen() {
   const router = useRouter();
-  const { checkoutData, workers, jobs, completeJob, feedback, submitFeedback, activeCustomerId, getActiveCustomer } = useAppStore();
+  const { activeWorkerId, jobs, getActiveWorker, customers } = useAppStore();
+  const worker = getActiveWorker();
+  
+  // Find the first active job for this worker
+  const activeJob = jobs.find((j: any) => j.workerId === activeWorkerId && (j.status === 'in_progress' || j.status === 'accepted'));
+  const customer = customers.find((c: any) => c.id === activeJob?.customerId);
+
   const [phaseIndex, setPhaseIndex] = useState(0);
-  const [etaLeft, setEtaLeft] = useState<number | null>(null);
-  const progressAnim = useRef(new Animated.Value(0)).current;
 
   const PHASES = [
-    { id: 'confirmed', label: 'Booking Confirmed', icon: 'checkmark-circle', color: Colors.accentPrimary },
-    { id: 'heading', label: 'Worker Heading to You', icon: 'bicycle', color: Colors.accentPrimary },
-    { id: 'arrived', label: 'Worker Arrived at Location', icon: 'location', color: Colors.warning },
+    { id: 'accepted', label: 'Job Accepted', icon: 'checkmark-circle', color: Colors.accentPrimary },
+    { id: 'heading', label: 'Heading to Customer', icon: 'bicycle', color: Colors.accentPrimary },
+    { id: 'arrived', label: 'Arrived at Location', icon: 'location', color: Colors.warning },
     { id: 'inprogress', label: 'Work In Progress', icon: 'construct', color: Colors.accentPrimaryDim },
-    { id: 'completed', label: 'Job Completed!', icon: 'trophy', color: Colors.success },
   ];
 
-  const customer = getActiveCustomer();
-  const worker = workers.find((w: any) => w.id === checkoutData?.workerId) ?? workers[0];
-  const currentJob = jobs.find((j: any) => j.id === checkoutData?.jobId);
-  const eta = checkoutData?.estimatedArrival ?? worker?.etaMinutes ?? 12;
-
-  useEffect(() => {
-    setEtaLeft(eta);
-    const intervals = [0, eta * 60 * 1000 * 0.2, eta * 60 * 1000 * 0.7, eta * 60 * 1000 * 0.9, eta * 60 * 1000];
-    const timers = intervals.map((delay, i) =>
-      setTimeout(() => setPhaseIndex(i), delay)
+  if (!activeJob || !customer) {
+    return (
+      <View style={styles.mainContainer}>
+        <SafeAreaView edges={['top']} />
+        <View style={styles.emptyState}>
+          <Ionicons name="map-outline" size={48} color={Colors.borderDark} />
+          <Text style={styles.emptyText}>NO ACTIVE JOBS TO TRACK</Text>
+        </View>
+      </View>
     );
-
-    const countdownTimer = setInterval(() => {
-      setEtaLeft((t) => {
-        if (t !== null && t <= 1) { clearInterval(countdownTimer); return 0; }
-        return t !== null ? t - 1 : null;
-      });
-    }, 60000);
-
-    return () => {
-      timers.forEach(clearTimeout);
-      clearInterval(countdownTimer);
-    };
-  }, [eta]);
-
-  useEffect(() => {
-    if (phaseIndex === PHASES.length - 1 && checkoutData?.jobId && currentJob?.status !== 'completed') completeJob(checkoutData.jobId);
-  }, [phaseIndex, checkoutData?.jobId]);
-
-  useEffect(() => {
-    Animated.timing(progressAnim, {
-      toValue: (phaseIndex / (PHASES.length - 1)) * 100,
-      duration: 600,
-      useNativeDriver: false,
-    }).start();
-  }, [phaseIndex]);
-
-  const currentPhase = PHASES[phaseIndex];
+  }
 
   return (
     <View style={styles.mainContainer}>
@@ -82,14 +56,10 @@ export default function TrackingScreen() {
         />
         <SafeAreaView edges={['top']} style={styles.headerOverlay}>
           <View style={styles.topRow}>
-            <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.8}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
-            </TouchableOpacity>
-            <View style={styles.headerTitles}>
-              <View style={styles.liveTag}>
-                <View style={styles.liveDot} />
-                <Text style={styles.liveText}>LIVE</Text>
-              </View>
+            <View style={{ flex: 1 }} />
+            <View style={styles.liveTag}>
+              <View style={styles.liveDot} />
+              <Text style={styles.liveText}>ON ROUTE</Text>
             </View>
           </View>
         </SafeAreaView>
@@ -98,37 +68,13 @@ export default function TrackingScreen() {
       <View style={styles.bottomSheet}>
         <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
           
-          {/* Minimal ETA Display */}
-          <View style={styles.minimalEta}>
-            <View style={[styles.minimalEtaIcon, { backgroundColor: currentPhase.color }]}>
-              <Ionicons name={currentPhase.icon as any} size={20} color={Colors.textOnPrimary} />
-            </View>
-            <View style={{ flex: 1 }}>
-              <Text style={styles.minimalEtaStatus}>{currentPhase.label}</Text>
-              <Text style={styles.minimalEtaTime}>
-                {phaseIndex === 0
-                  ? `ARRIVING IN ~${etaLeft ?? eta} MINS`
-                  : phaseIndex === PHASES.length - 1
-                  ? 'SERVICE DELIVERED'
-                  : 'ON THE WAY'}
-              </Text>
-            </View>
-          </View>
-
           <View style={styles.workerCard}>
-            <Image source={{ uri: worker.avatar }} style={styles.avatar} />
+            <View style={styles.avatarFallback}>
+              <Ionicons name="person" size={24} color={Colors.textMuted} />
+            </View>
             <View style={styles.workerInfo}>
-              <Text style={styles.workerName}>{worker.name}</Text>
-              <View style={styles.metaRow}>
-                <Ionicons name="star" size={12} color={Colors.textPrimary} />
-                <Text style={styles.metaText}>{worker.rating}</Text>
-                <View style={styles.dot} />
-                <Text style={styles.metaText}>{worker.category.toUpperCase()}</Text>
-                <View style={styles.dot} />
-                <Ionicons name="shield-checkmark" size={12} color={Colors.success} />
-                <Text style={[styles.metaText, { color: Colors.success }]}>Verified</Text>
-              </View>
-              <Text style={styles.coopText}>{worker.cooperative}</Text>
+              <Text style={styles.workerName}>{customer.name}</Text>
+              <Text style={styles.coopText}>{activeJob.address ?? 'JP Nagar, Bengaluru'}</Text>
             </View>
             <TouchableOpacity style={styles.callBtn} activeOpacity={0.8}>
               <Ionicons name="call" size={20} color={Colors.darkSurfaceDeep} />
@@ -136,14 +82,14 @@ export default function TrackingScreen() {
           </View>
 
           <View style={styles.timelineCard}>
-            <Text style={styles.timelineTitle}>DISPATCH PROGRESS</Text>
+            <Text style={styles.timelineTitle}>YOUR PROGRESS (TAP TO UPDATE)</Text>
             {PHASES.map((p, i) => {
               const isPast = i < phaseIndex;
               const isCurrent = i === phaseIndex;
               const isFuture = i > phaseIndex;
 
               return (
-                <View key={p.id} style={styles.stepRow}>
+                <TouchableOpacity key={p.id} style={styles.stepRow} onPress={() => setPhaseIndex(i)} activeOpacity={0.9}>
                   <View style={styles.stepLeft}>
                     <View
                       style={[
@@ -188,29 +134,15 @@ export default function TrackingScreen() {
                       {p.label}
                     </Text>
                     {isCurrent && (
-                      <Text style={styles.currentStepHint}>IN PROGRESS NOW</Text>
+                      <Text style={styles.currentStepHint}>CURRENT STATUS</Text>
                     )}
                   </View>
-                </View>
+                </TouchableOpacity>
               );
             })}
           </View>
 
-          <View style={styles.safetyCard}>
-            <Ionicons name="shield-checkmark" size={24} color={Colors.accentPrimary} />
-            <View style={{ flex: 1 }}>
-              <Text style={styles.safetyTitle}>COOPERATIVE SAFETY SHIELD</Text>
-              <Text style={styles.safetyText}>
-                Your session is GPS-monitored. 24/7 Cooperative SOS dispatch is on standby.
-              </Text>
-            </View>
-          </View>
-
-          {phaseIndex === PHASES.length - 1 && worker && currentJob?.status === 'completed' && (
-            <FeedbackCard title="How was your experience?" subject={worker.name}
-              submitted={feedback.some((entry: any) => entry.jobId === currentJob.id && entry.fromRole === 'customer')}
-              onSubmit={(entry: any) => submitFeedback({ ...entry, jobId: currentJob.id, fromRole: 'customer', fromUserId: activeCustomerId, toWorkerId: worker.id })} />
-          )}
+          <View style={{ height: 80 }} />
         </ScrollView>
       </View>
     </View>
@@ -221,6 +153,18 @@ const styles = StyleSheet.create({
   mainContainer: {
     flex: 1,
     backgroundColor: Colors.canvasDark,
+  },
+  emptyState: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: Spacing.md,
+  },
+  emptyText: {
+    color: Colors.textInverseMuted,
+    fontFamily: Typography.fontFamily.mono,
+    fontSize: 12,
+    fontWeight: Typography.fontWeight.bold,
   },
   mapSection: {
     height: '45%',
@@ -240,20 +184,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-  },
-  backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceLight,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-  },
-  headerTitles: {
-    flex: 1,
-    alignItems: 'flex-end',
   },
   liveTag: {
     flexDirection: 'row',
@@ -280,39 +210,11 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.black,
     letterSpacing: 1,
   },
-  minimalEta: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.md,
-    marginBottom: Spacing.xl,
-    paddingHorizontal: Spacing.sm,
-  },
-  minimalEtaIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: Radius.full,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  minimalEtaStatus: {
-    fontSize: Typography.fontSize.lg,
-    fontFamily: Typography.fontFamily.display,
-    fontWeight: Typography.fontWeight.bold,
-    color: Colors.textPrimary,
-    marginBottom: 2,
-  },
-  minimalEtaTime: {
-    color: Colors.textSecondary,
-    fontSize: 10,
-    fontFamily: Typography.fontFamily.mono,
-    fontWeight: Typography.fontWeight.bold,
-    letterSpacing: 0.5,
-  },
   bottomSheet: {
     flex: 1,
     backgroundColor: Colors.canvasLight,
-    borderTopLeftRadius: Radius['2xl'],
-    borderTopRightRadius: Radius['2xl'],
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
     overflow: 'hidden',
     marginTop: -Spacing.xl,
     zIndex: 20,
@@ -334,10 +236,13 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
     ...Shadow.sm,
   },
-  avatar: {
+  avatarFallback: {
     width: 56,
     height: 56,
     borderRadius: Radius.full,
+    backgroundColor: Colors.canvasCream,
+    justifyContent: 'center',
+    alignItems: 'center',
     borderWidth: 1,
     borderColor: Colors.borderLight,
   },
@@ -349,31 +254,12 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.black,
     letterSpacing: -0.5,
   },
-  metaRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    marginTop: 4,
-    flexWrap: 'wrap',
-  },
-  metaText: {
-    color: Colors.textSecondary,
+  coopText: {
     fontSize: 11,
     fontFamily: Typography.fontFamily.mono,
+    color: Colors.textSecondary,
     fontWeight: Typography.fontWeight.bold,
-  },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.borderLight,
-  },
-  coopText: {
-    fontSize: 9,
-    fontFamily: Typography.fontFamily.mono,
-    color: Colors.textMuted,
-    fontWeight: Typography.fontWeight.bold,
-    marginTop: 6,
+    marginTop: 4,
     letterSpacing: 0.5,
   },
   callBtn: {
@@ -442,30 +328,5 @@ const styles = StyleSheet.create({
     fontWeight: Typography.fontWeight.black,
     marginTop: 6,
     letterSpacing: 1,
-  },
-  safetyCard: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.surfaceDark,
-    padding: Spacing.xl,
-    borderRadius: Radius.xl,
-    gap: Spacing.md,
-    borderWidth: 1,
-    borderColor: Colors.borderDark,
-    marginBottom: Spacing.xl,
-  },
-  safetyTitle: {
-    fontSize: 10,
-    fontFamily: Typography.fontFamily.mono,
-    fontWeight: Typography.fontWeight.black,
-    color: Colors.accentPrimary,
-    letterSpacing: 1.5,
-    marginBottom: 6,
-  },
-  safetyText: {
-    fontSize: Typography.fontSize.xs,
-    color: Colors.textInverseMuted,
-    lineHeight: 18,
-    fontFamily: Typography.fontFamily.mono,
   },
 });

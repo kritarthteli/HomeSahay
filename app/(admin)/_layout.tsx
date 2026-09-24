@@ -44,11 +44,7 @@ export default function AdminLayout() {
           </View>
         </View>
 
-        {/* Live indicator */}
-        <View style={styles.liveTag}>
-          <View style={styles.liveDot} />
-          <Text style={styles.liveText}>LIVE MONITORING</Text>
-        </View>
+
 
         {/* Nav */}
         <View style={styles.nav}>
@@ -102,17 +98,19 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     flexDirection: 'row',
-    backgroundColor: Colors.canvasLight,
+    backgroundColor: Colors.canvasCream,
     minHeight: '100vh' as any,
   },
   sidebar: {
-    width: 260,
-    backgroundColor: Colors.darkSurfaceDeep,
-    paddingTop: Spacing['3xl'],
-    paddingBottom: Spacing.xl,
-    paddingHorizontal: Spacing.lg,
+    width: 280,
+    backgroundColor: Colors.canvasDark,
+    paddingTop: Spacing['4xl'],
+    paddingBottom: Spacing['2xl'],
+    paddingHorizontal: Spacing.xl,
     flexShrink: 0,
     minHeight: '100vh' as any,
+    borderRightWidth: 1,
+    borderRightColor: Colors.borderDark,
   },
   logoArea: {
     flexDirection: 'row',
@@ -177,13 +175,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.md,
-    paddingVertical: 12,
-    paddingHorizontal: Spacing.md,
+    paddingVertical: 14,
+    paddingHorizontal: Spacing.lg,
     borderRadius: Radius.lg,
     position: 'relative',
+    marginBottom: 4,
   },
   navItemActive: {
-    backgroundColor: Colors.surfaceInteractive,
+    backgroundColor: 'rgba(255, 255, 255, 0.05)',
   },
   navLabel: {
     color: Colors.textInverseMuted,
@@ -227,13 +226,14 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.sm,
-    paddingVertical: 10,
-    paddingHorizontal: Spacing.md,
+    paddingVertical: 12,
+    paddingHorizontal: Spacing.lg,
     borderRadius: Radius.md,
-    backgroundColor: Colors.dangerContainer,
+    backgroundColor: 'rgba(186, 26, 26, 0.1)',
     borderWidth: 1,
-    borderColor: Colors.danger,
-    alignSelf: 'flex-start',
+    borderColor: 'rgba(186, 26, 26, 0.3)',
+    alignSelf: 'stretch',
+    justifyContent: 'center',
   },
   logoutText: {
     color: Colors.danger,

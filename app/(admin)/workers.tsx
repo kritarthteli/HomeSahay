@@ -443,9 +443,16 @@ export default function WorkersList() {
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: Colors.canvasLight },
+  page: { flex: 1, backgroundColor: Colors.canvasCream },
   scroll: { flex: 1 },
-  pageContent: { padding: Spacing['4xl'], paddingBottom: Spacing['4xl'], gap: Spacing['2xl'] },
+  pageContent: { 
+    padding: 48, 
+    paddingBottom: 64, 
+    gap: 40, 
+    maxWidth: 1400, 
+    alignSelf: 'center', 
+    width: '100%' 
+  },
 
   pageHeader: {
     flexDirection: 'row',
@@ -515,11 +522,11 @@ const styles = StyleSheet.create({
 
   tableCard: {
     backgroundColor: Colors.surfaceLight,
-    borderRadius: Radius.xl,
+    borderRadius: 24,
     borderWidth: 1,
     borderColor: Colors.borderLight,
     overflow: 'hidden',
-    ...Shadow.soft,
+    ...Shadow.lg,
   },
   tableHead: {
     flexDirection: 'row',

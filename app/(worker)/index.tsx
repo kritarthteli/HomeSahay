@@ -24,6 +24,7 @@ const DEMO_INCOMING_JOB = {
   amount: 450,
   distance: '0.4',
   urgency: 'normal',
+  customerId: 'c001',
 };
 
 export default function WorkerDashboard() {
@@ -32,7 +33,7 @@ export default function WorkerDashboard() {
     auth, logout,
     workers, activeWorkerId,
     updateWorkerOnlineStatus, getTodayJobs,
-    acceptJob, rejectJob, addNotification,
+    acceptJob, rejectJob, addNotification, addJob,
   } = useAppStore();
 
   const worker = workers.find((w) => w.id === activeWorkerId);
@@ -67,9 +68,21 @@ export default function WorkerDashboard() {
   };
 
   const handleAccept = (job: any) => {
-    acceptJob(job.id);
+    const exists = useAppStore.getState().jobs.some(j => j.id === job.id);
+    if (!exists) {
+      addJob({
+        ...job,
+        workerId: activeWorkerId,
+        customerId: job.customerId || 'c001',
+        status: 'accepted',
+        createdAt: new Date().toISOString()
+      });
+    } else {
+      acceptJob(job.id);
+    }
     setShowJobModal(false);
     addNotification({ type: 'job', title: 'Job Accepted!', message: `Head to ${job.address}` });
+    router.push('/(worker)/track');
   };
 
   const handleReject = (reason: string) => {
@@ -312,7 +325,7 @@ const styles = StyleSheet.create({
   },
   statusCardOnline: {
     borderColor: Colors.accentPrimary,
-    backgroundColor: Colors.accentPrimaryDim,
+    backgroundColor: 'rgba(156, 255, 61, 0.08)',
   },
   statusLeft: {
     flex: 1,
@@ -401,8 +414,8 @@ const styles = StyleSheet.create({
   bottomSheet: {
     flex: 1,
     backgroundColor: Colors.canvasLight,
-    borderTopLeftRadius: Radius.xl,
-    borderTopRightRadius: Radius.xl,
+    borderTopLeftRadius: 40,
+    borderTopRightRadius: 40,
     overflow: 'hidden',
   },
   scrollContent: {

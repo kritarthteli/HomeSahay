@@ -59,6 +59,13 @@ export default function WorkerLayout() {
         }}
       />
       <Tabs.Screen
+        name="track"
+        options={{
+          title: 'Track',
+          tabBarIcon: ({ color, size }) => <Ionicons name="navigate-outline" size={size} color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="training"
         options={{
           href: null,

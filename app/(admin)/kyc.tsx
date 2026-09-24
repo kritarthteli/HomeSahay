@@ -177,8 +177,15 @@ export default function KYCQueue() {
 }
 
 const styles = StyleSheet.create({
-  page: { flex: 1, backgroundColor: Colors.canvasLight },
-  pageContent: { padding: Spacing['4xl'], paddingBottom: Spacing['4xl'], gap: Spacing['2xl'] },
+  page: { flex: 1, backgroundColor: Colors.canvasCream },
+  pageContent: { 
+    padding: 48, 
+    paddingBottom: 64, 
+    gap: 40, 
+    maxWidth: 1400, 
+    alignSelf: 'center', 
+    width: '100%' 
+  },
 
   pageHeader: {
     flexDirection: 'row',
@@ -215,12 +222,12 @@ const styles = StyleSheet.create({
     width: '47%' as any,
     minWidth: 360,
     backgroundColor: Colors.surfaceLight,
-    borderRadius: Radius.xl,
-    padding: Spacing['2xl'],
+    borderRadius: 24,
+    padding: 32,
     borderWidth: 1,
     borderColor: Colors.borderLight,
     gap: Spacing.xl,
-    ...Shadow.soft,
+    ...Shadow.lg,
   },
   applicantRow: {
     flexDirection: 'row',

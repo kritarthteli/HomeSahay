@@ -19,7 +19,7 @@ export default function ManageAccount() {
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.8}>
+        <TouchableOpacity onPress={() => router.push('/(customer)/profile')} style={styles.backBtn} activeOpacity={0.8}>
           <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Settings</Text>
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceInteractive,
+    backgroundColor: Colors.surfaceLight,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,

@@ -1,18 +1,22 @@
 import { Tabs } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Colors, Typography, Radius, Shadow, Spacing } from '../../constants/theme';
 
 export default function CustomerLayout() {
+  const insets = useSafeAreaInsets();
+  
   return (
     <Tabs
       initialRouteName="index"
       screenOptions={{
         headerShown: false,
+        tabBarHideOnKeyboard: true,
         tabBarStyle: {
           backgroundColor: Colors.darkSurface,
           borderTopWidth: 0,
           position: 'absolute',
-          bottom: Spacing.base,
+          bottom: Math.max(insets.bottom, Spacing.base),
           left: Spacing.base,
           right: Spacing.base,
           height: 64,

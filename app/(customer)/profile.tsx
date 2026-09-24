@@ -37,17 +37,23 @@ export default function CustomerProfile() {
   if (!customer) return null;
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.mainContainer}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.8}>
-          <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Profile</Text>
-        <View style={{ width: 40 }} />
+        <SafeAreaView edges={['top']} />
+        <View style={styles.headerContent}>
+          <TouchableOpacity onPress={() => router.push('/(customer)')} style={styles.backBtn} activeOpacity={0.8}>
+            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+          </TouchableOpacity>
+          <View style={{ flex: 1, alignItems: 'center' }}>
+            <Text style={styles.headerTitle}>Profile</Text>
+          </View>
+          <View style={{ width: 40 }} />
+        </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <View style={styles.sheetContainer}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Avatar Section */}
         <View style={styles.avatarSection}>
           <View style={styles.avatarCircle}>
@@ -57,51 +63,39 @@ export default function CustomerProfile() {
             <Text style={styles.nameText}>{customer.name}</Text>
             <Ionicons name="chevron-forward" size={20} color={Colors.textPrimary} />
           </TouchableOpacity>
-          <View style={styles.coopTag}>
-            <Ionicons name="shield-checkmark" size={12} color={Colors.accentPrimary} />
-            <Text style={styles.coopText}>VERIFIED COOPERATIVE MEMBER</Text>
+        </View>
+
+        {/* Wallet Minimal */}
+        <TouchableOpacity style={styles.walletContainer} activeOpacity={0.8}>
+          <View style={styles.walletLeft}>
+            <View style={styles.walletIconBox}>
+              <Ionicons name="wallet" size={16} color={Colors.accentPrimary} />
+            </View>
+            <Text style={styles.walletTitle}>Sahay Cash</Text>
           </View>
-        </View>
-
-        {/* Grid Cards */}
-        <View style={styles.gridContainer}>
-          <TouchableOpacity style={styles.gridCardDark} activeOpacity={0.8}>
-            <View style={styles.iconCircleAccent}>
-              <Ionicons name="wallet" size={18} color={Colors.darkSurfaceDeep} />
-            </View>
-            <Text style={styles.gridCardTitleDark}>Sahay Cash</Text>
-            <View style={styles.gridCardFooter}>
-              <Text style={styles.gridCardSubWallet}>₹{customer.sahayCash || 0}</Text>
-              <Ionicons name="arrow-forward" size={16} color={Colors.accentPrimary} />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.gridCard} activeOpacity={0.8}>
-            <View style={styles.iconCircle}>
-              <Ionicons name="calendar" size={18} color={Colors.textInverse} />
-            </View>
-            <Text style={styles.gridCardTitle}>Bookings</Text>
-            <View style={styles.gridCardFooter}>
-              <Text style={styles.gridCardSub}>View history</Text>
-              <Ionicons name="arrow-forward" size={16} color={Colors.textMuted} />
-            </View>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.gridCard} activeOpacity={0.8}>
-            <View style={styles.iconCircle}>
-              <Ionicons name="help-circle" size={18} color={Colors.textInverse} />
-            </View>
-            <Text style={styles.gridCardTitle}>Support</Text>
-            <View style={styles.gridCardFooter}>
-              <Text style={styles.gridCardSub}>Quick help</Text>
-              <Ionicons name="arrow-forward" size={16} color={Colors.textMuted} />
-            </View>
-          </TouchableOpacity>
-        </View>
+          <Ionicons name="chevron-forward" size={20} color={Colors.textPrimary} />
+        </TouchableOpacity>
 
         {/* Manage Account Section */}
         <Text style={styles.sectionTitle}>MANAGE ACCOUNT</Text>
         <View style={styles.listContainer}>
+          <TouchableOpacity style={styles.listItem} activeOpacity={0.7}>
+            <View style={styles.listIconBox}>
+              <Ionicons name="calendar-outline" size={20} color={Colors.textPrimary} />
+            </View>
+            <Text style={styles.listText}>Bookings History</Text>
+            <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
+          </TouchableOpacity>
+          <View style={styles.listDivider} />
+
+          <TouchableOpacity style={styles.listItem} activeOpacity={0.7}>
+            <View style={styles.listIconBox}>
+              <Ionicons name="help-circle-outline" size={20} color={Colors.textPrimary} />
+            </View>
+            <Text style={styles.listText}>Help & Support</Text>
+            <Ionicons name="chevron-forward" size={18} color={Colors.textMuted} />
+          </TouchableOpacity>
+          <View style={styles.listDivider} />
           <TouchableOpacity style={styles.listItem} activeOpacity={0.7}>
             <View style={styles.listIconBox}>
               <Ionicons name="people-outline" size={20} color={Colors.textPrimary} />
@@ -131,7 +125,8 @@ export default function CustomerProfile() {
           </TouchableOpacity>
         </View>
 
-      </ScrollView>
+        </ScrollView>
+      </View>
 
       {/* Edit Profile Bottom Sheet */}
       <Modal visible={editProfileVisible} transparent animationType="slide">
@@ -246,36 +241,54 @@ export default function CustomerProfile() {
           </View>
         </View>
       </Modal>
-    </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.canvasLight },
+  mainContainer: { flex: 1, backgroundColor: Colors.canvasDark },
   header: {
+    backgroundColor: Colors.canvasDark,
+    paddingBottom: Spacing.xl,
+  },
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
     paddingHorizontal: Spacing.xl,
     paddingTop: Spacing.md,
-    paddingBottom: Spacing.xl,
   },
   backBtn: {
     width: 40,
     height: 40,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceInteractive,
+    backgroundColor: Colors.surfaceLight,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
     borderColor: Colors.borderLight,
   },
+  logoutBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: Radius.full,
+    backgroundColor: Colors.dangerContainer,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
   headerTitle: {
     fontSize: Typography.fontSize.xl,
     fontFamily: Typography.fontFamily.display,
     fontWeight: Typography.fontWeight.black,
-    color: Colors.textPrimary,
+    color: Colors.textInverse,
     letterSpacing: -0.5,
+  },
+  sheetContainer: {
+    flex: 1,
+    backgroundColor: Colors.canvasLight,
+    borderTopLeftRadius: Radius['2xl'],
+    borderTopRightRadius: Radius['2xl'],
+    marginTop: -Spacing.md,
+    overflow: 'hidden',
   },
   scrollContent: {
     padding: Spacing.xl,
@@ -284,16 +297,16 @@ const styles = StyleSheet.create({
 
   avatarSection: {
     alignItems: 'center',
-    marginBottom: Spacing['3xl'],
+    marginBottom: Spacing.xl,
   },
   avatarCircle: {
-    width: 100,
-    height: 100,
+    width: 72,
+    height: 72,
     borderRadius: Radius.full,
     backgroundColor: Colors.canvasCream,
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.sm,
     borderWidth: 2,
     borderColor: Colors.borderDark,
     ...Shadow.sm,
@@ -302,108 +315,32 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: 8,
-    marginBottom: 8,
+    marginBottom: 4,
   },
   nameText: {
-    fontSize: Typography.fontSize['3xl'],
+    fontSize: Typography.fontSize.xl,
     fontFamily: Typography.fontFamily.display,
     fontWeight: Typography.fontWeight.black,
     color: Colors.textPrimary,
-    letterSpacing: -1,
-  },
-  coopTag: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-    backgroundColor: Colors.canvasDark,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: Radius.full,
-    marginTop: 4,
-  },
-  coopText: {
-    fontSize: 9,
-    fontFamily: Typography.fontFamily.mono,
-    fontWeight: Typography.fontWeight.bold,
-    color: Colors.accentPrimary,
-    letterSpacing: 1,
+    letterSpacing: -0.5,
   },
 
-  gridContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: Spacing.md,
-    marginBottom: Spacing['2xl'],
-  },
-  gridCard: {
-    width: '47%',
-    flexGrow: 1,
-    backgroundColor: Colors.surfaceLight,
-    borderRadius: Radius.xl,
-    padding: Spacing.lg,
-    borderWidth: 1,
-    borderColor: Colors.borderLight,
-    ...Shadow.sm,
-  },
-  gridCardDark: {
-    width: '100%',
-    backgroundColor: Colors.canvasDark,
-    borderRadius: Radius.xl,
-    padding: Spacing.xl,
-    borderWidth: 1,
-    borderColor: Colors.borderDark,
-    ...Shadow.glow,
-  },
-  iconCircle: {
-    width: 44,
-    height: 44,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceDark,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.lg,
-  },
-  iconCircleAccent: {
-    width: 44,
-    height: 44,
-    borderRadius: Radius.full,
-    backgroundColor: Colors.accentPrimary,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginBottom: Spacing.lg,
-  },
-  gridCardTitle: {
-    fontSize: Typography.fontSize.sm,
-    fontFamily: Typography.fontFamily.display,
-    fontWeight: Typography.fontWeight.black,
-    color: Colors.textPrimary,
-    marginBottom: 8,
-  },
-  gridCardTitleDark: {
-    fontSize: Typography.fontSize.lg,
-    fontFamily: Typography.fontFamily.display,
-    fontWeight: Typography.fontWeight.black,
-    color: Colors.textInverse,
-    marginBottom: 8,
-  },
-  gridCardFooter: {
+  walletContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    backgroundColor: Colors.surfaceLight,
+    padding: Spacing.md,
+    borderRadius: Radius.lg,
+    borderWidth: 1,
+    borderColor: Colors.borderLight,
+    marginBottom: Spacing.xl,
+    ...Shadow.sm,
   },
-  gridCardSub: {
-    fontSize: 12,
-    fontFamily: Typography.fontFamily.mono,
-    color: Colors.textSecondary,
-    fontWeight: Typography.fontWeight.semibold,
-  },
-  gridCardSubWallet: {
-    fontSize: Typography.fontSize.xl,
-    fontFamily: Typography.fontFamily.mono,
-    fontWeight: Typography.fontWeight.black,
-    color: Colors.accentPrimary,
-    letterSpacing: -0.5,
-  },
+  walletLeft: { flexDirection: 'row', alignItems: 'center', gap: Spacing.sm },
+  walletIconBox: { width: 32, height: 32, borderRadius: Radius.full, backgroundColor: Colors.canvasDark, justifyContent: 'center', alignItems: 'center' },
+  walletTitle: { fontSize: Typography.fontSize.md, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.bold, color: Colors.textPrimary },
+  walletAmount: { fontSize: Typography.fontSize.lg, fontFamily: Typography.fontFamily.mono, fontWeight: Typography.fontWeight.black, color: Colors.accentPrimary },
 
   sectionTitle: {
     fontSize: 10,

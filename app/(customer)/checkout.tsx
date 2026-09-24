@@ -44,10 +44,13 @@ export default function CheckoutScreen() {
         <View style={styles.header}>
           <SafeAreaView edges={['top']} />
           <View style={styles.headerContent}>
-            <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.8}>
-              <Ionicons name="arrow-back" size={20} color={Colors.textInverse} />
+            <TouchableOpacity style={styles.backBtn} onPress={() => router.push('/(customer)')} activeOpacity={0.8}>
+              <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
             </TouchableOpacity>
-            <Text style={styles.headerTitle}>Checkout</Text>
+            <View style={{ flex: 1, alignItems: 'center' }}>
+              <Text style={styles.headerTitle}>Checkout</Text>
+            </View>
+            <View style={{ width: 40 }} />
           </View>
         </View>
 
@@ -70,8 +73,8 @@ export default function CheckoutScreen() {
       <View style={styles.header}>
         <SafeAreaView edges={['top']} />
         <View style={styles.headerContent}>
-          <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.8}>
-            <Ionicons name="arrow-back" size={20} color={Colors.textInverse} />
+          <TouchableOpacity style={styles.backBtn} onPress={() => router.push('/(customer)')} activeOpacity={0.8}>
+            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
           </TouchableOpacity>
           <View style={{ flex: 1, alignItems: 'center' }}>
             <Text style={styles.headerTitle}>Complete Booking</Text>
@@ -90,7 +93,7 @@ export default function CheckoutScreen() {
             checkoutData={checkoutData}
             worker={worker}
             onPaymentSuccess={handlePaymentSuccess}
-            onClose={() => router.back()}
+            onClose={() => router.push('/(customer)')}
           />
         </ScrollView>
       </View>
@@ -117,11 +120,11 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     borderRadius: Radius.full,
-    backgroundColor: Colors.surfaceInteractive,
+    backgroundColor: Colors.surfaceLight,
     justifyContent: 'center',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: Colors.borderDark,
+    borderColor: Colors.borderLight,
   },
   headerTitle: {
     color: Colors.textInverse,
@@ -148,7 +151,6 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.canvasLight,
     borderTopLeftRadius: Radius['2xl'],
     borderTopRightRadius: Radius['2xl'],
-    overflow: 'hidden',
     marginTop: -Spacing.md,
   },
   emptySheet: {

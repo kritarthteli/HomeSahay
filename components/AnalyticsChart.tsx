@@ -1,9 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
-import { BarChart } from 'react-native-chart-kit';
+import { View, Text, StyleSheet } from 'react-native';
 import { Colors, Spacing, Radius, Typography } from '../constants/theme';
-
-const SCREEN_W = Dimensions.get('window').width;
 
 export default function AnalyticsChart({
   data,
@@ -15,34 +12,6 @@ export default function AnalyticsChart({
   giniCoefficient: number;
 }) {
   if (!data || data.length === 0) return null;
-
-  const chartData = {
-    labels: data.map((d) => d.name.split(' ')[0]),
-    datasets: [
-      {
-        data: data.map((d) => d.todayJobs),
-        colors: data.map((d, i) =>
-          (opacity = 1) =>
-            [Colors.accentPrimaryDark, Colors.textPrimary, Colors.textSecondary, Colors.warningDark, Colors.danger][i % 5]
-        ),
-      },
-    ],
-  };
-
-  const chartConfig = {
-    backgroundColor: Colors.surfaceLight,
-    backgroundGradientFrom: Colors.surfaceLight,
-    backgroundGradientTo: Colors.canvasCream,
-    decimalPlaces: 0,
-    color: (opacity = 1) => Colors.textPrimary,
-    labelColor: (opacity = 1) => Colors.textSecondary,
-    barPercentage: 0.7,
-    style: { borderRadius: Radius.lg },
-    propsForDots: { r: '4', strokeWidth: '2', stroke: Colors.textPrimary },
-    propsForBackgroundLines: { stroke: Colors.borderLight, strokeDasharray: '4' },
-    fillShadowGradient: Colors.textPrimary,
-    fillShadowGradientOpacity: 0.6,
-  };
 
   const fairnessColor =
     fairnessIndex >= 0.75 ? Colors.accentPrimaryDark : fairnessIndex >= 0.5 ? Colors.warningDark : Colors.danger;
@@ -69,18 +38,24 @@ export default function AnalyticsChart({
         </View>
       </View>
 
-      {/* Bar chart */}
+      {/* Custom Bar chart */}
       <View style={styles.chartWrapper}>
         <Text style={styles.chartTitle}>JOBS ASSIGNED TODAY (PER WORKER)</Text>
-        <BarChart
-          data={chartData}
-          width={Math.min(SCREEN_W - Spacing.base * 2, 540)}
-          height={200}
-          chartConfig={chartConfig}
-          style={styles.chart}
-          showValuesOnTopOfBars
-          fromZero
-        />
+        <View style={styles.weekBars}>
+          {data.map((worker, i) => {
+            const count = worker.todayJobs ?? 0;
+            const maxCount = Math.max(...data.map(d => d.todayJobs || 0), 1);
+            // Calculate height relative to the max count, with a min of 12 and max of 120
+            const height = Math.max(12, (count / maxCount) * 120);
+            return (
+              <View key={i} style={styles.weekBarWrapper}>
+                <Text style={styles.weekBarCount}>{count}</Text>
+                <View style={[styles.weekBar, { height }]} />
+                <Text style={styles.weekDay}>{worker.name.split(' ')[0]}</Text>
+              </View>
+            );
+          })}
+        </View>
       </View>
 
       {/* Legend / explanation */}
@@ -153,11 +128,39 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
     letterSpacing: 1,
-    marginBottom: Spacing.sm,
+    marginBottom: Spacing.xl,
   },
-  chart: {
-    borderRadius: Radius.md,
-    marginLeft: -Spacing.md,
+  weekBars: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-around',
+    height: 140,
+    marginTop: Spacing.md,
+    marginBottom: Spacing.md,
+  },
+  weekBarWrapper: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'flex-end',
+    gap: 8,
+  },
+  weekBarCount: {
+    color: Colors.textPrimary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.bold,
+  },
+  weekBar: {
+    width: 20,
+    backgroundColor: Colors.textSecondary,
+    borderRadius: Radius.full,
+    minHeight: 12,
+  },
+  weekDay: {
+    color: Colors.textSecondary,
+    fontSize: 10,
+    fontFamily: Typography.fontFamily.mono,
+    fontWeight: Typography.fontWeight.semibold,
   },
   legend: {
     flexDirection: 'row',

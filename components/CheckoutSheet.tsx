@@ -100,7 +100,7 @@ export default function CheckoutSheet({ checkoutData, worker, onPaymentSuccess, 
           <View style={styles.workerCard}>
             <Image source={{ uri: worker.avatar }} style={styles.avatar} />
             <View style={styles.workerInfo}>
-              <Text style={styles.workerName}>{worker.name}</Text>
+              <Text style={styles.workerName} numberOfLines={1}>{worker.name}</Text>
               <View style={styles.workerMeta}>
                 <Ionicons name="star" size={12} color={Colors.textPrimary} />
                 <Text style={styles.workerMetaText}>{worker.rating}</Text>
@@ -254,6 +254,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     gap: Spacing.md,
+    flex: 1,
   },
   stepIcon: {
     width: 36,
@@ -321,6 +322,7 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.display,
     fontWeight: Typography.fontWeight.black,
     letterSpacing: -0.5,
+    flexShrink: 1,
   },
   workerMeta: {
     flexDirection: 'row',

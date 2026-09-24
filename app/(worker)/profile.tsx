@@ -20,17 +20,21 @@ export default function WorkerProfile() {
   if (!worker) return null;
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <View style={styles.mainContainer}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backBtn} activeOpacity={0.7}>
-          <Ionicons name="arrow-back" size={24} color={Colors.textPrimary} />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Partner Profile</Text>
-        <View style={{ width: 24 }} />
+      <View style={styles.headerBackground}>
+        <SafeAreaView edges={['top']} />
+        <View style={styles.headerContent}>
+          <TouchableOpacity onPress={() => router.push('/(worker)')} style={styles.backBtn} activeOpacity={0.8}>
+            <Ionicons name="arrow-back" size={20} color={Colors.textPrimary} />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Partner Profile</Text>
+          <View style={{ width: 44 }} />
+        </View>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
+      <View style={styles.sheetContainer}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollContent}>
         {/* Avatar Section */}
         <View style={styles.avatarSection}>
           <View style={styles.avatarCircle}>
@@ -124,16 +128,19 @@ export default function WorkerProfile() {
         <TouchableOpacity style={styles.logoutBtn} onPress={handleLogout} activeOpacity={0.8}>
           <Text style={styles.logoutBtnText}>LOG OUT</Text>
         </TouchableOpacity>
-      </ScrollView>
-    </SafeAreaView>
+        </ScrollView>
+      </View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: Colors.canvasLight },
-  header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.xl, paddingVertical: Spacing.md },
-  backBtn: { padding: 4 },
-  headerTitle: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textPrimary, letterSpacing: -0.5 },
+  mainContainer: { flex: 1, backgroundColor: Colors.canvasDark },
+  headerBackground: { backgroundColor: Colors.canvasDark, paddingBottom: Spacing.xl },
+  headerContent: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: Spacing.xl, paddingTop: Spacing.sm },
+  backBtn: { width: 44, height: 44, borderRadius: 22, backgroundColor: Colors.surfaceLight, justifyContent: 'center', alignItems: 'center', borderWidth: 1, borderColor: Colors.borderLight },
+  headerTitle: { fontSize: Typography.fontSize.xl, fontFamily: Typography.fontFamily.display, fontWeight: Typography.fontWeight.black, color: Colors.textInverse, letterSpacing: -0.5 },
+  sheetContainer: { flex: 1, backgroundColor: Colors.canvasLight, borderTopLeftRadius: 40, borderTopRightRadius: 40, overflow: 'hidden' },
   scrollContent: { padding: Spacing.xl, paddingBottom: 60 },
   
   avatarSection: { alignItems: 'center', marginBottom: Spacing['2xl'], marginTop: Spacing.md },
