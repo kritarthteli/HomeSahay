@@ -9,48 +9,64 @@ import {
   KeyboardAvoidingView,
   Platform,
   Alert,
+  ActivityIndicator,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { useAppStore } from '../../store/appStore';
-import { MOCK_CUSTOMERS } from '../../data/seedData';
 import { Colors, Spacing, Radius, Typography, Shadow } from '../../constants/theme';
+import { MOCK_CUSTOMERS } from '../../data/seedData';
+
+const DEMO_ACCOUNT_IDS = ['c001', 'c002', 'c003'];
 
 export default function CustomerLogin() {
   const router = useRouter();
-  const { login } = useAppStore();
+  const loginWithPassword = useAppStore((s) => s.loginWithPassword);
+  const customers = useAppStore((s) => s.customers);
 
   const [phone, setPhone] = useState('');
-  const [otp, setOtp] = useState('');
-  const [otpSent, setOtpSent] = useState(false);
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const handleSendOtp = () => {
-    if (!phone || phone.length < 10) {
-      Alert.alert('Invalid Number', 'Please enter a valid 10-digit mobile number.');
+  const handleLogin = async () => {
+    setErrorMsg('');
+
+    if (!phone || phone.replace(/[^0-9]/g, '').length < 10) {
+      setErrorMsg('Please enter a valid 10-digit mobile number.');
       return;
     }
+    if (!password || password.length < 4) {
+      setErrorMsg('Password must be at least 4 characters.');
+      return;
+    }
+
     setLoading(true);
-    setTimeout(() => {
+    try {
+      await loginWithPassword(phone, password);
+      // Auth state change triggers auto-redirect via _layout.tsx
+    } catch (err) {
+      setErrorMsg(err.message || 'Login failed. Please check your credentials.');
+    } finally {
       setLoading(false);
-      setOtpSent(true);
-      setOtp('2026'); // Pre-fill mock OTP for easy testing
-    }, 600);
+    }
   };
 
-  const handleVerifyLogin = (customerId = 'c001') => {
+  const handleDemoLogin = async (customer) => {
+    setErrorMsg('');
+    const cleanPhone = customer.phone ? customer.phone.replace(/[^0-9]/g, '').slice(-10) : '';
+    setPhone(cleanPhone);
+    setPassword('demo123');
     setLoading(true);
-    setTimeout(() => {
+    try {
+      await loginWithPassword(cleanPhone, 'demo123');
+    } catch (err) {
+      setErrorMsg(err.message || 'Demo login failed.');
+    } finally {
       setLoading(false);
-      login('customer', customerId);
-      router.replace('/(customer)');
-    }, 400);
-  };
-
-  const handleDemoSelect = (customer: any) => {
-    setPhone(customer.phone.replace('+91 ', ''));
-    handleVerifyLogin(customer.id);
+    }
   };
 
   return (
@@ -86,8 +102,8 @@ export default function CustomerLogin() {
                 <Text style={styles.featureBadgeText}>Verified Pros</Text>
               </View>
               <View style={styles.featureBadge}>
-                <Ionicons name="flash" size={14} color={Colors.accentPrimary} />
-                <Text style={styles.featureBadgeText}>SOS Dispatch</Text>
+                <Ionicons name="lock-closed" size={14} color={Colors.accentPrimary} />
+                <Text style={styles.featureBadgeText}>JWT Secured</Text>
               </View>
               <View style={styles.featureBadge}>
                 <Ionicons name="sparkles" size={14} color={Colors.accentPrimary} />
@@ -100,8 +116,16 @@ export default function CustomerLogin() {
         {/* Clean Ivory Sheet Card */}
         <View style={styles.sheet}>
           <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.sheetContent}>
-            <Text style={styles.sheetTitle}>Log in or Sign up</Text>
-            <Text style={styles.sheetSubtitle}>Enter your phone number to book home services</Text>
+            <Text style={styles.sheetTitle}>Welcome Back</Text>
+            <Text style={styles.sheetSubtitle}>Log in with your phone number and password</Text>
+
+            {/* Error Message */}
+            {errorMsg ? (
+              <View style={styles.errorBox}>
+                <Ionicons name="alert-circle" size={16} color="#DC2626" />
+                <Text style={styles.errorText}>{errorMsg}</Text>
+              </View>
+            ) : null}
 
             {/* Mobile Number Input */}
             <View style={styles.inputGroup}>
@@ -117,75 +141,91 @@ export default function CustomerLogin() {
                   keyboardType="phone-pad"
                   maxLength={10}
                   value={phone}
-                  onChangeText={setPhone}
+                  onChangeText={(t) => { setPhone(t); setErrorMsg(''); }}
                 />
               </View>
             </View>
 
-            {/* OTP Section (Visible after Send OTP) */}
-            {otpSent && (
-              <View style={styles.inputGroup}>
-                <View style={styles.otpHeader}>
-                  <Text style={styles.inputLabel}>Enter 4-digit OTP</Text>
-                  <Text style={styles.demoOtpHint}>Mock OTP: 2026</Text>
-                </View>
+            {/* Password Input */}
+            <View style={styles.inputGroup}>
+              <Text style={styles.inputLabel}>Password</Text>
+              <View style={styles.passwordRow}>
                 <TextInput
-                  style={styles.otpInput}
-                  placeholder="• • • •"
+                  style={styles.passwordInput}
+                  placeholder="Enter your password"
                   placeholderTextColor={Colors.textMuted}
-                  keyboardType="number-pad"
-                  maxLength={4}
-                  value={otp}
-                  onChangeText={setOtp}
+                  secureTextEntry={!showPassword}
+                  value={password}
+                  onChangeText={(t) => { setPassword(t); setErrorMsg(''); }}
+                  autoCapitalize="none"
                 />
+                <TouchableOpacity
+                  style={styles.eyeBtn}
+                  onPress={() => setShowPassword(!showPassword)}
+                  activeOpacity={0.7}
+                >
+                  <Ionicons
+                    name={showPassword ? 'eye-off-outline' : 'eye-outline'}
+                    size={20}
+                    color={Colors.textMuted}
+                  />
+                </TouchableOpacity>
               </View>
-            )}
+            </View>
 
-            {/* Action Button */}
-            {!otpSent ? (
-              <TouchableOpacity
-                style={[styles.primaryBtn, loading && styles.btnDisabled]}
-                onPress={handleSendOtp}
-                disabled={loading}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.primaryBtnText}>{loading ? 'SENDING OTP…' : 'CONTINUE WITH OTP'}</Text>
-                <Ionicons name="arrow-forward" size={18} color={Colors.darkSurfaceDeep} />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={[styles.primaryBtn, loading && styles.btnDisabled]}
-                onPress={() => handleVerifyLogin()}
-                disabled={loading}
-                activeOpacity={0.8}
-              >
-                <Text style={styles.primaryBtnText}>{loading ? 'VERIFYING…' : 'VERIFY & CONTINUE'}</Text>
-                <Ionicons name="checkmark-circle" size={18} color={Colors.darkSurfaceDeep} />
-              </TouchableOpacity>
-            )}
+            {/* Login Button */}
+            <TouchableOpacity
+              style={[styles.primaryBtn, loading && styles.btnDisabled]}
+              onPress={handleLogin}
+              disabled={loading}
+              activeOpacity={0.8}
+            >
+              {loading ? (
+                <ActivityIndicator size="small" color={Colors.darkSurfaceDeep} />
+              ) : (
+                <>
+                  <Text style={styles.primaryBtnText}>LOG IN SECURELY</Text>
+                  <Ionicons name="log-in-outline" size={18} color={Colors.darkSurfaceDeep} />
+                </>
+              )}
+            </TouchableOpacity>
+
+            {/* Registration Link */}
+            <TouchableOpacity
+              style={styles.registerLinkBtn}
+              onPress={() => router.push('/(customer)/register')}
+              activeOpacity={0.8}
+            >
+              <Ionicons name="person-add-outline" size={18} color={Colors.accentPrimaryDark} />
+              <Text style={styles.registerLinkText}>New customer? Create your account</Text>
+            </TouchableOpacity>
 
             {/* Quick Demo Login Divider */}
             <View style={styles.dividerRow}>
               <View style={styles.dividerLine} />
-              <Text style={styles.dividerText}>QUICK DEMO ACCOUNTS</Text>
+              <Text style={styles.dividerText}>DEMO ACCOUNTS (password: demo123)</Text>
               <View style={styles.dividerLine} />
             </View>
 
             {/* 1-Tap Demo Profiles */}
             <View style={styles.demoList}>
-              {MOCK_CUSTOMERS.map((c) => (
+              {DEMO_ACCOUNT_IDS.map((id) => (
+                (customers && customers.find((c) => c.id === id)) ||
+                MOCK_CUSTOMERS.find((c) => c.id === id)
+              )).filter(Boolean).map((c) => (
                 <TouchableOpacity
                   key={c.id}
                   style={styles.demoCard}
-                  onPress={() => handleDemoSelect(c)}
+                  onPress={() => handleDemoLogin(c)}
                   activeOpacity={0.7}
+                  disabled={loading}
                 >
                   <View style={styles.demoAvatar}>
-                    <Text style={styles.demoAvatarText}>{c.name.charAt(0)}</Text>
+                    <Text style={styles.demoAvatarText}>{c.name ? c.name.charAt(0) : 'C'}</Text>
                   </View>
                   <View style={styles.demoInfo}>
                     <Text style={styles.demoName}>{c.name}</Text>
-                    <Text style={styles.demoAddress} numberOfLines={1}>{c.address}</Text>
+                    <Text style={styles.demoAddress} numberOfLines={1}>{c.address || c.phone}</Text>
                   </View>
                   <View style={styles.demoLoginBtn}>
                     <Text style={styles.demoLoginBtnText}>LOGIN</Text>
@@ -315,7 +355,25 @@ const styles = StyleSheet.create({
   sheetSubtitle: {
     fontSize: Typography.fontSize.base,
     color: Colors.textSecondary,
-    marginBottom: Spacing.xl,
+    marginBottom: Spacing.lg,
+  },
+  errorBox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+    backgroundColor: '#FEF2F2',
+    borderWidth: 1,
+    borderColor: '#FECACA',
+    borderRadius: Radius.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    marginBottom: Spacing.lg,
+  },
+  errorText: {
+    flex: 1,
+    fontSize: Typography.fontSize.sm,
+    color: '#DC2626',
+    fontWeight: Typography.fontWeight.medium,
   },
   inputGroup: {
     marginBottom: Spacing.lg,
@@ -360,31 +418,27 @@ const styles = StyleSheet.create({
     color: Colors.textPrimary,
     outlineStyle: 'none',
   },
-  otpHeader: {
+  passwordRow: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
-  },
-  demoOtpHint: {
-    fontSize: 11,
-    fontFamily: Typography.fontFamily.mono,
-    color: Colors.accentPrimaryDark,
-    fontWeight: Typography.fontWeight.bold,
-  },
-  otpInput: {
     borderWidth: 1,
     borderColor: Colors.borderLight,
     borderRadius: Radius.full,
     backgroundColor: Colors.surfaceLight,
+    overflow: 'hidden',
+  },
+  passwordInput: {
+    flex: 1,
     paddingHorizontal: Spacing.md,
     paddingVertical: 16,
-    fontSize: Typography.fontSize.lg,
+    fontSize: Typography.fontSize.base,
     fontFamily: Typography.fontFamily.mono,
     color: Colors.textPrimary,
-    textAlign: 'center',
-    letterSpacing: 16,
     outlineStyle: 'none',
+  },
+  eyeBtn: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: 16,
   },
   primaryBtn: {
     backgroundColor: Colors.accentPrimary,
@@ -426,7 +480,7 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
     color: Colors.textMuted,
-    letterSpacing: 1.5,
+    letterSpacing: 1,
   },
 
   // Demo Profiles
@@ -487,6 +541,24 @@ const styles = StyleSheet.create({
     fontFamily: Typography.fontFamily.mono,
     fontWeight: Typography.fontWeight.bold,
     color: Colors.textPrimary,
+  },
+
+  registerLinkBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+    backgroundColor: Colors.accentPrimaryLight,
+    borderWidth: 1,
+    borderColor: Colors.accentPrimary,
+    borderRadius: Radius.md,
+    paddingVertical: Spacing.md,
+    marginTop: Spacing.md,
+  },
+  registerLinkText: {
+    fontSize: Typography.fontSize.sm,
+    fontWeight: Typography.fontWeight.bold,
+    color: Colors.accentPrimaryDark,
   },
 
   coopFooter: {

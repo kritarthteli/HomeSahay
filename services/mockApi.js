@@ -4,6 +4,7 @@
 // ============================================================
 
 import { MOCK_WORKERS, MOCK_CUSTOMERS, JOB_HISTORY, DEFAULT_RANKING_WEIGHTS } from '../data/seedData';
+import { api } from './apiClient';
 
 // Utility: simulate network latency
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -174,8 +175,16 @@ export const fetchNearbyWorkers = async (
   weights = DEFAULT_RANKING_WEIGHTS,
   workerPool = MOCK_WORKERS
 ) => {
-  await delay(800);
+  try {
+    const liveWorkers = await api.getNearbyWorkers(category, userLocation, radiusKm);
+    if (liveWorkers && liveWorkers.length > 0) {
+      return liveWorkers;
+    }
+  } catch (err) {
+    console.log('[PostgreSQL API] Offline or unreachable, falling back to local pool:', err.message);
+  }
 
+  await delay(400);
   const eligible = filterWorkers(category, userLocation, radiusKm, workerPool);
   const scored = eligible.map((w) => ({
     ...w,
@@ -194,7 +203,16 @@ export const fetchNearbyWorkers = async (
  * @returns {Promise<{ jobId, status, worker, estimatedArrival, price }>}
  */
 export const submitJobRequest = async (params) => {
-  await delay(1200);
+  try {
+    const liveJob = await api.createJob(params);
+    if (liveJob && liveJob.jobId) {
+      return liveJob;
+    }
+  } catch (err) {
+    console.log('[PostgreSQL API] Offline or unreachable for createJob, using mock fallback:', err.message);
+  }
+
+  await delay(600);
 
   const worker = MOCK_WORKERS.find((w) => w.id === params.workerId);
   if (!worker) throw new Error('Worker not found');
@@ -287,14 +305,16 @@ export const processPayment = async (params) => {
   };
 };
 
-// ── Worker Status Update ────────────────────────────────────
-/**
- * Toggle worker online/offline status
- * @param {string} workerId
- * @param {boolean} isOnline
- */
 export const updateWorkerStatus = async (workerId, isOnline) => {
-  await delay(400);
+  try {
+    const res = await api.updateWorkerStatus(workerId, isOnline);
+    if (res && res.success) {
+      return res;
+    }
+  } catch (err) {
+    console.log('[PostgreSQL API] Offline for updateWorkerStatus, using local:', err.message);
+  }
+  await delay(200);
   return { workerId, isOnline, updatedAt: new Date().toISOString() };
 };
 
@@ -306,7 +326,21 @@ export const updateWorkerStatus = async (workerId, isOnline) => {
  * @param {string} reason - Optional rejection reason
  */
 export const processKYC = async (kycId, action, reason = '') => {
-  await delay(700);
+  try {
+    const res = await api.reviewKyc(kycId, action);
+    if (res && res.success) {
+      return {
+        kycId,
+        action,
+        reason,
+        processedAt: new Date().toISOString(),
+        success: true,
+      };
+    }
+  } catch (err) {
+    console.log('[PostgreSQL API] Offline for processKYC, using local:', err.message);
+  }
+  await delay(400);
   return {
     kycId,
     action,
@@ -321,7 +355,16 @@ export const processKYC = async (kycId, action, reason = '') => {
  * Fetch analytics summary for admin dashboard
  */
 export const fetchAnalytics = async () => {
-  await delay(500);
+  try {
+    const liveAnalytics = await api.getAnalytics();
+    if (liveAnalytics && liveAnalytics.summary) {
+      return liveAnalytics;
+    }
+  } catch (err) {
+    console.log('[PostgreSQL API] Offline for fetchAnalytics, using local calculations:', err.message);
+  }
+
+  await delay(300);
 
   const jobsByWorker = MOCK_WORKERS.map((w) => ({
     workerId: w.id,

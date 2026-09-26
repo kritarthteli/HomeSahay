@@ -6,6 +6,29 @@ import { StyleSheet, View, Text } from 'react-native';
 import RoleSwitcher from '../components/RoleSwitcher';
 import { Colors } from '../constants/theme';
 
+// Suppress third-party browser extension errors (e.g. Chrome extension M_ID) from popping up in Expo dev redbox
+if (typeof window !== 'undefined') {
+  const isExtError = (msg?: string, filename?: string, stack?: string) => {
+    const s = `${msg || ''} ${filename || ''} ${stack || ''}`;
+    return s.includes('chrome-extension://') || s.includes('moz-extension://') || s.includes('safari-extension://') || s.includes('M_ID');
+  };
+
+  window.addEventListener('error', (event) => {
+    if (isExtError(event.message, event.filename, event.error?.stack)) {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+      return true;
+    }
+  }, true);
+
+  window.addEventListener('unhandledrejection', (event) => {
+    if (isExtError(event.reason?.message, '', event.reason?.stack)) {
+      event.stopImmediatePropagation();
+      event.preventDefault();
+    }
+  }, true);
+}
+
 export default function RootLayout() {
   const role = process.env.EXPO_PUBLIC_APP_ROLE;
 

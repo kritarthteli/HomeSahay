@@ -18,12 +18,17 @@
     "android:admin": "cross-env APP_ROLE=admin EXPO_PUBLIC_APP_ROLE=admin expo start --android --port 8083",
     "ios:customer": "cross-env APP_ROLE=customer EXPO_PUBLIC_APP_ROLE=customer expo start --ios --port 8081",
     "ios:worker": "cross-env APP_ROLE=worker EXPO_PUBLIC_APP_ROLE=worker expo start --ios --port 8082",
-    "ios:admin": "cross-env APP_ROLE=admin EXPO_PUBLIC_APP_ROLE=admin expo start --ios --port 8083"
+    "ios:admin": "cross-env APP_ROLE=admin EXPO_PUBLIC_APP_ROLE=admin expo start --ios --port 8083",
+    "server": "node server/index.js",
+    "seed": "node server/seed.js"
   },
   "dependencies": {
     "@expo/metro-runtime": "~3.2.3",
     "@expo/vector-icons": "^14.0.2",
     "@react-native-community/slider": "^4.5.2",
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^16.6.1",
     "expo": "~51.0.0",
     "expo-constants": "~16.0.2",
     "expo-font": "~12.0.10",
@@ -32,6 +37,9 @@
     "expo-router": "~3.5.0",
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
+    "express": "^4.22.3",
+    "jsonwebtoken": "^9.0.3",
+    "pg": "^8.23.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.5",

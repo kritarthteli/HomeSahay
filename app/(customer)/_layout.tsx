@@ -1,14 +1,48 @@
-import { Tabs } from 'expo-router';
+import { useEffect, useState } from 'react';
+import { Tabs, useRouter, useSegments } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { View, ActivityIndicator, StyleSheet } from 'react-native';
 import { Colors, Typography, Radius, Shadow, Spacing } from '../../constants/theme';
+import { useAppStore } from '../../store/appStore';
 
 export default function CustomerLayout() {
   const insets = useSafeAreaInsets();
-  
+  const router = useRouter();
+  const segments = useSegments();
+
+  const isAuthenticated = useAppStore((s) => s.auth.customer);
+  const authLoading = useAppStore((s) => s.authLoading);
+
+  // Determine current screen from segments
+  const currentScreen = segments[segments.length - 1];
+  const isOnAuthScreen = currentScreen === 'login' || currentScreen === 'register';
+
+  useEffect(() => {
+    // Don't navigate while auth state is loading
+    if (authLoading) return;
+
+    if (!isAuthenticated && !isOnAuthScreen) {
+      // Not logged in and not on auth screen → send to login
+      router.replace('/(customer)/login');
+    } else if (isAuthenticated && isOnAuthScreen) {
+      // Logged in but still on auth screen → send to main app
+      router.replace('/(customer)');
+    }
+  }, [isAuthenticated, authLoading, isOnAuthScreen]);
+
+  // Show loading spinner while checking stored JWT
+  if (authLoading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={Colors.accentPrimary} />
+      </View>
+    );
+  }
+
   return (
     <Tabs
-      initialRouteName="index"
+      initialRouteName={isAuthenticated ? 'index' : 'login'}
       screenOptions={{
         headerShown: false,
         tabBarHideOnKeyboard: true,
@@ -25,6 +59,8 @@ export default function CustomerLayout() {
           paddingHorizontal: Spacing.sm,
           ...Shadow.lg,
           elevation: 12,
+          // Hide tab bar when on auth screens
+          display: isOnAuthScreen ? 'none' : 'flex',
         },
         tabBarActiveTintColor: Colors.primary,
         tabBarInactiveTintColor: Colors.textMuted,
@@ -42,6 +78,13 @@ export default function CustomerLayout() {
     >
       <Tabs.Screen
         name="login"
+        options={{
+          href: null,
+          tabBarStyle: { display: 'none' },
+        }}
+      />
+      <Tabs.Screen
+        name="register"
         options={{
           href: null,
           tabBarStyle: { display: 'none' },
@@ -85,3 +128,12 @@ export default function CustomerLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    backgroundColor: '#0A0E1A',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+});

@@ -8,11 +8,10 @@ import { Colors, Spacing, Radius, Typography, Shadow } from '../../constants/the
 
 export default function ManageAccount() {
   const router = useRouter();
-  const { logout } = useAppStore();
+  const { logoutCustomer } = useAppStore();
 
-  const handleLogout = () => {
-    logout('customer');
-    router.replace('/(customer)/login');
+  const handleLogout = async () => {
+    await logoutCustomer();
   };
 
   return (

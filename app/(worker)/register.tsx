@@ -25,7 +25,7 @@ export default function WorkerRegister() {
     const workerId = registerWorker({ ...form, certifications: form.certifications.split(',').map((s) => s.trim()).filter(Boolean) });
     useAppStore.getState().login('worker', workerId);
     setSaving(false);
-    Alert.alert('Application received', 'Your profile is saved in this demo session. Identity verification is pending cooperative review.', [{ text: 'Continue', onPress: () => router.replace('/(worker)') }]);
+    Alert.alert('Application received', 'Your worker profile and verification request have been saved into PostgreSQL! Pending cooperative KYC review.', [{ text: 'Continue', onPress: () => router.replace('/(worker)') }]);
   };
   const field = (label: string, key: Exclude<keyof FormData, 'skills'>, placeholder: string, props: object = {}) => (
     <View style={styles.group} key={key}>

@@ -1,0 +1,16 @@
+{
+  "name": "homesahay-backend",
+  "version": "1.0.0",
+  "description": "PostgreSQL Backend API for HomeSahay Cooperative Platform",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "seed": "node seed.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "pg": "^8.11.5"
+  }
+}
