@@ -1,0 +1,70 @@
+{
+  "cli": {
+    "version": ">= 10.2.0"
+  },
+  "build": {
+    "development-customer": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "APP_ROLE": "customer",
+        "EXPO_PUBLIC_APP_ROLE": "customer"
+      }
+    },
+    "preview-customer": {
+      "distribution": "internal",
+      "env": {
+        "APP_ROLE": "customer",
+        "EXPO_PUBLIC_APP_ROLE": "customer"
+      }
+    },
+    "production-customer": {
+      "env": {
+        "APP_ROLE": "customer",
+        "EXPO_PUBLIC_APP_ROLE": "customer"
+      }
+    },
+    "development-worker": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "APP_ROLE": "worker",
+        "EXPO_PUBLIC_APP_ROLE": "worker"
+      }
+    },
+    "preview-worker": {
+      "distribution": "internal",
+      "env": {
+        "APP_ROLE": "worker",
+        "EXPO_PUBLIC_APP_ROLE": "worker"
+      }
+    },
+    "production-worker": {
+      "env": {
+        "APP_ROLE": "worker",
+        "EXPO_PUBLIC_APP_ROLE": "worker"
+      }
+    },
+    "development-admin": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "APP_ROLE": "admin",
+        "EXPO_PUBLIC_APP_ROLE": "admin"
+      }
+    },
+    "preview-admin": {
+      "distribution": "internal",
+      "env": {
+        "APP_ROLE": "admin",
+        "EXPO_PUBLIC_APP_ROLE": "admin"
+      }
+    },
+    "production-admin": {
+      "env": {
+        "APP_ROLE": "admin",
+        "EXPO_PUBLIC_APP_ROLE": "admin"
+      }
+    }
+  }
+}
